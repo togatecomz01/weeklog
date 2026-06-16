@@ -5,12 +5,14 @@ type ButtonVariant = 'primary' | 'secondary' | 'inbox'
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
   fullWidth?: boolean
+  logout?: boolean
   startIcon?: React.ReactNode
 }
 
 function Button({
   variant = 'primary',
   fullWidth = false,
+  logout = false,
   startIcon,
   className = '',
   children,
@@ -20,6 +22,7 @@ function Button({
     'btn',
     `btn--${variant}`,
     fullWidth ? 'btn--full' : '',
+    logout ? 'btn--logout' : '',
     className,
   ]
     .filter(Boolean)

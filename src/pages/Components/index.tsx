@@ -3,6 +3,7 @@ import './Components.scss'
 import Button from '@/components/Button'
 import SendIcon from '@/components/icons/SendIcon'
 import CheckCircleIcon from '@/components/icons/CheckCircleIcon'
+import LogoutIcon from '@/components/icons/LogoutIcon'
 
 function Components() {
     return (
@@ -34,6 +35,9 @@ function Components() {
             </div>
 
             <h2>기타</h2>
+            <div className='section'>
+                <Button variant="secondary" logout startIcon={<LogoutIcon />}>로그아웃</Button>
+            </div>
             <h2>뱃지</h2>
 
         </div>
