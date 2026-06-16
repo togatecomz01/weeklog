@@ -5,6 +5,11 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   base: '/weeklog/',
   plugins: [react()],
+  resolve: {
+    alias: {
+      '@': path.resolve(__dirname, 'src'),
+    },
+  },
   server: {
     proxy: {
       '/api': 'http://localhost:3000',
@@ -13,7 +18,7 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use '${path.resolve(__dirname, 'src/styles/variables')}' as *;`,
+        additionalData: `@use 'sass:color'; @use '${path.resolve(__dirname, 'src/styles/variables')}' as *;`,
       },
     },
   },
