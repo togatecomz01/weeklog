@@ -11,6 +11,10 @@ import Input from '@/components/Input'
 import Radio from '@/components/Radio'
 import Select from '@/components/Select'
 import RadioGroup from '@/components/Radio/RadioGroup'
+import WeekCard from '@/components/WeekCard'
+import WeekCardList from '@/components/WeekCard/WeekCardList'
+import CompletedTaskCard from '@/components/CompletedTaskCard'
+import CompletedTaskCardList from '@/components/CompletedTaskCard/CompletedTaskCardList'
 
 function Components() {
     const [selected, setSelected] = useState('a')
@@ -108,6 +112,58 @@ function Components() {
                     { value: '3', label: '옵션 3' },
                 ]} disabled />
             </div>
+
+            <h2>메인 카드 리스트</h2>
+            <WeekCardList>
+                <WeekCard
+                    week="6월 2주"
+                    priority="important"
+                    content={`1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정\n3. 모바일 앱 검토 예정`}
+                    status="unsent"
+                />
+                <WeekCard
+                    week="6월 2주"
+                    priority="normal"
+                    content={`1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정\n3. 모바일 앱 검토 예정`}
+                    status="partial"
+                />
+                <WeekCard
+                    week="6월 2주"
+                    priority="urgent"
+                    content={`1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정\n3. 모바일 앱 검토 예정`}
+                    status="sent"
+                />
+            </WeekCardList>
+
+            <h2>상세 카드 리스트</h2>
+            <CompletedTaskCardList>
+                <CompletedTaskCard
+                    status="todo"
+                    sent={false}
+                    items={[
+                        '등록페이지 화면 설계 정리 완료',
+                        '업무 내용 항목명 확정',
+                    ]}
+                    onSend={() => console.log('전송')}
+                />
+                <CompletedTaskCard
+                    status="doing"
+                    sent={false}
+                    items={[
+                        '등록페이지 화면 설계 정리 완료',
+                        '업무 내용 항목명 확정',
+                    ]}
+                    onSend={() => console.log('전송')}
+                />
+                <CompletedTaskCard
+                    status="done"
+                    sent={true}
+                    items={[
+                        '등록페이지 화면 설계 정리 완료',
+                        '업무 내용 항목명 확정',
+                    ]}
+                    onSend={() => console.log('전송')}
+                /></CompletedTaskCardList>
         </div>
     )
 }
