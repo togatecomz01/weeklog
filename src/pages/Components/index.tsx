@@ -1,6 +1,8 @@
 import ButtonContainer from '@/components/ButtonContainer'
 import './Components.scss'
 import Button from '@/components/Button'
+import SendIcon from '@/components/icons/SendIcon'
+import CheckCircleIcon from '@/components/icons/CheckCircleIcon'
 
 function Components() {
     return (
@@ -25,10 +27,10 @@ function Components() {
 
             <h2>full 버튼</h2>
             <div className='section'>
-                <Button variant="full">더보기</Button>
-                <Button variant="full">로그인</Button>
-                <Button variant="full">스윗으로 보내기</Button>
-                <Button variant="full">전송 완료</Button>
+                <Button variant="secondary" fullWidth >더보기</Button>
+                <Button fullWidth>로그인</Button>
+                <Button variant="inbox" fullWidth startIcon={<SendIcon />}>스윗으로 보내기</Button>
+                <Button variant="inbox" fullWidth startIcon={<CheckCircleIcon />} disabled>전송 완료</Button>
             </div>
 
             <h2>기타</h2>

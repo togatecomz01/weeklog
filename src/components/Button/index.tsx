@@ -1,13 +1,17 @@
 import './Button.scss'
 
-type ButtonVariant = 'primary' | 'secondary' | 'full'
+type ButtonVariant = 'primary' | 'secondary' | 'inbox'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: ButtonVariant
+  fullWidth?: boolean
+  startIcon?: React.ReactNode
 }
 
 function Button({
   variant = 'primary',
+  fullWidth = false,
+  startIcon,
   className = '',
   children,
   ...props
@@ -15,6 +19,7 @@ function Button({
   const classes = [
     'btn',
     `btn--${variant}`,
+    fullWidth ? 'btn--full' : '',
     className,
   ]
     .filter(Boolean)
@@ -22,6 +27,7 @@ function Button({
 
   return (
     <button className={classes} {...props}>
+      {startIcon && <span className="btn__icon">{startIcon}</span>}
       {children}
     </button>
   )
