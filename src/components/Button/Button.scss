@@ -2,22 +2,24 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 13px 12px;
+  padding: 14px 12px;
   min-width: 100px;
   border: 1px solid transparent;
   border-radius: 10px;
+  background-color: $color-primary;
+  text-align: center;
+  color: $color-white;
+  font-size: $font16;
+  font-weight: $font-w-m;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
-  background-color: $color-primary;
-  color: $color-white;
-  font-size: $font14;
-  font-weight: 600;
-  line-height: 140%;
 
   &__icon {
     display: inline-flex;
     align-items: center;
     margin-right: 10px;
+    width: 16px;
+    height: 16px;
   }
 
   &:disabled {
@@ -31,10 +33,6 @@
     &:not(.btn--full):hover:not(:disabled) {
       background-color: $color-hover;
       font-weight: $font-w-b;
-    }
-
-    &.btn--full {
-      font-size: $font16;
     }
   }
 
@@ -50,27 +48,28 @@
 
     &:not(.btn--full):hover:not(:disabled) {
       border-color: $color-hover;
+      color: $color-hover;
       font-weight: $font-w-b;
     }
 
     &.btn--full {
-      font-size: $font14;
+      padding: 10px 12px;
     }
   }
 
 
   &--full {
     width: 100%;
-    padding: 8px 0;
-    border-radius: 16px;
+    padding: 14px 0;
+    border-radius: 10px;
     min-width: unset;
   }
 
   &--inbox {
-    background-color: $color-white;
-    color: $color-text-gray;
     border-color: $color-border;
-    border-radius: 8px;
+    background-color: $color-white;
+    font-size: $font14;
+    color: $color-text-gray;
 
     &:disabled {
       background: $color-disabled;
@@ -84,5 +83,6 @@
     padding: 8px 10px;
     min-width: 0;
     width: fit-content;
+    font-size: $font14;
   }
 }
