@@ -1,5 +1,25 @@
 .radio-group {
   display: flex;
-  align-items: center;
-  gap: 20px;
+  flex-direction: column;
+  gap: 12px;
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: $font14;
+    font-weight: $font-w-b;
+    color: $color-text-black;
+  }
+
+  &__required {
+    font-size: $font14;
+    color: $color-error;
+  }
+
+  &__items {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
 }
