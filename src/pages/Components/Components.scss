@@ -1,10 +1,100 @@
-h2 {
-    margin: 20px 0 20px;
+body {
+    width: 100%;
+    max-width: none;
 }
 
-.section {
-    margin: 20px 0 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
+.component {
+    &-header {
+        padding: 20px 10px;
+        border-bottom: 1px solid $color-border;
+    }
+    &-wrap {
+        display: flex;
+        width: 100%;
+        min-height: 100svh;
+        padding: 0 20px;
+    }
+    &-side {
+        width: 160px;
+        padding: 24px 20px 24px 0;
+        border-right: 1px solid $color-border;
+        line-height: 1.4;
+    }
+}
+
+.side {
+    &-title {
+        margin: 0 0 16px;
+        font-size: $font18;
+        font-weight: $font-w-b;
+        color: $color-text-black;
+        line-height: 1.4;
+    }
+    
+    &-nav {
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        margin: 0;
+    }
+}
+
+.nav {
+    &-btn {
+        display: block;
+        width: 100%;
+        padding: 10px 12px;
+        border: 0;
+        background: transparent;
+        font-size: 14px;
+        font-weight: 600;
+        color: $color-text-gray;
+        line-height: 1.4;
+        text-align: left;
+        cursor: pointer;
+        &.is-active {
+            border-radius: 8px;
+            background: $color-secondary;
+            color: $color-primary;
+        }
+    }
+}
+
+.component-content {
+    flex: 1;
+    padding: 24px;
+}
+
+.guide {
+    &-content {
+        width: 100%;
+        padding: 24px 0 40px;
+    }
+
+    &-title {
+        margin: 0 0 24px;
+        font-size: $font24;
+        font-weight: $font-w-b;
+        color: $color-text-black;
+        line-height: 1.4;
+    }
+
+    &-section {
+        margin: 0 0 28px;
+        &-title {
+            margin: 0 0 12px;
+            font-size: $font18;
+            font-weight: $font-w-b;
+            color: $color-text-black;
+            list-style: 1.4;
+        }
+    }
+
+    &-example {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 480px;
+        width: 100%;
+    }
 }

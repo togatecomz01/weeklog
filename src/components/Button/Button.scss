@@ -2,7 +2,7 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 12px;
+  padding: 13px 12px;
   min-width: 100px;
   border: 1px solid transparent;
   border-radius: 10px;
@@ -10,7 +10,7 @@
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
   background-color: $color-primary;
   color: $color-white;
-  font-size: 12px;
+  font-size: $font14;
   font-weight: 600;
   line-height: 140%;
 
@@ -27,12 +27,14 @@
   }
 
   &--primary {
+    width: 100%;
     &:not(.btn--full):hover:not(:disabled) {
       background-color: $color-hover;
+      font-weight: $font-w-b;
     }
 
     &.btn--full {
-      font-size: 20px;
+      font-size: $font16;
     }
   }
 
@@ -48,10 +50,11 @@
 
     &:not(.btn--full):hover:not(:disabled) {
       border-color: $color-hover;
+      font-weight: $font-w-b;
     }
 
     &.btn--full {
-      font-size: 14px;
+      font-size: $font14;
     }
   }
 
