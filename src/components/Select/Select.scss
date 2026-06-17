@@ -2,6 +2,21 @@
   position: relative;
   width: 100%;
 
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    font-size: $font14;
+    font-weight: $font-w-b;
+    color: $color-text-black;
+    margin-bottom: 8px;
+  }
+
+  &__required {
+    font-size: $font14;
+    color: $color-error;
+  }
+
   &__trigger {
     display: flex;
     align-items: center;
