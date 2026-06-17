@@ -2,11 +2,11 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 2px 8px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 500;
-  line-height: 140%;
+  padding: 6px 8px;
+  border-radius: 10px;
+  font-size: $font14;
+  font-weight: $font-w-sb;
+  white-space: nowrap;
 
   &--normal {
     background: #F3F4F6;

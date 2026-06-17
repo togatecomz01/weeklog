@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import ButtonGuide from './ButtonGuide'
+import BadgeGuide from './BadgeGuide'
 import './Components.scss'
 
 const MENU_LIST = [
     { id: 'button', label: 'Button', Component: ButtonGuide},
+    { id: 'badge', label: 'Badge', Component: BadgeGuide},
 ]
 
 function Components() {
