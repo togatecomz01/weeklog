@@ -12,10 +12,12 @@ interface SelectProps {
   onChange?: (value: string) => void
   placeholder?: string
   disabled?: boolean
+  label?: string
+  required?: boolean
   className?: string
 }
 
-function Select({ options, value, onChange, placeholder = '선택하세요', disabled = false, className = '' }: SelectProps) {
+function Select({ options, value, onChange, placeholder = '선택하세요', disabled = false, label, required = false, className = '' }: SelectProps) {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
 
@@ -38,6 +40,12 @@ function Select({ options, value, onChange, placeholder = '선택하세요', dis
 
   return (
     <div className={`select ${className}`.trim()} ref={ref}>
+      {label && (
+        <p className="select__label">
+          {label}
+          {required && <span className="select__required" aria-hidden>*</span>}
+        </p>
+      )}
       <button
         type="button"
         className={`select__trigger ${open ? 'select__trigger--open' : ''} ${disabled ? 'select__trigger--disabled' : ''}`}
