@@ -8,17 +8,17 @@
   font-weight: $font-w-sb;
   white-space: nowrap;
 
-  &--normal {
+  &-normal {
     background: #F3F4F6;
     color: #4B5563;
   }
 
-  &--important {
+  &-important {
     background: #FEF3C7;
     color: #B45309;
   }
 
-  &--urgent {
+  &-urgent {
     background: #FEE2E2;
     color: #B91C1C;
   }

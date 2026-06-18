@@ -20,9 +20,9 @@ function Button({
 }: ButtonProps) {
   const classes = [
     'btn',
-    `btn--${variant}`,
-    fullWidth ? 'btn--full' : '',
-    logout ? 'btn--logout' : '',
+    `btn-${variant}`,
+    fullWidth ? 'btn-full' : '',
+    logout ? 'btn-logout' : '',
     className,
   ]
     .filter(Boolean)
@@ -30,7 +30,7 @@ function Button({
 
   return (
     <button className={classes} {...props}>
-      {startIcon && <span className="btn__icon">{startIcon}</span>}
+      {startIcon && <span className="btn-icon">{startIcon}</span>}
       {children}
     </button>
   )

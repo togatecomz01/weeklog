@@ -28,6 +28,14 @@
         font-weight: 400;
         color: $color-error;
     }
+
+    &.error {
+        border-color: $color-error;
+    
+        &:focus {
+            border-color: $color-error;
+        }
+    }
 }
 
 input.input {
@@ -42,19 +50,12 @@ input.input {
     outline: none;
 
     &::placeholder {
+        font-size: $font14;
         color: $color-input-placeholder;
     }
 
     &:focus {
         border-color: $color-hover;
-    }
-
-    &--error {
-        border-color: $color-error;
-
-        &:focus {
-            border-color: $color-error;
-        }
     }
 
     &:disabled {

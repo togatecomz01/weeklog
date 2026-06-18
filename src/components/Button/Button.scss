@@ -14,7 +14,7 @@
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 
-  &__icon {
+  &-icon {
     display: inline-flex;
     align-items: center;
     margin-right: 10px;
@@ -28,15 +28,15 @@
     cursor: not-allowed;
   }
 
-  &--primary {
+  &-primary {
     width: 100%;
-    &:not(.btn--full):hover:not(:disabled) {
+    &:not(.btn-full):hover:not(:disabled) {
       background-color: $color-hover;
       font-weight: $font-w-b;
     }
   }
 
-  &--secondary {
+  &-secondary {
     background-color: $color-white;
     color: $color-text-gray;
     border-color: $color-border;
@@ -46,26 +46,26 @@
       border-color: $color-disabled;
     }
 
-    &:not(.btn--full):hover:not(:disabled) {
+    &:not(.btn-full):hover:not(:disabled) {
       border-color: $color-hover;
       color: $color-hover;
       font-weight: $font-w-b;
     }
 
-    &.btn--full {
+    &.btn-full {
       padding: 10px 12px;
     }
   }
 
 
-  &--full {
+  &-full {
     width: 100%;
     padding: 14px 0;
     border-radius: 10px;
     min-width: unset;
   }
 
-  &--inbox {
+  &-inbox {
     border-color: $color-border;
     background-color: $color-white;
     font-size: $font14;
@@ -79,7 +79,7 @@
 
   }
 
-  &--logout {
+  &-logout {
     padding: 8px 10px;
     min-width: 0;
     width: fit-content;

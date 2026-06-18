@@ -14,7 +14,7 @@ interface BadgeProps {
 }
 
 function Badge({ type, className = '' }: BadgeProps) {
-  const classes = ['badge', `badge--${type}`, className].filter(Boolean).join(' ')
+  const classes = ['badge', `badge-${type}`, className].filter(Boolean).join(' ')
 
   return <span className={classes}>{BADGE_LABEL[type]}</span>
 }

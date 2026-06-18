@@ -9,7 +9,7 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
 }
 
 function Input({ className = '', label, required = false, error = false, errorMessage, id, ...props }: InputProps) {
-  const inputClasses = ['input', error ? 'input--error' : '', className].filter(Boolean).join(' ')
+  const inputClasses = ['input', error ? 'error' : '', className].filter(Boolean).join(' ')
 
   return (
     <div className="input-group">
