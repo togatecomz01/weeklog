@@ -2,12 +2,16 @@ import { useState } from 'react'
 import ButtonGuide from './ButtonGuide'
 import BadgeGuide from './BadgeGuide'
 import InputGuide from './InputGuide'
+import SelectGuide from './SelectGuide'
+import RadioGuide from './RadioGuide'
 import './Components.scss'
 
 const MENU_LIST = [
     { id: 'button', label: 'Button', Component: ButtonGuide},
     { id: 'badge', label: 'Badge', Component: BadgeGuide},
     { id: 'input', label: 'Input', Component: InputGuide},
+    { id: 'selectbox', label: 'Selectbox', Component: SelectGuide},
+    { id: 'radio', label: 'Radio', Component: RadioGuide},
 ]
 
 function Components() {

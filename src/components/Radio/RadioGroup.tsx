@@ -11,12 +11,12 @@ function RadioGroup({ children, label, required = false, className = '' }: Radio
   return (
     <div className={`radio-group ${className}`.trim()}>
       {label && (
-        <p className="radio-group__label">
+        <p className="radio-group-label">
           {label}
-          {required && <span className="radio-group__required" aria-hidden>*</span>}
+          {required && <span className="radio-group-required" aria-hidden>*</span>}
         </p>
       )}
-      <div className="radio-group__items">
+      <div className="radio-group-items">
         {children}
       </div>
     </div>
