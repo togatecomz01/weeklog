@@ -2,6 +2,8 @@
   min-height: 100svh;
   display: flex;
   flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
 
   &__header {
     position: fixed;
@@ -11,7 +13,7 @@
     width: 100%;
     max-width: 480px;
     height: 48px;
-    background: #fff;
+    background: $color-white;
     display: flex;
     align-items: center;
     padding: 0 20px;
@@ -26,7 +28,7 @@
 
   &__content {
     flex: 1;
-    padding: 68px 20px 75px;
+    padding: 68px 20px 95px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -37,18 +39,18 @@
     background-color: $color-primary;
     border-radius: 16px;
     padding: 20px;
-    color: #fff;
-    min-height: 147px;
+    color: $color-white;
+    min-height: 148px;
 
     &-date {
-      font-size: 12px;
-      font-weight: 700;
+      font-size: $font12;
+      font-weight: $font-w-b;
       margin-bottom: 10px;
     }
 
     &-text {
-      font-size: 20px;
-      font-weight: 700;
+      font-size: $font20;
+      font-weight: $font-w-b;
       line-height: 1.4;
     }
 
@@ -56,12 +58,11 @@
       position: absolute;
       bottom: 12px;
       right: 12px;
-      background: #fff;
-      border: 1px solid #fff;
+      background: $color-white;
       border-radius: 10px;
-      padding: 7px 12px 8px;
-      font-size: 12px;
-      font-weight: 600;
+      padding: 8px 12px;
+      font-size: $font12;
+      font-weight: $font-w-sb;
       color: $color-text-gray;
       cursor: pointer;
       white-space: nowrap;
@@ -83,8 +84,8 @@
   }
 
   &__section-title {
-    font-size: 16px;
-    font-weight: 700;
+    font-size: $font16;
+    font-weight: $font-w-b;
     color: $color-text-black;
   }
 
