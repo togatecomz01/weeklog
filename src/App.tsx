@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Login from './pages/Login'
 import Main from './pages/Main'
+import MyPage from './pages/MyPage'
 import Components from './pages/Components'
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
       <Routes>
         <Route path="/weeklog/login" element={<Login />} />
         <Route path="/weeklog/main" element={<Main />} />
+        <Route path="/weeklog/my" element={<MyPage />} />
         <Route path="/weeklog/components" element={<Components />} />
       </Routes>
     </BrowserRouter>
