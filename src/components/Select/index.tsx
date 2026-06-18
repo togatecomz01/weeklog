@@ -41,20 +41,21 @@ function Select({ options, value, onChange, placeholder = '선택하세요', dis
   return (
     <div className={`select ${className}`.trim()} ref={ref}>
       {label && (
-        <p className="select__label">
+        <p className="select-label">
           {label}
-          {required && <span className="select__required" aria-hidden>*</span>}
+          {required && <span className="select-required" aria-hidden>*</span>}
         </p>
       )}
       <button
         type="button"
-        className={`select__trigger ${open ? 'select__trigger--open' : ''} ${disabled ? 'select__trigger--disabled' : ''}`}
+        className={['select-btn', open ? 'is-open' : ''].filter(Boolean).join(' ')}
+        disabled={disabled}
         onClick={() => !disabled && setOpen((prev) => !prev)}
       >
-        <span className={selected ? 'select__value' : 'select__placeholder'}>
+        <span className={selected ? 'select-text' : 'select-placeholder'}>
           {selected ? selected.label : placeholder}
         </span>
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={`select__arrow ${open ? 'select__arrow--up' : ''}`}>
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className={['select-arrow', open ? 'is-open' : ''].filter(Boolean).join(' ')}>
           <mask id="mask0_102_4823" style={{ maskType: 'alpha' }} maskUnits="userSpaceOnUse" x="0" y="0" width="24" height="24">
             <path d="M24 24L24 0L0 2.86197e-07L2.86197e-07 24L24 24Z" fill="#222222"/>
           </mask>
@@ -65,11 +66,11 @@ function Select({ options, value, onChange, placeholder = '선택하세요', dis
       </button>
 
       {open && (
-        <ul className="select__dropdown">
+        <ul className="select-list">
           {options.map((option) => (
             <li
               key={option.value}
-              className={`select__option ${option.value === value ? 'select__option--selected' : ''}`}
+              className={['select-option', option.value === value ? 'is-selected' : ''].filter(Boolean).join(' ')}
               onClick={() => handleSelect(option.value)}
             >
               {option.label}
