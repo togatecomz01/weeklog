@@ -4,9 +4,11 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import Checkbox from '@/components/Checkbox'
 import AuthLayout from '@/components/AuthLayout'
+import { useAuth } from '@/contexts/AuthContext'
 
 function Login() {
   const navigate = useNavigate()
+  const { login } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [autoLogin, setAutoLogin] = useState(false)
 
@@ -16,8 +18,20 @@ function Login() {
     }
   }
 
+  function handleLogin() {
+    // TODO: 실제 API 연동 시 응답의 role 값을 사용
+    const role = form.email.includes('admin') ? 'admin' : 'user'
+    login({ name: form.email, role })
+
+    if (role === 'admin') navigate('/weeklog/admin')
+    else navigate('/weeklog/main')
+  }
+
   return (
-    <AuthLayout title="로그인" footer={<Button fullWidth>로그인</Button>}>
+    <AuthLayout
+      title="로그인"
+      footer={<Button fullWidth onClick={handleLogin}>로그인</Button>}
+    >
       <div className="auth-inputs">
         <Input
           label="이메일 주소"
