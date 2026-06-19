@@ -1,0 +1,24 @@
+.admin {
+  min-height: 100svh;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+
+  &-title {
+    font-size: $font20;
+    font-weight: $font-w-b;
+    color: $color-text-black;
+  }
+
+  &-body {
+    flex: 1;
+    padding: 68px 20px 30px;
+  }
+
+  &-welcome {
+    font-size: $font16;
+    font-weight: $font-w-m;
+    color: $color-text-gray;
+  }
+}
