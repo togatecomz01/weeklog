@@ -16,16 +16,14 @@
   }
 
   &-title {
-    font-size: 12px;
-    font-weight: 700;
-    line-height: 1.4;
+    font-size: $font14;
+    font-weight: $font-w-b;
     color: $color-text-black;
   }
 
   &-status {
-    font-size: 12px;
-    font-weight: 400;
-    line-height: 1.4;
+    font-size: $font14;
+    font-weight: $font-w-r;
     color: $color-text-gray-light;
   }
 
@@ -33,13 +31,12 @@
     display: flex;
     flex-direction: column;
     gap: 10px;
-    padding: 10px 10px 10px 28px;
+    padding: 10px 20px;
 
     li {
       font-family: 'Noto Sans KR', sans-serif;
-      font-size: 12px;
-      font-weight: 400;
-      line-height: 1.4;
+      font-size: $font14;
+      font-weight: $font-w-r;
       color: $color-text-gray;
     }
   }

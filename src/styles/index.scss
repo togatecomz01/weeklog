@@ -6,6 +6,8 @@ html { background: $color-background; color: $color-text-black; }
 
 body { max-width: 480px; min-height: 100svh; margin: 0 auto; background: #ffffff; font-family: 'Pretendard Variable', Pretendard, sans-serif; color: $color-text-black; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; }
 
+html,body { overflow: hidden; }
+
 button, input, textarea, select { border: 0; background: transparent; font: inherit; color: inherit; }
 
 button { cursor: pointer; }

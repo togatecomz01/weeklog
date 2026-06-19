@@ -15,7 +15,9 @@
     }
 
     &-body {
-        flex: 1;
+        display: flex;
+        gap: 20px;
+        flex-direction: column;
         padding: 20px;
         overflow-y: auto;
     }

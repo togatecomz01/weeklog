@@ -9,6 +9,7 @@ import Input from '@/components/Input'
 import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
 import Select from '@/components/Select'
+import ScrollTop from '@/components/ScrollTop'
 import './Entry.scss'
 import Textarea from '@/components/Textarea'
 
@@ -153,6 +154,7 @@ function Entry() {
                     </Button>
                 </ButtonContainer>
             </main>
+            <ScrollTop />
             <BottomNav active="register" />
         </div>
     )
