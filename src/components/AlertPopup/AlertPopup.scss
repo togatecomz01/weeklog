@@ -1,0 +1,54 @@
+.alert-pop {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    // max-width: 480px;
+    margin: 0 auto;
+    padding: 0 20px;
+    background: rgba(0, 0, 0, .4);
+
+    &-box {
+      width: 335px;
+      padding: 40px 20px 15px;
+      border-radius: 8px;
+      background: $color-white;
+    }
+
+    &-msg {
+      margin: 0 0 26px;
+      font-size: $font16;
+      font-weight: $font-w-m;
+      color: $color-text-black;
+      text-align: center;
+    }
+
+    &-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    &-btn {
+      display: inline-block;
+      width: calc((100% - 10px) / 2);
+      padding: 14px 10px;
+      border: 1px solid transparent;
+      border-radius: 8px;
+      font-size: $font18;
+      font-weight: $font-w-m;
+    }
+
+    &-cancel {
+      border-color: $color-input-border;
+      background: $color-white;
+      color: $color-text-gray;
+    }
+
+    &-confirm {
+      border-color: $color-primary;
+      background: $color-primary;
+      color: $color-white;
+    }
+}

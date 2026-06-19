@@ -5,6 +5,7 @@ import InputGuide from './InputGuide'
 import SelectGuide from './SelectGuide'
 import RadioGuide from './RadioGuide'
 import CardListGuide from './CardListGuide'
+import AlertGuide from './AlertGuide'
 import './Components.scss'
 
 const MENU_LIST = [
@@ -14,6 +15,7 @@ const MENU_LIST = [
     { id: 'selectbox', label: 'Selectbox', Component: SelectGuide},
     { id: 'radio', label: 'Radio', Component: RadioGuide},
     { id: 'cardList', label: 'CardList', Component: CardListGuide},
+    { id: 'popup', label: 'Popup', Component: AlertGuide},
 ]
 
 function Components() {
