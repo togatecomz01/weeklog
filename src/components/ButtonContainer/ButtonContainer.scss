@@ -1,4 +1,29 @@
 .button-container {
     display: flex;
-    gap: 10px;
+    gap: 12px;
+    width: 100%;
+    margin: 6px 0 0;
+
+    > .btn {
+        flex: 1 1 auto;
+        width: auto;
+        min-width: 0;
+        height: 58px;
+        padding: 0 12px;
+        border-radius: 10px;
+        font-size: $font16;
+        line-height: 58px;
+
+        &:first-child:nth-last-child(2) {
+            flex: 0 0 116px;
+            width: 116px;
+            min-width: 0;
+
+            & + .btn {
+                flex: 1 1 auto;
+                width: auto;
+                min-width: 0;
+            }
+        }
+    }
 }

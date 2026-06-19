@@ -1,8 +1,10 @@
 import './Button.scss'
 
 type ButtonVariant = 'primary' | 'secondary' | 'inbox'
+type ButtonType = 'button' | 'submit' | 'reset'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  type?: ButtonType
   variant?: ButtonVariant
   fullWidth?: boolean
   logout?: boolean
@@ -10,6 +12,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 function Button({
+  type = 'button',
   variant = 'primary',
   fullWidth = false,
   logout = false,
@@ -29,7 +32,7 @@ function Button({
     .join(' ')
 
   return (
-    <button className={classes} {...props}>
+    <button type={type} className={classes} {...props}>
       {startIcon && <span className="btn-icon">{startIcon}</span>}
       {children}
     </button>

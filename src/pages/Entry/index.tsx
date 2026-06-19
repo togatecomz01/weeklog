@@ -3,6 +3,7 @@ import type { ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomNav from '@/components/BottomNav'
 import Button from '@/components/Button'
+import ButtonContainer from '@/components/ButtonContainer'
 import DetailHeader from '@/components/DetailHeader'
 import Input from '@/components/Input'
 import Radio from '@/components/Radio'
@@ -143,18 +144,14 @@ function Entry() {
                         />
                     </div>
                 </section>
-                <div className="entry-action">
-                    <Button type="button" variant="secondary" className="entry-save-btn">
+                <ButtonContainer>
+                    <Button type="button" variant="secondary">
                         임시저장
                     </Button>
-                    <Button
-                        type="button"
-                        className="entry-submit-btn"
-                        disabled={!isValid}
-                    >
+                    <Button type="button" disabled={!isValid}>
                         등록
                     </Button>
-                </div>
+                </ButtonContainer>
             </main>
             <BottomNav active="register" />
         </div>

@@ -54,8 +54,8 @@ function FullPopup({
       <div className="full-pop-body">{children}</div>
       <div className="full-pop-foot">
         <ButtonContainer>
-          <Button variant="secondary" fullWidth onClick={onCancel}>{cancelText}</Button>
-          <Button fullWidth onClick={onConfirm}>{confirmText}</Button>
+          <Button variant="secondary" onClick={onCancel}>{cancelText}</Button>
+          <Button onClick={onConfirm}>{confirmText}</Button>
         </ButtonContainer>
       </div>
     </div>

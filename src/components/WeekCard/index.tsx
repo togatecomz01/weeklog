@@ -20,19 +20,19 @@ const STATUS_LABEL: Record<SendStatus, string> = {
 
 function WeekCard({ week, priority, content, status = 'unsent', className = '' }: WeekCardProps) {
   return (
-    <div className={`week-card week-card--${status} ${className}`.trim()}>
-      <div className="week-card__header">
-        <span className="week-card__title">week: {week}</span>
+    <div className={`week-card week-card-${status} ${className}`.trim()}>
+      <div className="week-card-header">
+        <span className="week-card-title">week: {week}</span>
         <Badge type={priority} />
-        <div className="week-card__status">
+        <div className="week-card-status">
           <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17 17" fill="none">
             <path d="M15.7501 0.75L7.41675 9.0833" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
             <path d="M15.75 0.75L10.75 15.75L7.41667 9.0833L0.75 5.75L15.75 0.75Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
           </svg>
-          <span className="week-card__status-label">{STATUS_LABEL[status]}</span>
+          <span className="week-card-status-label">{STATUS_LABEL[status]}</span>
         </div>
       </div>
-      <div className="week-card__content">
+      <div className="week-card-content">
         <p>
           {content.split('\n').map((line, i, arr) => (
             <span key={i}>

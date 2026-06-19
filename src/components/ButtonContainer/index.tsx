@@ -1,7 +1,8 @@
+import type { ReactNode } from 'react'
 import './ButtonContainer.scss'
 
 function ButtonContainer({
-    children }: { children: React.ReactNode }) {
+    children }: { children: ReactNode }) {
     return (
         <div className="button-container">
             {children}

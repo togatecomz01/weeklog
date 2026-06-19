@@ -7,29 +7,29 @@
   border-radius: 16px;
   width: 100%;
 
-  &--partial {
+  &-partial {
     border-color: #B45309;
 
-    .week-card__status {
+    .week-card-status {
       color: #B45309;
     }
   }
 
-  &--sent {
+  &-sent {
     border-color: #15803D;
 
-    .week-card__status {
+    .week-card-status {
       color: #15803D;
     }
   }
 
-  &__header {
+  &-header {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  &__title {
+  &-title {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.4;
@@ -37,7 +37,7 @@
     white-space: nowrap;
   }
 
-  &__status {
+  &-status {
     display: flex;
     align-items: center;
     gap: 4px;
@@ -45,13 +45,13 @@
     color: $color-text-gray-light;
   }
 
-  &__status-label {
+  &-status-label {
     font-size: 14px;
     font-weight: 500;
     line-height: 1.4;
   }
 
-  &__content {
+  &-content {
     padding-top: 10px;
 
     p {
