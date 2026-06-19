@@ -1,0 +1,39 @@
+textarea.textarea {
+    display: block;
+    width: 100%;
+    min-height: 43px;
+    max-height: 77px;
+    padding: 12px 16px 13px;
+    border: 1px solid $color-input-border;
+    background: $color-white;
+    font-size: $font14;
+    font-weight: $font-w-r;
+    line-height: normal;
+    color: $color-text-gray;
+    outline: none;
+    overflow-y: auto;
+    resize: none;
+
+    &::placeholder {
+        font-size: $font14;
+        color: $color-input-placeholder;
+    }
+
+    &:focus {
+        border-color: $color-hover;
+    }
+
+    &:disabled {
+        background: $color-disabled;
+        color: $color-input-placeholder;
+        cursor: not-allowed;
+    }
+
+    &.error {
+        border-color: $color-error;
+
+        &:focus {
+            border-color: $color-error;
+        }
+    }
+}
