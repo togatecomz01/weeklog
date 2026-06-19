@@ -8,6 +8,7 @@ import Entry from './pages/Entry'
 import Admin from './pages/Admin'
 import EntryView from './pages/EntryView'
 import Components from './pages/Components'
+import AdminList from './pages/AdminList'
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           <Route path="/weeklog/my" element={<MyPage />} />
           <Route path="/weeklog/entry" element={<Entry />} />
           <Route path="/weeklog/admin" element={<Admin />} />
+          <Route path="/weeklog/adminlist" element={<AdminList />} />
           <Route path="/weeklog/entry-view" element={<EntryView />} />
           <Route path="/weeklog/components" element={<Components />} />
         </Routes>
