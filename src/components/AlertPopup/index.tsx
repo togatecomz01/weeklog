@@ -4,6 +4,7 @@ import './AlertPopup.scss'
 interface AlertPopupProps {
   open: boolean
   message?: string
+  description?: string
   cancelText?: string
   confirmText?: string
   className?: string
@@ -14,6 +15,7 @@ interface AlertPopupProps {
 function AlertPopup({
   open,
   message = '임시저장 하시겠습니까?',
+  description,
   cancelText = '취소',
   confirmText = '확인',
   className = '',
@@ -28,6 +30,7 @@ function AlertPopup({
     <div className={classes}>
       <div className="alert-pop-box">
         <p className="alert-pop-msg">{message}</p>
+        {description && <p className="alert-pop-desc">{description}</p>}
         <div className="alert-pop-btns">
           <Button variant="secondary" fullWidth onClick={onCancel}>
             {cancelText}
