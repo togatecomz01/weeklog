@@ -47,13 +47,12 @@
 
 .auth-link {
   background: none;
-  border: none;
+  border-bottom: 1px solid $color-primary;
   padding: 0;
   margin-left: auto;
   font-size: $font14;
   font-weight: $font-w-r;
-  color: $color-text-gray-light;
-  text-decoration: underline;
+  color: $color-primary;
   cursor: pointer;
   text-align: left;
   font-family: inherit;
