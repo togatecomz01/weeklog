@@ -1,0 +1,63 @@
+.entry-view {
+    position: relative;
+    width: 100%;
+    max-width: 480px;
+    min-height: 100svh;
+    margin: 0 auto;
+    background: $color-white;
+    color: $color-text-black;
+
+    
+
+    &-work {
+        display: block;
+        width: 100%;
+        margin-top: 22px;
+    }
+
+}
+.view {
+    &-info {
+        display: block;
+        width: 100%;
+        padding: 20px 16px;
+        border: 1px solid $color-border-strong;
+        border-radius: 10px;
+        background: $color-white;
+    }
+
+    &-row {
+        width: 100%;
+        padding: 10px 0;
+        & + .entry-view-row {
+            margin-top: 22px;
+        }
+    }
+    
+    &-label {
+        display: inline-block;
+        width: 65px;
+        font-size: $font14;
+        font-weight: $font-w-b;
+        color: $color-text-black;
+        text-align: left;
+    }
+
+    &-value {
+        display: inline-block;
+        width: calc(100% - 65px);
+        font-size: $font16;
+        font-weight: $font-w-r;
+        color: $color-text-gray;
+        text-align: right;
+        word-break: keep-all;
+        overflow-wrap: anywhere;
+
+        .badge {
+            padding: 3px 8px;
+            border-radius: 9px;
+            font-size: $font14;
+            line-height: 1.4;
+        }
+    }
+}
