@@ -1,6 +1,7 @@
 import '../Components.scss'
 
 import Input from '@/components/Input'
+import Textarea from '@/components/Textarea'
 
 function InputGuide() {
     return (
@@ -16,6 +17,14 @@ function InputGuide() {
                             <Input label="disabled" disabled placeholder="disabled" />
                             <Input label="유효성 체크"
                             placeholder="placeholder"
+                            error={true}
+                            errorMessage="유효성 체크 문구"
+                            />
+                            <Textarea label="Textarea" placeholder="textarea" />
+                            <Textarea label="Textarea disabled" disabled placeholder="disabled" />
+                            <Textarea
+                            label="Textarea 유효성 체크"
+                            placeholder="textarea"
                             error={true}
                             errorMessage="유효성 체크 문구"
                             />
