@@ -1,0 +1,44 @@
+.entry {
+    max-width: 480px;
+    padding: 0 0 80px;
+    margin: 0 auto;
+    &-content {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+        max-width: 480px;
+        padding: 10px 20px 20px;
+        margin: 0 auto;
+    }
+    &-section {
+        display: block;
+        width: 100%;
+        &+.entry-section {
+            padding-top: 20px;
+            border-top: 1px solid $color-border-strong;
+        }
+    }
+    &-form {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        width: 100%;
+    }
+    &-title {
+        margin-bottom: 17px;
+        font-size: $font20;
+        font-weight: $font-w-b;
+        color: $color-text-black;
+    }
+}
+
+
+
+
+
+
+.entry-action { display: flex; gap: 12px; width: 100%; margin: 6px 0 0; }
+.entry-action .btn { height: 58px; padding: 0 12px; border-radius: 10px; font-size: $font16; line-height: 58px; }
+.entry-save-btn { flex: 0 0 116px; width: 116px; min-width: 0; }
+.entry-submit-btn { flex: 1 1 auto; width: auto; min-width: 0; }
