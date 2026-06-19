@@ -2,16 +2,22 @@ import { useState } from 'react'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import BottomNav from '@/components/BottomNav'
+import AlertPopup from '@/components/AlertPopup'
 import LogoutIcon from '@/components/icons/LogoutIcon'
 import './MyPage.scss'
 
 function MyPage() {
   const [form, setForm] = useState({
-    id: '',
+    id: 'Id_123@togate.kr',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   })
+
+  const [alertOpen, setAlertOpen] = useState(false)
+
+  const passwordMismatch =
+    form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword
 
   function handleChange(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -40,7 +46,7 @@ function MyPage() {
               label="아이디"
               placeholder="아이디를 입력하세요"
               value={form.id}
-              onChange={handleChange('id')}
+              disabled
             />
             <Input
               id="current-password"
@@ -55,6 +61,7 @@ function MyPage() {
               label="새 비밀번호"
               type="password"
               placeholder=""
+              hint="영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10자~16자"
               value={form.newPassword}
               onChange={handleChange('newPassword')}
             />
@@ -65,12 +72,20 @@ function MyPage() {
               placeholder=""
               value={form.confirmPassword}
               onChange={handleChange('confirmPassword')}
+              error={passwordMismatch}
+              errorMessage="비밀번호를 다시 입력해 주세요."
             />
           </div>
-          <Button>비밀번호 등록하기</Button>
+          <Button onClick={() => setAlertOpen(true)}>비밀번호 변경하기</Button>
         </div>
       </div>
 
+      <AlertPopup
+        open={alertOpen}
+        message="비밀번호가 변경되었습니다."
+        onCancel={() => setAlertOpen(false)}
+        cancelText="닫기"
+      />
       <BottomNav active="my" />
     </div>
   )

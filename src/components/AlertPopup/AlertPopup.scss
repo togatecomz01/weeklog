@@ -30,25 +30,4 @@
       gap: 8px;
     }
 
-    &-btn {
-      display: inline-block;
-      width: calc((100% - 10px) / 2);
-      padding: 14px 10px;
-      border: 1px solid transparent;
-      border-radius: 8px;
-      font-size: $font18;
-      font-weight: $font-w-m;
-    }
-
-    &-cancel {
-      border-color: $color-input-border;
-      background: $color-white;
-      color: $color-text-gray;
-    }
-
-    &-confirm {
-      border-color: $color-primary;
-      background: $color-primary;
-      color: $color-white;
-    }
 }
