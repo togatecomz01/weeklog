@@ -5,7 +5,7 @@
   max-width: 480px;
   margin: 0 auto;
 
-  &__header {
+  &-header {
     position: fixed;
     top: 0;
     left: 50%;
@@ -17,29 +17,28 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 20px;
+    padding: 10px 20px;
     z-index: 100;
   }
 
-  &__user-info {
+  &-user-info {
     display: flex;
     align-items: baseline;
-    gap: 6px;
-  }
-
-  &__username {
-    font-size: $font20;
-    font-weight: $font-w-m;
+    gap: 4px;
     color: $color-text-black;
   }
 
-  &__position {
-    font-size: $font14;
-    font-weight: $font-w-r;
-    color: $color-text-gray-light;
+  &-username {
+    font-size: $font20;
+    font-weight: $font-w-m;
   }
 
-  &__content {
+  &-position {
+    font-size: $font16;
+    font-weight: $font-w-r;
+  }
+
+  &-content {
     flex: 1;
     padding: 68px 20px 95px;
     display: flex;
@@ -47,19 +46,19 @@
     gap: 20px;
   }
 
-  &__section {
+  &-section {
     display: flex;
     flex-direction: column;
     gap: 20px;
   }
 
-  &__section-title {
+  &-section-title {
     font-size: $font16;
     font-weight: $font-w-b;
     color: $color-text-black;
   }
 
-  &__form {
+  &-form {
     display: flex;
     flex-direction: column;
     gap: 16px;
