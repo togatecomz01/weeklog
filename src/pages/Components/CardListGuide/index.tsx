@@ -15,6 +15,11 @@ const TASK_ITEMS = [
     '업무 내용 항목명 확정',
 ]
 
+const NOTE_ITEMS = [
+    '스윗 연동 방식은 추후 확정 필요',
+    '테스트 단계에서는 앱 저장을 우선 처리',
+]
+
 function CardListGuide() {
     return (
         <div className="guide-content">
@@ -66,6 +71,10 @@ function CardListGuide() {
                             sent={true}
                             items={TASK_ITEMS}
                             onSend={() => console.log('전송')}
+                        />
+                        <CompletedTaskCard
+                            title="특이사항"
+                            items={NOTE_ITEMS}
                         />
                     </CompletedTaskCardList>
                 </div>
