@@ -40,7 +40,7 @@
 
   &-content {
     flex: 1;
-    padding: 68px 20px 95px;
+    padding: 70px 20px 95px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -49,11 +49,11 @@
   &-section {
     display: flex;
     flex-direction: column;
-    gap: 20px;
+    gap: 18px;
   }
 
   &-section-title {
-    font-size: $font16;
+    font-size: $font18;
     font-weight: $font-w-b;
     color: $color-text-black;
   }
