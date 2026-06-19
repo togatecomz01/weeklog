@@ -1,0 +1,25 @@
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  max-width: 480px;
+  height: 48px;
+  background: $color-white;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  z-index: 100;
+
+  &-left {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  &-right {
+    display: inline-flex;
+    align-items: center;
+  }
+}

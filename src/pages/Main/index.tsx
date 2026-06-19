@@ -4,6 +4,7 @@ import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
 import Button from '@/components/Button'
 import BottomNav from '@/components/BottomNav'
+import AppHeader from '@/components/AppHeader'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -65,11 +66,7 @@ function Main() {
 
   return (
     <div className="main">
-      <header className="main-header">
-        <div className="main-logo">
-          <img src={logo} alt="weeklog" />
-        </div>
-      </header>
+      <AppHeader left={<img src={logo} alt="weeklog" />} />
 
       <div className="main-content">
         <div className="main-banner">
