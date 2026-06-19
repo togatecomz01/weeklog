@@ -6,7 +6,7 @@ import MyPage from './pages/MyPage'
 import ResetPassword from './pages/ResetPassword'
 import Entry from './pages/Entry'
 import Admin from './pages/Admin'
-// import EntryView from './pages/EntryView'
+import EntryView from './pages/EntryView'
 import Components from './pages/Components'
 
 function App() {
@@ -20,7 +20,7 @@ function App() {
           <Route path="/weeklog/my" element={<MyPage />} />
           <Route path="/weeklog/entry" element={<Entry />} />
           <Route path="/weeklog/admin" element={<Admin />} />
-          {/* <Route path="/weeklog/entry-view" element={<EntryView />} /> */}
+          <Route path="/weeklog/entry-view" element={<EntryView />} />
           <Route path="/weeklog/components" element={<Components />} />
         </Routes>
       </BrowserRouter>
