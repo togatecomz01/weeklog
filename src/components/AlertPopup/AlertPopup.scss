@@ -18,16 +18,25 @@
     }
 
     &-msg {
-      margin: 0 0 26px;
+      margin: 0;
       font-size: $font16;
       font-weight: $font-w-m;
       color: $color-text-black;
       text-align: center;
     }
 
+    &-desc {
+      margin: 12px 0 0;
+      font-size: $font16;
+      font-weight: $font-w-r;
+      color: $color-text-gray;
+      text-align: center;
+    }
+
     &-btns {
       display: flex;
       gap: 8px;
+      margin-top: 26px;
     }
 
 }
