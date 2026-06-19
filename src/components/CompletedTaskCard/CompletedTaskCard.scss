@@ -6,7 +6,7 @@
   width: 100%;
   overflow: hidden;
 
-  &__header {
+  &-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -15,21 +15,21 @@
     border-bottom: 1px solid $color-border;
   }
 
-  &__title {
+  &-title {
     font-size: 12px;
     font-weight: 700;
     line-height: 1.4;
     color: $color-text-black;
   }
 
-  &__status {
+  &-status {
     font-size: 12px;
     font-weight: 400;
     line-height: 1.4;
     color: $color-text-gray-light;
   }
 
-  &__list {
+  &-list {
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -44,7 +44,7 @@
     }
   }
 
-  &__footer {
+  &-footer {
     padding: 0 10px 10px;
   }
 }

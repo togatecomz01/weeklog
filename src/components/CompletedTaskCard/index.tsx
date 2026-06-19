@@ -23,17 +23,17 @@ function CompletedTaskCard({ status = 'done', sent = false, items, onSend, class
   const { title, label } = STATUS_CONFIG[status]
 
   return (
-    <div className={`completed-task-card completed-task-card--${status} ${className}`.trim()}>
-      <div className="completed-task-card__header">
-        <span className="completed-task-card__title">{title}</span>
-        <span className="completed-task-card__status">{label}</span>
+    <div className={`completed-task-card completed-task-card-${status} ${className}`.trim()}>
+      <div className="completed-task-card-header">
+        <span className="completed-task-card-title">{title}</span>
+        <span className="completed-task-card-status">{label}</span>
       </div>
-      <ol className="completed-task-card__list">
+      <ol className="completed-task-card-list">
         {items.map((item, index) => (
           <li key={index}>{item}</li>
         ))}
       </ol>
-      <div className="completed-task-card__footer">
+      <div className="completed-task-card-footer">
         {sent ? (
           <Button variant="inbox" fullWidth startIcon={<CheckCircleIcon />} disabled>
             전송 완료
