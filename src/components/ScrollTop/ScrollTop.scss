@@ -1,0 +1,37 @@
+.scroll-top {
+    position: fixed;
+    right: max(20px, calc((100vw - 480px) / 2 + 18px));
+    bottom: 82px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    padding: 0;
+    border: 1px solid $color-text-gray;
+    border-radius: 50%;
+    background: $color-white;
+    color: $color-text-gray;
+
+    &-line {
+        position: absolute;
+        top: 8px;
+        left: 50%;
+        width: 2px;
+        height: 14px;
+        margin-left: -1px;
+        background: $color-text-gray;
+    }
+
+    &-arrow {
+        position: absolute;
+        top: 7px;
+        left: 50%;
+        width: 9px;
+        height: 9px;
+        margin-left: -4px;
+        border-top: 2px solid $color-text-gray;
+        border-left: 2px solid $color-text-gray;
+        transform: rotate(45deg);
+    }
+}
