@@ -1,0 +1,75 @@
+.main {
+  min-height: 100svh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+
+  &-content {
+    flex: 1;
+    padding: 68px 20px 95px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &-banner {
+    position: relative;
+    background-color: $color-primary;
+    border-radius: 16px;
+    padding: 20px;
+    color: $color-white;
+    min-height: 148px;
+
+    &-date {
+      font-size: $font12;
+      font-weight: $font-w-b;
+      margin-bottom: 10px;
+    }
+
+    &-text {
+      font-size: $font20;
+      font-weight: $font-w-b;
+      line-height: 1.4;
+    }
+
+    &-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: $color-white;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: $font12;
+      font-weight: $font-w-sb;
+      color: $color-text-gray;
+      cursor: pointer;
+      white-space: nowrap;
+      font-family: inherit;
+      line-height: 1.4;
+    }
+  }
+
+  &-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  &-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  &-section-title {
+    font-size: $font16;
+    font-weight: $font-w-b;
+    color: $color-text-black;
+  }
+
+  &-filter {
+    width: 134px;
+  }
+
+}
