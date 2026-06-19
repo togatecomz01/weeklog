@@ -3,7 +3,7 @@ import express from 'express'
 import pool from './db.js'
 
 const app = express()
-const PORT = process.env.PORT ?? 3000
+const PORT = Number(process.env.PORT) || 3000;
 
 app.use(express.json())
 
@@ -18,6 +18,6 @@ app.get('/api/health', async (_req, res) => {
   }
 })
 
-app.listen(PORT, () => {
+app.listen(PORT, "0.0.0.0", () => {
   console.log(`Server running on http://localhost:${PORT}`)
 })

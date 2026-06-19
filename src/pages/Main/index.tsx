@@ -65,31 +65,31 @@ function Main() {
 
   return (
     <div className="main">
-      <header className="main__header">
-        <div className="main__logo">
+      <header className="main-header">
+        <div className="main-logo">
           <img src={logo} alt="weeklog" />
         </div>
       </header>
 
-      <div className="main__content">
-        <div className="main__banner">
-          <p className="main__banner-date">{formatDate()}</p>
-          <p className="main__banner-text">
+      <div className="main-content">
+        <div className="main-banner">
+          <p className="main-banner-date">{formatDate()}</p>
+          <p className="main-banner-text">
             업무일지를 작성하고<br />진행 현황을 확인하세요.
           </p>
-          <button className="main__banner-btn" type="button">
+          <button className="main-banner-btn" type="button">
             등록하러 가기
           </button>
         </div>
 
-        <div className="main__section">
-          <div className="main__section-header">
-            <h2 className="main__section-title">내 업무일지</h2>
+        <div className="main-section">
+          <div className="main-section-header">
+            <h2 className="main-section-title">내 업무일지</h2>
             <Select
               options={FILTER_OPTIONS}
               value={filter}
               onChange={setFilter}
-              className="main__filter"
+              className="main-filter"
             />
           </div>
 

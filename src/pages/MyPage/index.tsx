@@ -21,20 +21,20 @@ function MyPage() {
 
   return (
     <div className="mypage">
-      <header className="mypage__header">
-        <div className="mypage__user-info">
-          <span className="mypage__username">홍길동</span>
-          <span className="mypage__position">팀장</span>
+      <header className="mypage-header">
+        <div className="mypage-user-info">
+          <span className="mypage-username">홍길동</span>
+          <span className="mypage-position">과장</span>
         </div>
         <Button variant="secondary" logout startIcon={<LogoutIcon />}>
           로그아웃
         </Button>
       </header>
 
-      <div className="mypage__content">
-        <div className="mypage__section">
-          <h2 className="mypage__section-title">업무내용</h2>
-          <div className="mypage__form">
+      <div className="mypage-content">
+        <div className="mypage-section">
+          <h2 className="mypage-section-title">업무내용</h2>
+          <div className="mypage-form">
             <Input
               id="user-id"
               label="아이디"
