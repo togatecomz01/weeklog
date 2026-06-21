@@ -8,7 +8,7 @@ type DetailHeaderType = 'back' | 'close'
 interface DetailHeaderProps {
   title: string
   type?: DetailHeaderType
-  scrollTargetRef?: React.RefObject<HTMLElement>
+  scrollTargetRef?: React.RefObject<HTMLElement | null>
   className?: string
   onClick?: () => void
 }

@@ -6,7 +6,7 @@ function SelectGuide() {
     const [value, setValue] = useState('')
     return (
         <div className="guide-content">
-            <h1 className="guide-title">Input</h1>
+            <h1 className="guide-title">Selectbox</h1>
             <div className="guide-section">
                 <div className="guide-example">
                     <div className='section'>

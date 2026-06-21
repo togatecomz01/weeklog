@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
@@ -64,6 +64,7 @@ const INITIAL_EDIT_DATA: EntryEditForm = {
 
 function EntryView() {
   const navigate = useNavigate()
+  const contentRef = useRef<HTMLElement | null>(null)
   const [editOpen, setEditOpen] = useState(false)
 
   function handleConfirm(form: EntryEditForm) {
@@ -73,9 +74,9 @@ function EntryView() {
 
   return (
     <div className="entry-view">
-      <DetailHeader title="업무일지 상세" onClick={() => navigate(-1)} />
+      <DetailHeader title="업무일지 상세" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
 
-      <main className="entry-content">
+      <main ref={contentRef} className="entry-content">
         <section className="entry-section view-info">
           {DETAIL_INFO.map(({ label, value }) => (
             <div className="view-row" key={label}>
@@ -117,7 +118,7 @@ function EntryView() {
         </ButtonContainer>
       </main>
 
-      <ScrollTop />
+      <ScrollTop scrollTargetRef={contentRef} />
 
       <EntryEditPopup
         open={editOpen}

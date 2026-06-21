@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import FullPopup from '@/components/FullPopup'
 import Input from '@/components/Input'
@@ -6,7 +6,6 @@ import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
 import Select from '@/components/Select'
 import Textarea from '@/components/Textarea'
-import ScrollTop from '@/components/ScrollTop'
 import '../Entry/Entry.scss'
 
 export interface EntryEditForm {
@@ -44,6 +43,12 @@ const PRIORITY_OPTIONS = [
 function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopupProps) {
   const [form, setForm] = useState<EntryEditForm>(initialData)
 
+  useEffect(() => {
+    if (open) {
+      setForm(initialData)
+    }
+  }, [open, initialData])
+
   function handleChange(field: keyof EntryEditForm) {
     return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }))
@@ -61,7 +66,7 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
     onClose()
   }
 
-  const isValid = form.title.trim()
+  const isValid = Boolean(form.title.trim())
 
   return (
     <FullPopup
@@ -70,6 +75,7 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
       headerType="close"
       cancelText="취소"
       confirmText="저장"
+      confirmDisabled={!isValid}
       onClose={handleClose}
       onCancel={handleClose}
       onConfirm={() => isValid && onConfirm(form)}
@@ -158,7 +164,6 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
           />
         </div>
       </section>
-      <ScrollTop />
     </FullPopup>
   )
 }

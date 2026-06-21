@@ -16,8 +16,10 @@
 
     &-body {
         display: flex;
+        flex: 1;
         gap: 20px;
         flex-direction: column;
+        min-height: 0;
         padding: 20px;
         overflow-y: auto;
     }

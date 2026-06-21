@@ -1,23 +1,39 @@
 import { useEffect, useState } from 'react'
 import './ScrollTop.scss'
 
-function ScrollTop() {
+interface ScrollTopProps {
+  scrollTargetRef?: React.RefObject<HTMLElement | null>
+}
+
+function ScrollTop({ scrollTargetRef }: ScrollTopProps) {
   const [isShow, setIsShow] = useState(false)
 
   useEffect(() => {
+    const target = scrollTargetRef?.current
+    const scrollElement = target || window
+    const getScrollTop = () => (target ? target.scrollTop : window.scrollY)
     const handleScroll = () => {
-      setIsShow(window.scrollY > 50)
+      setIsShow(getScrollTop() > 50)
     }
 
     handleScroll()
-    window.addEventListener('scroll', handleScroll)
+    scrollElement.addEventListener('scroll', handleScroll)
+    window.addEventListener('resize', handleScroll)
 
     return () => {
-      window.removeEventListener('scroll', handleScroll)
+      scrollElement.removeEventListener('scroll', handleScroll)
+      window.removeEventListener('resize', handleScroll)
     }
-  }, [])
+  }, [scrollTargetRef])
 
   function handleClick() {
+    const target = scrollTargetRef?.current
+
+    if (target) {
+      target.scrollTo({ top: 0, behavior: 'smooth' })
+      return
+    }
+
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
