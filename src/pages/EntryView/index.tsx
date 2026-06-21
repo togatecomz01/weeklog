@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
@@ -64,12 +64,30 @@ const INITIAL_EDIT_DATA: EntryEditForm = {
 
 function EntryView() {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const contentRef = useRef<HTMLElement | null>(null)
   const [editOpen, setEditOpen] = useState(false)
+  const isEditMode = searchParams.get('mode') === 'edit'
+
+  useEffect(() => {
+    if (isEditMode) {
+      setEditOpen(true)
+    }
+  }, [isEditMode])
+
+  function handleEditClose() {
+    setEditOpen(false)
+
+    if (isEditMode) {
+      const nextSearchParams = new URLSearchParams(searchParams)
+      nextSearchParams.delete('mode')
+      setSearchParams(nextSearchParams, { replace: true })
+    }
+  }
 
   function handleConfirm(form: EntryEditForm) {
     console.log('저장:', form)
-    setEditOpen(false)
+    handleEditClose()
   }
 
   return (
@@ -123,7 +141,7 @@ function EntryView() {
       <EntryEditPopup
         open={editOpen}
         initialData={INITIAL_EDIT_DATA}
-        onClose={() => setEditOpen(false)}
+        onClose={handleEditClose}
         onConfirm={handleConfirm}
       />
     </div>

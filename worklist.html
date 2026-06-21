@@ -107,7 +107,7 @@
         </div>
       </div>
 
-      <p class="notice"><strong>링크 기준:</strong> 화면 확인은 Vite 개발 서버 주소인 http://localhost:5173 기준입니다. 현재 라우터에 잡힌 경로는 로그인, 메인, 마이페이지이며 등록, 수정 풀팝업, 상세페이지는 라우트가 확정되면 URL 칸만 교체하면 됩니다.</p>
+      <p class="notice"><strong>링크 기준:</strong> 화면 확인은 Vite 개발 서버 주소인 http://localhost:5173 기준입니다. 수정처럼 독립 페이지가 아닌 풀팝업은 상세 화면 URL에 쿼리값을 붙여 바로 열리도록 연결합니다.</p>
 
       <div class="legend">
         <span class="legend-item"><i class="legend-dot legend-dot-done"></i>완료</span>
@@ -237,11 +237,11 @@
               <td>업무일지</td>
               <td>수정</td>
               <td class="center"><span class="type">풀팝업</span></td>
-              <td><span class="path">라우트 미정</span></td>
+              <td><a href="http://localhost:5173/weeklog/entry-view?mode=edit" target="_blank">/weeklog/entry-view?mode=edit</a></td>
               <td class="center"><span class="status status-ing">진행</span></td>
               <td class="center">퍼블</td>
               <td class="center"><span class="txt-muted">-</span></td>
-              <td>상세 또는 목록에서 진입하는 전체 화면 팝업 형태</td>
+              <td>상세 화면에서 수정 풀팝업 자동 오픈</td>
             </tr>
             <tr>
               <td class="center">WL-006</td>
