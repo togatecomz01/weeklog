@@ -1,12 +1,14 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import BottomNav from '@/components/BottomNav'
 import AlertPopup from '@/components/AlertPopup'
 import LogoutIcon from '@/components/icons/LogoutIcon'
+import ScrollTop from '@/components/ScrollTop'
 import './MyPage.scss'
 
 function MyPage() {
+  const contentRef = useRef<HTMLDivElement | null>(null)
   const [form, setForm] = useState({
     id: 'Id_123@togate.kr',
     currentPassword: '',
@@ -37,7 +39,7 @@ function MyPage() {
         </Button>
       </header>
 
-      <div className="mypage-content">
+      <div ref={contentRef} className="mypage-content">
         <div className="mypage-section">
           <h2 className="mypage-section-title">업무내용</h2>
           <div className="mypage-form">
@@ -86,6 +88,7 @@ function MyPage() {
         onCancel={() => setAlertOpen(false)}
         cancelText="닫기"
       />
+      <ScrollTop scrollTargetRef={contentRef} />
       <BottomNav active="my" />
     </div>
   )

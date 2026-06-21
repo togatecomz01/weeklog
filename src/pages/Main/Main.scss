@@ -1,16 +1,19 @@
 .main {
-  min-height: 100svh;
+  height: 100svh;
   display: flex;
   flex-direction: column;
   max-width: 480px;
   margin: 0 auto;
+  overflow: hidden;
 
   &-content {
     flex: 1;
+    min-height: 0;
     padding: 68px 20px 95px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow-y: auto;
   }
 
   &-banner {

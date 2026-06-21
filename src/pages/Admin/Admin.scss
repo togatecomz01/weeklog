@@ -1,9 +1,10 @@
 .admin {
-  min-height: 100svh;
+  height: 100svh;
   max-width: 480px;
   margin: 0 auto;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 
   &-title {
     font-size: $font20;
@@ -13,10 +14,12 @@
 
   &-content {
     flex: 1;
+    min-height: 0;
     padding: 68px 20px 95px;
     display: flex;
     flex-direction: column;
     gap: 20px;
+    overflow-y: auto;
   }
 
   &-update {

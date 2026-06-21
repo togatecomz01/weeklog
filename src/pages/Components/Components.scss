@@ -3,16 +3,25 @@ body {
     max-width: none;
 }
 
+.component-page {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    overflow: hidden;
+}
+
 .component {
     &-header {
         padding: 20px 10px;
         border-bottom: 1px solid $color-border;
     }
     &-wrap {
+        flex: 1;
         display: flex;
         width: 100%;
-        min-height: 100svh;
+        min-height: 0;
         padding: 0 20px;
+        overflow-y: auto;
     }
     &-side {
         width: 160px;

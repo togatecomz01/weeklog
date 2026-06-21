@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import WeekCard from '@/components/WeekCard'
 import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
 import Button from '@/components/Button'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
+import ScrollTop from '@/components/ScrollTop'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -59,6 +60,7 @@ function formatDate() {
 }
 
 function Main() {
+  const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
 
   const filteredCards =
@@ -68,7 +70,7 @@ function Main() {
     <div className="main">
       <AppHeader left={<img src={logo} alt="weeklog" />} />
 
-      <div className="main-content">
+      <div ref={contentRef} className="main-content">
         <div className="main-banner">
           <p className="main-banner-date">{formatDate()}</p>
           <p className="main-banner-text">
@@ -108,6 +110,7 @@ function Main() {
         </div>
       </div>
 
+      <ScrollTop scrollTargetRef={contentRef} />
       <BottomNav active="home" />
     </div>
   )
