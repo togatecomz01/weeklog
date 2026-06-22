@@ -24,10 +24,17 @@ body {
         overflow-y: auto;
     }
     &-side {
+        position: fixed;
+        top: 79px;
+        bottom: 0;
         width: 160px;
         padding: 24px 20px 24px 0;
         border-right: 1px solid $color-border;
         line-height: 1.4;
+    }
+    &-content {
+        flex: 1;
+        padding: 24px 24px 24px 184px;
     }
 }
 
@@ -67,11 +74,6 @@ body {
             color: $color-primary;
         }
     }
-}
-
-.component-content {
-    flex: 1;
-    padding: 24px;
 }
 
 .guide {
