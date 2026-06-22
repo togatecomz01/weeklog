@@ -11,8 +11,8 @@ interface ProtectedRouteProps {
 function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user } = useAuth()
 
-  if (!user) return <Navigate to="/weeklog/login" replace />
-  if (!allowedRoles.includes(user.role)) return <Navigate to="/weeklog/login" replace />
+  if (!user) return <Navigate to="/login" replace />
+  if (!allowedRoles.includes(user.role)) return <Navigate to="/login" replace />
 
   return <>{children}</>
 }

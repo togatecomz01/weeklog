@@ -42,8 +42,8 @@ const TABS: { key: NavTab; label: string; icon: React.ReactNode }[] = [
 ]
 
 const NAV_PATHS: Record<Exclude<NavTab, 'home'>, string> = {
-  register: '/weeklog/entry',
-  my: '/weeklog/my',
+  register: '/entry',
+  my: '/my',
 }
 
 function BottomNav({ active = 'home', onTabChange }: BottomNavProps) {
@@ -52,11 +52,11 @@ function BottomNav({ active = 'home', onTabChange }: BottomNavProps) {
   const { user } = useAuth()
 
   function getHomePath() {
-    if (user?.role === 'admin' || location.pathname.startsWith('/weeklog/admin')) {
-      return '/weeklog/admin'
+    if (user?.role === 'admin' || location.pathname.startsWith('/admin')) {
+      return '/admin'
     }
 
-    return '/weeklog/main'
+    return '/main'
   }
 
   function handleTabClick(tab: NavTab) {

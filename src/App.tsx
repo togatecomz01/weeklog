@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
 import Login from './pages/Login'
 import Main from './pages/Main'
@@ -16,16 +16,17 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/weeklog/login" element={<Login />} />
-          <Route path="/weeklog/reset-password" element={<ResetPassword />} />
-          <Route path="/weeklog/main" element={<Main />} />
-          <Route path="/weeklog/my" element={<MyPage />} />
-          <Route path="/weeklog/entry" element={<Entry />} />
-          <Route path="/weeklog/admin" element={<Admin />} />
-          <Route path="/weeklog/adminlist" element={<AdminList />} />
-          <Route path="/weeklog/entry-view" element={<EntryView />} />
-          <Route path="/weeklog/admin-entry-view" element={<AdminEntryView />} />
-          <Route path="/weeklog/components" element={<Components />} />
+          <Route path="/" element={<Navigate to="/main" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/main" element={<Main />} />
+          <Route path="/my" element={<MyPage />} />
+          <Route path="/entry" element={<Entry />} />
+          <Route path="/admin" element={<Admin />} />
+          <Route path="/adminlist" element={<AdminList />} />
+          <Route path="/entry-view" element={<EntryView />} />
+          <Route path="/admin-entry-view" element={<AdminEntryView />} />
+          <Route path="/components" element={<Components />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
