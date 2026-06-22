@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import WeekCard from '@/components/WeekCard'
 import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
@@ -6,48 +7,15 @@ import Button from '@/components/Button'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
+import { WEEKLOG_ENTRIES, getWeeklogEntryPreview } from '@/data/weeklogEntries'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
-
-type BadgeType = 'normal' | 'important' | 'urgent'
-type SendStatus = 'unsent' | 'partial' | 'sent'
 
 const FILTER_OPTIONS = [
   { value: 'all', label: '전체' },
   { value: 'normal', label: '보통' },
   { value: 'important', label: '중요' },
   { value: 'urgent', label: '긴급' },
-]
-
-const SAMPLE_CARDS: { id: number; week: string; priority: BadgeType; content: string; status: SendStatus }[] = [
-  {
-    id: 1,
-    week: '6월 2주',
-    priority: 'important',
-    content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정',
-    status: 'unsent',
-  },
-  {
-    id: 2,
-    week: '6월 1주',
-    priority: 'normal',
-    content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중',
-    status: 'partial',
-  },
-  {
-    id: 3,
-    week: '5월 4주',
-    priority: 'urgent',
-    content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정',
-    status: 'sent',
-  },
-  {
-    id: 4,
-    week: '5월 3주',
-    priority: 'normal',
-    content: '1. 업무보고 시스템 개발 완료',
-    status: 'unsent',
-  },
 ]
 
 function formatDate() {
@@ -60,11 +28,12 @@ function formatDate() {
 }
 
 function Main() {
+  const navigate = useNavigate()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
 
   const filteredCards =
-    filter === 'all' ? SAMPLE_CARDS : SAMPLE_CARDS.filter((c) => c.priority === filter)
+    filter === 'all' ? WEEKLOG_ENTRIES : WEEKLOG_ENTRIES.filter((c) => c.priority === filter)
 
   return (
     <div className="main">
@@ -98,8 +67,9 @@ function Main() {
                 key={card.id}
                 week={card.week}
                 priority={card.priority}
-                content={card.content}
+                content={getWeeklogEntryPreview(card)}
                 status={card.status}
+                onClick={() => navigate(`/weeklog/entry-view?id=${card.id}`)}
               />
             ))}
           </WeekCardList>

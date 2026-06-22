@@ -15,6 +15,8 @@ import Textarea from '@/components/Textarea'
 
 const DEPARTMENT_OPTIONS = [
     { value: 'planning', label: '기획팀' },
+    { value: 'design', label: '디자인팀' },
+    { value: 'publisher', label: '퍼블팀' },
     { value: 'development', label: '개발팀' },
     { value: 'operation', label: '운영팀' },
 ]

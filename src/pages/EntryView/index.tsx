@@ -7,6 +7,8 @@ import CompletedTaskCard from '@/components/CompletedTaskCard'
 import CompletedTaskCardList from '@/components/CompletedTaskCard/CompletedTaskCardList'
 import DetailHeader from '@/components/DetailHeader'
 import ScrollTop from '@/components/ScrollTop'
+import { formatEntryDate, getWeeklogEntryById } from '@/data/weeklogEntries'
+import type { BadgeType, WeeklogEntry } from '@/data/weeklogEntries'
 import EntryEditPopup, { type EntryEditForm } from './EntryEditPopup'
 import './EntryView.scss'
 import '../Entry/Entry.scss'
@@ -25,45 +27,56 @@ interface WorkBlock {
   items: string[]
 }
 
-const DETAIL_INFO = [
-  { label: '작성일자', value: '2026.06.12' },
-  { label: '작성자', value: '홍길동' },
-  { label: '부서', value: '디자인' },
-  { label: '제목', value: '[홍길동]업무보고서_2026.06.08~2026.06.12' },
-]
+function getDetailInfo(entry: WeeklogEntry) {
+  return [
+    { label: '주차', value: entry.week },
+    { label: '작성일자', value: formatEntryDate(entry.writeDate) },
+    { label: '작성자', value: entry.writer },
+    { label: '부서', value: entry.departmentLabel },
+    { label: '제목', value: entry.title },
+  ]
+}
 
-const WORK_BLOCKS: WorkBlock[] = [
-  {
-    status: 'done',
-    sent: true,
-    items: ['등록페이지 화면 설계 정리 완료', '업무 내용 항목명 확정'],
-  },
-  {
-    status: 'doing',
-    sent: false,
-    items: ['메인 화면 상세 플로우 정리 중', '스윗 전송 항목 구분 방식 확인 중', '스윗 전송 항목 구분 방식 확인 중'],
-  },
-  {
-    status: 'todo',
-    sent: false,
-    items: ['차주 메인 화면 상세 플로우 정리', '스윗 전송 항목 구분 방식 확정'],
-  },
-  {
-    title: '특이사항',
-    items: ['스윗 연동 방식은 추후 확정 필요', '테스트 단계에서는 앱 저장을 우선 처리'],
-  },
-]
+function getWorkBlocks(entry: WeeklogEntry): WorkBlock[] {
+  return [
+    {
+      status: 'done',
+      sent: entry.sent.done,
+      items: entry.completedWork,
+    },
+    {
+      status: 'doing',
+      sent: entry.sent.doing,
+      items: entry.progressWork,
+    },
+    {
+      status: 'todo',
+      sent: entry.sent.todo,
+      items: entry.nextWork,
+    },
+    {
+      title: '특이사항',
+      items: entry.note,
+    },
+  ]
+}
 
-const INITIAL_EDIT_DATA: EntryEditForm = {
-  writeDate: '2026.06.12',
-  writer: '홍길동',
-  department: 'design',
-  title: '[홍길동]업무보고서_2026.06.08~2026.06.12',
-  priority: 'important',
-  completedWork: '등록페이지 화면 설계 정리 완료\n업무 내용 항목명 확정',
-  progressWork: '메인 화면 상세 플로우 정리 중\n스윗 전송 항목 구분 방식 확인 중',
-  nextWork: '차주 메인 화면 상세 플로우 정리\n스윗 전송 항목 구분 방식 확정',
-  note: '스윗 연동 방식은 추후 확정 필요\n테스트 단계에서는 앱 저장을 우선 처리',
+function getEditPriority(priority: BadgeType) {
+  return priority === 'urgent' ? 'high' : priority
+}
+
+function getInitialEditData(entry: WeeklogEntry): EntryEditForm {
+  return {
+    writeDate: entry.writeDate,
+    writer: entry.writer,
+    department: entry.department,
+    title: entry.title,
+    priority: getEditPriority(entry.priority),
+    completedWork: entry.completedWork.join('\n'),
+    progressWork: entry.progressWork.join('\n'),
+    nextWork: entry.nextWork.join('\n'),
+    note: entry.note.join('\n'),
+  }
 }
 
 function EntryView({ variant = 'user' }: EntryViewProps) {
@@ -73,6 +86,10 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [editOpen, setEditOpen] = useState(false)
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
+  const entry = getWeeklogEntryById(searchParams.get('id'))
+  const detailInfo = getDetailInfo(entry)
+  const workBlocks = getWorkBlocks(entry)
+  const initialEditData = getInitialEditData(entry)
 
   useEffect(() => {
     if (!isAdmin && isEditMode) {
@@ -101,7 +118,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
 
       <main ref={contentRef} className="entry-content">
         <section className="entry-section view-info">
-          {DETAIL_INFO.map(({ label, value }) => (
+          {detailInfo.map(({ label, value }) => (
             <div className="view-row" key={label}>
               <strong className="view-label">{label}</strong>
               <span className="view-value">{value}</span>
@@ -110,7 +127,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           <div className="view-row">
             <strong className="view-label">중요도</strong>
             <span className="view-value">
-              <Badge type="important" />
+              <Badge type={entry.priority} />
             </span>
           </div>
         </section>
@@ -118,7 +135,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
         <section className="entry-view-work">
           <h2 className="entry-title">업무내용</h2>
           <CompletedTaskCardList>
-            {WORK_BLOCKS.map(({ title, status, sent, items }, index) => (
+            {workBlocks.map(({ title, status, sent, items }, index) => (
               <CompletedTaskCard
                 key={`${status || title || 'work'}-${index}`}
                 title={title}
@@ -157,7 +174,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
       {!isAdmin && (
         <EntryEditPopup
           open={editOpen}
-          initialData={INITIAL_EDIT_DATA}
+          initialData={initialEditData}
           onClose={handleEditClose}
           onConfirm={handleConfirm}
         />
