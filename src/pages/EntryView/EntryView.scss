@@ -21,6 +21,13 @@
         overflow-y: auto;
     }
 
+    &-empty {
+        font-size: $font14;
+        color: $color-text-gray-light;
+        text-align: center;
+        padding: 40px 0;
+    }
+
     &-foot {
         flex: 0 0 auto;
         padding: 12px 20px 20px;
