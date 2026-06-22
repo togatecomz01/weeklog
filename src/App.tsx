@@ -30,7 +30,7 @@ function App() {
 
           {/* 일반 유저 전용 */}
           <Route path="/main" element={<ProtectedRoute allowedRoles={['user']}><Main /></ProtectedRoute>} />
-          <Route path="/my" element={<ProtectedRoute allowedRoles={['user']}><MyPage /></ProtectedRoute>} />
+          <Route path="/my" element={<ProtectedRoute allowedRoles={['user', 'admin']}><MyPage /></ProtectedRoute>} />
           <Route path="/entry" element={<ProtectedRoute allowedRoles={['user']}><Entry /></ProtectedRoute>} />
           <Route path="/entry-view" element={<ProtectedRoute allowedRoles={['user']}><EntryView /></ProtectedRoute>} />
 
