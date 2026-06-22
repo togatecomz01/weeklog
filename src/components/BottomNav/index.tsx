@@ -1,3 +1,5 @@
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 import './BottomNav.scss'
 
 type NavTab = 'home' | 'register' | 'my'
@@ -39,15 +41,45 @@ const TABS: { key: NavTab; label: string; icon: React.ReactNode }[] = [
   { key: 'my', label: 'MY', icon: <MyIcon /> },
 ]
 
+const NAV_PATHS: Record<Exclude<NavTab, 'home'>, string> = {
+  register: '/weeklog/entry',
+  my: '/weeklog/my',
+}
+
 function BottomNav({ active = 'home', onTabChange }: BottomNavProps) {
+  const navigate = useNavigate()
+  const location = useLocation()
+  const { user } = useAuth()
+
+  function getHomePath() {
+    if (user?.role === 'admin' || location.pathname.startsWith('/weeklog/admin')) {
+      return '/weeklog/admin'
+    }
+
+    return '/weeklog/main'
+  }
+
+  function handleTabClick(tab: NavTab) {
+    if (onTabChange) {
+      onTabChange(tab)
+      return
+    }
+
+    const path = tab === 'home' ? getHomePath() : NAV_PATHS[tab]
+
+    if (location.pathname !== path) {
+      navigate(path)
+    }
+  }
+
   return (
     <nav className="bottom-nav">
       {TABS.map(({ key, label, icon }) => (
         <button
           key={key}
           type="button"
-          className={`bottom-nav__item ${active === key ? 'bottom-nav__item--active' : ''}`}
-          onClick={() => onTabChange?.(key)}
+          className={`bottom-nav-item ${active === key ? 'bottom-nav-item-active' : ''}`}
+          onClick={() => handleTabClick(key)}
         >
           {icon}
           <span>{label}</span>
