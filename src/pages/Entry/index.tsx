@@ -10,6 +10,8 @@ import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
 import Select from '@/components/Select'
 import ScrollTop from '@/components/ScrollTop'
+import { createWeeklogEntry } from '@/data/weeklogEntries'
+import type { EntryPriority, WeeklogEntryForm } from '@/data/weeklogEntries'
 import './Entry.scss'
 import Textarea from '@/components/Textarea'
 
@@ -21,7 +23,7 @@ const DEPARTMENT_OPTIONS = [
     { value: 'operation', label: '운영팀' },
 ]
 
-const PRIORITY_OPTIONS = [
+const PRIORITY_OPTIONS: Array<{ value: EntryPriority; label: string }> = [
     { value: 'normal', label: '보통' },
     { value: 'important', label: '중요' },
     { value: 'high', label: '높음' },
@@ -30,7 +32,7 @@ const PRIORITY_OPTIONS = [
 function Entry() {
     const navigate = useNavigate()
     const contentRef = useRef<HTMLElement | null>(null)
-    const [form, setForm] = useState({
+    const [form, setForm] = useState<WeeklogEntryForm>({
         writeDate: '',
         writer: '',
         department: '',
@@ -55,10 +57,21 @@ function Entry() {
     }
 
     const isValid =
-    form.writeDate.trim() &&
-    form.writer.trim() &&
-    form.department.trim() &&
-    form.title.trim()
+    Boolean(
+        form.writeDate.trim() &&
+        form.writer.trim() &&
+        form.department.trim() &&
+        form.title.trim()
+    )
+
+    function handleSubmit() {
+        if (!isValid) {
+            return
+        }
+
+        createWeeklogEntry(form)
+        navigate('/weeklog/main', { replace: true })
+    }
 
     return (
         <div className="entry">
@@ -152,7 +165,7 @@ function Entry() {
                     <Button type="button" variant="secondary">
                         임시저장
                     </Button>
-                    <Button type="button" disabled={!isValid}>
+                    <Button type="button" disabled={!isValid} onClick={handleSubmit}>
                         등록
                     </Button>
                 </ButtonContainer>

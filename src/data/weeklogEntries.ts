@@ -1,5 +1,18 @@
 export type BadgeType = 'normal' | 'important' | 'urgent'
+export type EntryPriority = 'normal' | 'important' | 'high'
 export type SendStatus = 'unsent' | 'partial' | 'sent'
+
+export interface WeeklogEntryForm {
+  writeDate: string
+  writer: string
+  department: string
+  title: string
+  priority: EntryPriority
+  completedWork: string
+  progressWork: string
+  nextWork: string
+  note: string
+}
 
 export interface WeeklogEntry {
   id: number
@@ -20,6 +33,16 @@ export interface WeeklogEntry {
     doing: boolean
     todo: boolean
   }
+}
+
+const WEEKLOG_STORAGE_KEY = 'weeklog.entries'
+
+const DEPARTMENT_LABELS: Record<string, string> = {
+  planning: '기획팀',
+  design: '디자인팀',
+  publisher: '퍼블팀',
+  development: '개발팀',
+  operation: '운영팀',
 }
 
 export const WEEKLOG_ENTRIES: WeeklogEntry[] = [
@@ -105,18 +128,178 @@ export const WEEKLOG_ENTRIES: WeeklogEntry[] = [
   },
 ]
 
+function canUseStorage() {
+  try {
+    return typeof window !== 'undefined' && typeof window.localStorage !== 'undefined'
+  } catch {
+    return false
+  }
+}
+
+function isWeeklogEntry(value: unknown): value is WeeklogEntry {
+  const entry = value as WeeklogEntry
+
+  return (
+    typeof entry?.id === 'number' &&
+    typeof entry.week === 'string' &&
+    typeof entry.writeDate === 'string' &&
+    typeof entry.writer === 'string' &&
+    typeof entry.department === 'string' &&
+    typeof entry.departmentLabel === 'string' &&
+    typeof entry.title === 'string' &&
+    ['normal', 'important', 'urgent'].includes(entry.priority) &&
+    ['unsent', 'partial', 'sent'].includes(entry.status) &&
+    Array.isArray(entry.completedWork) &&
+    Array.isArray(entry.progressWork) &&
+    Array.isArray(entry.nextWork) &&
+    Array.isArray(entry.note) &&
+    typeof entry.sent?.done === 'boolean' &&
+    typeof entry.sent?.doing === 'boolean' &&
+    typeof entry.sent?.todo === 'boolean'
+  )
+}
+
+function getStoredWeeklogEntries() {
+  if (!canUseStorage()) {
+    return null
+  }
+
+  try {
+    const stored = window.localStorage.getItem(WEEKLOG_STORAGE_KEY)
+
+    if (!stored) {
+      return null
+    }
+
+    const entries = JSON.parse(stored)
+
+    if (!Array.isArray(entries)) {
+      return null
+    }
+
+    return entries.filter(isWeeklogEntry)
+  } catch {
+    return null
+  }
+}
+
+function saveWeeklogEntries(entries: WeeklogEntry[]) {
+  if (!canUseStorage()) {
+    return
+  }
+
+  try {
+    window.localStorage.setItem(WEEKLOG_STORAGE_KEY, JSON.stringify(entries))
+  } catch {
+    return
+  }
+}
+
+function getWorkItems(value: string) {
+  return value
+    .split(/\r?\n/)
+    .map((item) => item.trim())
+    .filter(Boolean)
+}
+
+function getBadgePriority(priority: EntryPriority): BadgeType {
+  return priority === 'high' ? 'urgent' : priority
+}
+
+function getWeekStart(date: Date) {
+  const weekStart = new Date(date)
+  const day = weekStart.getDay()
+  const diff = day === 0 ? -6 : 1 - day
+
+  weekStart.setDate(weekStart.getDate() + diff)
+  weekStart.setHours(0, 0, 0, 0)
+
+  return weekStart
+}
+
+function getDateValue(value: string) {
+  const [year, month, day] = value.split('-').map(Number)
+
+  if (!year || !month || !day) {
+    return new Date()
+  }
+
+  return new Date(year, month - 1, day)
+}
+
+function getWeekLabel(writeDate: string) {
+  const weekStart = getWeekStart(getDateValue(writeDate))
+  const firstDayOfMonth = new Date(weekStart.getFullYear(), weekStart.getMonth(), 1)
+  const firstWeekStart = getWeekStart(firstDayOfMonth)
+
+  if (firstWeekStart.getMonth() !== weekStart.getMonth()) {
+    firstWeekStart.setDate(firstWeekStart.getDate() + 7)
+  }
+
+  const weekNumber = Math.floor((weekStart.getTime() - firstWeekStart.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
+
+  return `${weekStart.getMonth() + 1}월 ${Math.max(1, weekNumber)}주`
+}
+
+function getNextEntryId(entries: WeeklogEntry[]) {
+  return Math.max(...entries.map((entry) => entry.id), 0) + 1
+}
+
+export function getWeeklogEntries() {
+  const storedEntries = getStoredWeeklogEntries()
+
+  return storedEntries?.length ? storedEntries : WEEKLOG_ENTRIES
+}
+
+export function createWeeklogEntry(form: WeeklogEntryForm) {
+  const entries = getWeeklogEntries()
+  const nextEntry: WeeklogEntry = {
+    id: getNextEntryId(entries),
+    week: getWeekLabel(form.writeDate),
+    writeDate: form.writeDate,
+    writer: form.writer.trim(),
+    department: form.department,
+    departmentLabel: DEPARTMENT_LABELS[form.department] || form.department,
+    title: form.title.trim(),
+    priority: getBadgePriority(form.priority),
+    status: 'unsent',
+    completedWork: getWorkItems(form.completedWork),
+    progressWork: getWorkItems(form.progressWork),
+    nextWork: getWorkItems(form.nextWork),
+    note: getWorkItems(form.note),
+    sent: {
+      done: false,
+      doing: false,
+      todo: false,
+    },
+  }
+
+  saveWeeklogEntries([nextEntry, ...entries])
+
+  return nextEntry
+}
+
 export function getWeeklogEntryPreview(entry: WeeklogEntry) {
-  return entry.completedWork.map((item, index) => `${index + 1}. ${item}`).join('\n')
+  const previewItems = entry.completedWork.length
+    ? entry.completedWork
+    : [entry.progressWork[0], entry.nextWork[0], entry.note[0]].filter(Boolean)
+
+  if (!previewItems.length) {
+    return '등록된 업무 내용이 없습니다.'
+  }
+
+  return previewItems.map((item, index) => `${index + 1}. ${item}`).join('\n')
 }
 
 export function getWeeklogEntryById(id: string | null): WeeklogEntry {
   const entryId = Number(id)
+  const entries = getWeeklogEntries()
 
   if (!Number.isFinite(entryId)) {
-    return WEEKLOG_ENTRIES[0]
+    return entries[0]
   }
 
-  return WEEKLOG_ENTRIES.find((entry) => entry.id === entryId) || WEEKLOG_ENTRIES[0]
+  return entries.find((entry) => entry.id === entryId) || entries[0]
 }
 
 export function formatEntryDate(date: string) {

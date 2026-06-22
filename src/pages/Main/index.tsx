@@ -7,7 +7,7 @@ import Button from '@/components/Button'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
-import { WEEKLOG_ENTRIES, getWeeklogEntryPreview } from '@/data/weeklogEntries'
+import { getWeeklogEntries, getWeeklogEntryPreview } from '@/data/weeklogEntries'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -31,9 +31,10 @@ function Main() {
   const navigate = useNavigate()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
+  const entries = getWeeklogEntries()
 
   const filteredCards =
-    filter === 'all' ? WEEKLOG_ENTRIES : WEEKLOG_ENTRIES.filter((c) => c.priority === filter)
+    filter === 'all' ? entries : entries.filter((c) => c.priority === filter)
 
   return (
     <div className="main">
