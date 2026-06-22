@@ -14,7 +14,7 @@ function RadioGuide() {
                 <div className="guide-example">
                     <RadioGroup>
                         <Radio
-                            label="일반"
+                            label="보통"
                             value="a"
                             checked={selected === 'a'}
                             onChange={() => setSelected('a')}

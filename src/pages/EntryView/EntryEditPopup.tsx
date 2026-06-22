@@ -35,7 +35,7 @@ const DEPARTMENT_OPTIONS = [
 ]
 
 const PRIORITY_OPTIONS = [
-  { value: 'normal', label: '일반' },
+  { value: 'normal', label: '보통' },
   { value: 'important', label: '중요' },
   { value: 'high', label: '높음' },
 ]
