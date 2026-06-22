@@ -1,14 +1,18 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import BottomNav from '@/components/BottomNav'
 import AlertPopup from '@/components/AlertPopup'
 import LogoutIcon from '@/components/icons/LogoutIcon'
 import ScrollTop from '@/components/ScrollTop'
+import { useAuth } from '@/contexts/AuthContext'
 import './MyPage.scss'
 
 function MyPage() {
   const contentRef = useRef<HTMLDivElement | null>(null)
+  const { logout } = useAuth()
+  const navigate = useNavigate()
   const [form, setForm] = useState({
     id: 'Id_123@togate.kr',
     currentPassword: '',
@@ -34,7 +38,7 @@ function MyPage() {
           <span className="mypage-username">홍길동</span>
           <span className="mypage-position">과장</span>
         </div>
-        <Button variant="secondary" logout startIcon={<LogoutIcon />}>
+        <Button variant="secondary" logout startIcon={<LogoutIcon />} onClick={() => { logout(); navigate('/login') }}>
           로그아웃
         </Button>
       </header>

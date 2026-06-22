@@ -12,7 +12,9 @@ function ProtectedRoute({ children, allowedRoles }: ProtectedRouteProps) {
   const { user } = useAuth()
 
   if (!user) return <Navigate to="/login" replace />
-  if (!allowedRoles.includes(user.role)) return <Navigate to="/login" replace />
+  if (!allowedRoles.includes(user.role)) {
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/main'} replace />
+  }
 
   return <>{children}</>
 }

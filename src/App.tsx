@@ -1,5 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider } from './contexts/AuthContext'
+import { useAuth } from './contexts/AuthContext'
+import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Main from './pages/Main'
 import MyPage from './pages/MyPage'
@@ -11,21 +13,32 @@ import AdminEntryView from './pages/AdminEntryView'
 import Components from './pages/Components'
 import AdminList from './pages/AdminList'
 
+function RootRedirect() {
+  const { user } = useAuth()
+  if (!user) return <Navigate to="/login" replace />
+  return <Navigate to={user.role === 'admin' ? '/admin' : '/main'} replace />
+}
+
 function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Navigate to="/main" replace />} />
+          <Route path="/" element={<RootRedirect />} />
           <Route path="/login" element={<Login />} />
           <Route path="/reset-password" element={<ResetPassword />} />
-          <Route path="/main" element={<Main />} />
-          <Route path="/my" element={<MyPage />} />
-          <Route path="/entry" element={<Entry />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/adminlist" element={<AdminList />} />
-          <Route path="/entry-view" element={<EntryView />} />
-          <Route path="/admin-entry-view" element={<AdminEntryView />} />
+
+          {/* 일반 유저 전용 */}
+          <Route path="/main" element={<ProtectedRoute allowedRoles={['user']}><Main /></ProtectedRoute>} />
+          <Route path="/my" element={<ProtectedRoute allowedRoles={['user']}><MyPage /></ProtectedRoute>} />
+          <Route path="/entry" element={<ProtectedRoute allowedRoles={['user']}><Entry /></ProtectedRoute>} />
+          <Route path="/entry-view" element={<ProtectedRoute allowedRoles={['user']}><EntryView /></ProtectedRoute>} />
+
+          {/* 어드민 전용 */}
+          <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><Admin /></ProtectedRoute>} />
+          <Route path="/adminlist" element={<ProtectedRoute allowedRoles={['admin']}><AdminList /></ProtectedRoute>} />
+          <Route path="/admin-entry-view" element={<ProtectedRoute allowedRoles={['admin']}><AdminEntryView /></ProtectedRoute>} />
+
           <Route path="/components" element={<Components />} />
         </Routes>
       </BrowserRouter>
