@@ -7,6 +7,7 @@ import ResetPassword from './pages/ResetPassword'
 import Entry from './pages/Entry'
 import Admin from './pages/Admin'
 import EntryView from './pages/EntryView'
+import AdminEntryView from './pages/AdminEntryView'
 import Components from './pages/Components'
 import AdminList from './pages/AdminList'
 
@@ -23,6 +24,7 @@ function App() {
           <Route path="/weeklog/admin" element={<Admin />} />
           <Route path="/weeklog/adminlist" element={<AdminList />} />
           <Route path="/weeklog/entry-view" element={<EntryView />} />
+          <Route path="/weeklog/admin-entry-view" element={<AdminEntryView />} />
           <Route path="/weeklog/components" element={<Components />} />
         </Routes>
       </BrowserRouter>

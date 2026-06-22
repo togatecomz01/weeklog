@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import AppHeader from '@/components/AppHeader'
 import BottomNav from '@/components/BottomNav'
+import ScrollTop from '@/components/ScrollTop'
 import './Admin.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -35,6 +36,7 @@ function formatUpdateTime() {
 }
 
 function Admin() {
+  const contentRef = useRef<HTMLDivElement | null>(null)
   const [updateTime, setUpdateTime] = useState(formatUpdateTime)
   const [activeTab, setActiveTab] = useState<TabType>('all')
 
@@ -48,7 +50,7 @@ function Admin() {
   return (
     <div className="admin">
       <AppHeader left={<img src={logo} alt="weeklog" />} />
-      <div className="admin-content">
+      <div ref={contentRef} className="admin-content">
         <div className="admin-top">
           <div className="admin-update">
             <span className="admin-update-text">최근 업데이트 : {updateTime}</span>
@@ -61,7 +63,7 @@ function Admin() {
               </svg>
             </button>
           </div>
-
+          
           <div className="admin-banner">
             <p className="admin-banner-text">주간 확인 현황</p>
             <p className="admin-banner-desc">전체 주차의 확인 상태를 한눈에 확인하세요.</p>
@@ -118,6 +120,7 @@ function Admin() {
           ))}
         </div>
       </div>
+      <ScrollTop scrollTargetRef={contentRef} />
       <BottomNav active="home" />
     </div>
   )

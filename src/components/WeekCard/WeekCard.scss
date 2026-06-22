@@ -6,6 +6,9 @@
   border: 1px solid $color-text-gray-light;
   border-radius: 16px;
   width: 100%;
+  text-align: left;
+
+  &-clickable { cursor: pointer; }
 
   &-partial {
     border-color: #B45309;

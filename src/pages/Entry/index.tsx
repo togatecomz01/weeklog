@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import BottomNav from '@/components/BottomNav'
@@ -9,23 +9,27 @@ import Input from '@/components/Input'
 import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
 import Select from '@/components/Select'
+import ScrollTop from '@/components/ScrollTop'
 import './Entry.scss'
 import Textarea from '@/components/Textarea'
 
 const DEPARTMENT_OPTIONS = [
     { value: 'planning', label: '기획팀' },
+    { value: 'design', label: '디자인팀' },
+    { value: 'publisher', label: '퍼블팀' },
     { value: 'development', label: '개발팀' },
     { value: 'operation', label: '운영팀' },
 ]
 
 const PRIORITY_OPTIONS = [
-    { value: 'normal', label: '일반' },
+    { value: 'normal', label: '보통' },
     { value: 'important', label: '중요' },
     { value: 'high', label: '높음' },
 ]
 
 function Entry() {
     const navigate = useNavigate()
+    const contentRef = useRef<HTMLElement | null>(null)
     const [form, setForm] = useState({
         writeDate: '',
         writer: '',
@@ -58,8 +62,8 @@ function Entry() {
 
     return (
         <div className="entry">
-            <DetailHeader title="업무일지 등록" onClick={() => navigate(-1)} />
-            <main className="entry-content">
+            <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
+            <main ref={contentRef} className="entry-content">
                 <section className="entry-section">
                     <div className="entry-form">
                         <Input
@@ -153,6 +157,7 @@ function Entry() {
                     </Button>
                 </ButtonContainer>
             </main>
+            <ScrollTop scrollTargetRef={contentRef} />
             <BottomNav active="register" />
         </div>
     )

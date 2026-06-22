@@ -3,22 +3,38 @@ body {
     max-width: none;
 }
 
+.component-page {
+    display: flex;
+    flex-direction: column;
+    height: 100svh;
+    overflow: hidden;
+}
+
 .component {
     &-header {
         padding: 20px 10px;
         border-bottom: 1px solid $color-border;
     }
     &-wrap {
+        flex: 1;
         display: flex;
         width: 100%;
-        min-height: 100svh;
+        min-height: 0;
         padding: 0 20px;
+        overflow-y: auto;
     }
     &-side {
+        position: fixed;
+        top: 79px;
+        bottom: 0;
         width: 160px;
         padding: 24px 20px 24px 0;
         border-right: 1px solid $color-border;
         line-height: 1.4;
+    }
+    &-content {
+        flex: 1;
+        padding: 24px 24px 24px 184px;
     }
 }
 
@@ -60,11 +76,6 @@ body {
     }
 }
 
-.component-content {
-    flex: 1;
-    padding: 24px;
-}
-
 .guide {
     &-content {
         width: 100%;
@@ -86,7 +97,6 @@ body {
             font-size: $font18;
             font-weight: $font-w-b;
             color: $color-text-black;
-            list-style: 1.4;
         }
     }
 
@@ -100,6 +110,6 @@ body {
 }
 
 // input
-.is-foucs {
+.is-focus {
     border-color: $color-hover!important;
 }

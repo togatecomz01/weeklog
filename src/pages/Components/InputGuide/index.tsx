@@ -13,7 +13,7 @@ function InputGuide() {
                         <div className="input-wrap">
                             <Input label="기본" placeholder="placeholder" />
                             <Input label="패스워드" type="password" placeholder="password" />
-                            <Input label="focus" className="is-foucs" placeholder="placeholder" />
+                            <Input label="focus" className="is-focus" placeholder="placeholder" />
                             <Input label="disabled" disabled placeholder="disabled" />
                             <Input label="유효성 체크"
                             placeholder="placeholder"

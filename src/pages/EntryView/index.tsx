@@ -1,4 +1,5 @@
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
@@ -6,10 +7,18 @@ import CompletedTaskCard from '@/components/CompletedTaskCard'
 import CompletedTaskCardList from '@/components/CompletedTaskCard/CompletedTaskCardList'
 import DetailHeader from '@/components/DetailHeader'
 import ScrollTop from '@/components/ScrollTop'
+import { formatEntryDate, getWeeklogEntryById } from '@/data/weeklogEntries'
+import type { BadgeType, WeeklogEntry } from '@/data/weeklogEntries'
+import EntryEditPopup, { type EntryEditForm } from './EntryEditPopup'
 import './EntryView.scss'
 import '../Entry/Entry.scss'
 
 type WorkStatus = 'done' | 'doing' | 'todo'
+type EntryViewVariant = 'user' | 'admin'
+
+interface EntryViewProps {
+  variant?: EntryViewVariant
+}
 
 interface WorkBlock {
   title?: string
@@ -18,45 +27,98 @@ interface WorkBlock {
   items: string[]
 }
 
-const DETAIL_INFO = [
-  { label: '작성일자', value: '2026.06.12' },
-  { label: '작성자', value: '홍길동' },
-  { label: '부서', value: '디자인' },
-  { label: '제목', value: '[홍길동]업무보고서_2026.06.08~2026.06.12' },
-]
+function getDetailInfo(entry: WeeklogEntry) {
+  return [
+    { label: '주차', value: entry.week },
+    { label: '작성일자', value: formatEntryDate(entry.writeDate) },
+    { label: '작성자', value: entry.writer },
+    { label: '부서', value: entry.departmentLabel },
+    { label: '제목', value: entry.title },
+  ]
+}
 
-const WORK_BLOCKS: WorkBlock[] = [
-  {
-    status: 'todo',
-    sent: false,
-    items: ['메인 화면 상세 플로우 정리 중', '스윗 전송 항목 구분 방식 확인 중', '스윗 전송 항목 구분 방식 확인 중'],
-  },
-  {
-    status: 'doing',
-    sent: false,
-    items: ['메인 화면 상세 플로우 정리 중', '스윗 전송 항목 구분 방식 확인 중', '스윗 전송 항목 구분 방식 확인 중'],
-  },
-  {
-    status: 'done',
-    sent: true,
-    items: ['등록페이지 화면 설계 정리 완료', '업무 내용 항목명 확정'],
-  },
-  {
-    title: '특이사항',
-    items: ['스윗 연동 방식은 추후 확정 필요', '테스트 단계에서는 앱 저장을 우선 처리'],
-  },
-]
+function getWorkBlocks(entry: WeeklogEntry): WorkBlock[] {
+  return [
+    {
+      status: 'done',
+      sent: entry.sent.done,
+      items: entry.completedWork,
+    },
+    {
+      status: 'doing',
+      sent: entry.sent.doing,
+      items: entry.progressWork,
+    },
+    {
+      status: 'todo',
+      sent: entry.sent.todo,
+      items: entry.nextWork,
+    },
+    {
+      title: '특이사항',
+      items: entry.note,
+    },
+  ]
+}
 
-function EntryView() {
+function getEditPriority(priority: BadgeType) {
+  return priority === 'urgent' ? 'high' : priority
+}
+
+function getInitialEditData(entry: WeeklogEntry): EntryEditForm {
+  return {
+    writeDate: entry.writeDate,
+    writer: entry.writer,
+    department: entry.department,
+    title: entry.title,
+    priority: getEditPriority(entry.priority),
+    completedWork: entry.completedWork.join('\n'),
+    progressWork: entry.progressWork.join('\n'),
+    nextWork: entry.nextWork.join('\n'),
+    note: entry.note.join('\n'),
+  }
+}
+
+function EntryView({ variant = 'user' }: EntryViewProps) {
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
+  const contentRef = useRef<HTMLElement | null>(null)
+  const [editOpen, setEditOpen] = useState(false)
+  const isEditMode = searchParams.get('mode') === 'edit'
+  const isAdmin = variant === 'admin'
+  const entry = getWeeklogEntryById(searchParams.get('id'))
+  const detailInfo = getDetailInfo(entry)
+  const workBlocks = getWorkBlocks(entry)
+  const initialEditData = getInitialEditData(entry)
+
+  useEffect(() => {
+    if (!isAdmin && isEditMode) {
+      setEditOpen(true)
+    }
+  }, [isAdmin, isEditMode])
+
+  function handleEditClose() {
+    setEditOpen(false)
+
+    if (isEditMode) {
+      const nextSearchParams = new URLSearchParams(searchParams)
+      nextSearchParams.delete('mode')
+      setSearchParams(nextSearchParams, { replace: true })
+    }
+  }
+
+  function handleConfirm(form: EntryEditForm) {
+    console.log('저장:', form)
+    handleEditClose()
+  }
 
   return (
-    <div className="entry-view">
-      <DetailHeader title="업무일지 상세" onClick={() => navigate(-1)} />
+    <div className={`entry-view ${isAdmin ? 'entry-view-admin' : ''}`.trim()}>
+      <DetailHeader title="업무일지 상세" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
 
-      <main className="entry-content">
+      <main ref={contentRef} className="entry-content">
         <section className="entry-section view-info">
-          {DETAIL_INFO.map(({ label, value }) => (
+          {detailInfo.map(({ label, value }) => (
             <div className="view-row" key={label}>
               <strong className="view-label">{label}</strong>
               <span className="view-value">{value}</span>
@@ -65,7 +127,7 @@ function EntryView() {
           <div className="view-row">
             <strong className="view-label">중요도</strong>
             <span className="view-value">
-              <Badge type="important" />
+              <Badge type={entry.priority} />
             </span>
           </div>
         </section>
@@ -73,30 +135,50 @@ function EntryView() {
         <section className="entry-view-work">
           <h2 className="entry-title">업무내용</h2>
           <CompletedTaskCardList>
-            {WORK_BLOCKS.map(({ title, status, sent, items }) => (
+            {workBlocks.map(({ title, status, sent, items }, index) => (
               <CompletedTaskCard
-                key={status || title || items.join(',')}
+                key={`${status || title || 'work'}-${index}`}
                 title={title}
                 status={status}
-                sent={sent}
+                sent={isAdmin ? false : sent}
                 items={items}
-                onSend={status && !sent ? () => console.log('전송') : undefined}
+                onSend={!isAdmin && status && !sent ? () => console.log('전송') : undefined}
               />
             ))}
           </CompletedTaskCardList>
         </section>
 
-        <ButtonContainer>
-          <Button variant="secondary">
-            삭제
-          </Button>
-          <Button>
-            수정
-          </Button>
-        </ButtonContainer>
       </main>
 
-      <ScrollTop />
+      <div className="entry-view-foot">
+        <ButtonContainer>
+          {isAdmin ? (
+            <Button onClick={() => navigate(-1)}>
+              확인
+            </Button>
+          ) : (
+            <>
+              <Button variant="secondary">
+                삭제
+              </Button>
+              <Button onClick={() => setEditOpen(true)}>
+                수정
+              </Button>
+            </>
+          )}
+        </ButtonContainer>
+      </div>
+
+      <ScrollTop scrollTargetRef={contentRef} />
+
+      {!isAdmin && (
+        <EntryEditPopup
+          open={editOpen}
+          initialData={initialEditData}
+          onClose={handleEditClose}
+          onConfirm={handleConfirm}
+        />
+      )}
     </div>
   )
 }

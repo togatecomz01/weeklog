@@ -10,6 +10,7 @@ interface WeekCardProps {
   content: string
   status?: SendStatus
   className?: string
+  onClick?: () => void
 }
 
 const STATUS_LABEL: Record<SendStatus, string> = {
@@ -18,9 +19,10 @@ const STATUS_LABEL: Record<SendStatus, string> = {
   sent: '전송완료',
 }
 
-function WeekCard({ week, priority, content, status = 'unsent', className = '' }: WeekCardProps) {
-  return (
-    <div className={`week-card week-card-${status} ${className}`.trim()}>
+function WeekCard({ week, priority, content, status = 'unsent', className = '', onClick }: WeekCardProps) {
+  const classes = `week-card week-card-${status} ${onClick ? 'week-card-clickable' : ''} ${className}`.trim()
+  const cardContent = (
+    <>
       <div className="week-card-header">
         <span className="week-card-title">week: {week}</span>
         <Badge type={priority} />
@@ -42,6 +44,20 @@ function WeekCard({ week, priority, content, status = 'unsent', className = '' }
           ))}
         </p>
       </div>
+    </>
+  )
+
+  if (onClick) {
+    return (
+      <button type="button" className={classes} onClick={onClick}>
+        {cardContent}
+      </button>
+    )
+  }
+
+  return (
+    <div className={classes}>
+      {cardContent}
     </div>
   )
 }

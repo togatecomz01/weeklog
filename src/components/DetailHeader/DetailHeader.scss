@@ -17,7 +17,8 @@
 
     &.is-scroll {
         border-bottom-color: transparent;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, .12);
+        // box-shadow: 0 2px 10px rgba(0, 0, 0, .12);
+        border-bottom: 1px solid $color-border;
     }
 }
 

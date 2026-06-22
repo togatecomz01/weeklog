@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import ButtonGuide from './ButtonGuide'
 import BadgeGuide from './BadgeGuide'
 import InputGuide from './InputGuide'
@@ -6,6 +6,7 @@ import SelectGuide from './SelectGuide'
 import RadioGuide from './RadioGuide'
 import CardListGuide from './CardListGuide'
 import AlertGuide from './AlertGuide'
+import ScrollTop from '@/components/ScrollTop'
 import './Components.scss'
 
 const MENU_LIST = [
@@ -19,15 +20,16 @@ const MENU_LIST = [
 ]
 
 function Components() {
+    const contentRef = useRef<HTMLDivElement | null>(null)
     const [activeID, setAtiveID] = useState('button')
     const activeMenu = MENU_LIST.find((menu) => menu.id === activeID)
     const ActiveComponent = activeMenu?.Component
     return (
-        <div>
+        <div className="component-page">
             <div className="component-header">
                 <h1>component guide</h1>
             </div>
-            <div className="component-wrap">
+            <div ref={contentRef} className="component-wrap">
                 <aside className="component-side">
                     <p className="side-title">Components</p>
                     <ul className="side-nav">
@@ -43,6 +45,7 @@ function Components() {
                     {ActiveComponent && <ActiveComponent />}
                 </main>
             </div>
+            <ScrollTop scrollTargetRef={contentRef} />
         </div>
     )
 }
