@@ -3,8 +3,8 @@ import bcrypt from 'bcrypt'
 import sql from './db.js'
 
 const SEED_USERS = [
-  { email: 'admin@weeklog.com', password: 'admin1234', name: '관리자', role: 'admin' },
-  { email: 'user@weeklog.com',  password: 'user1234',  name: '홍길동', role: 'user' },
+  { email: 'admin@weeklog.com', password: 'admin1234', name: '관리자', role: 'admin', department: '' },
+  { email: 'user@weeklog.com',  password: 'user1234',  name: '홍길동', role: 'user',  department: '개발팀' },
 ]
 
 const SEED_ENTRIES = [
@@ -24,7 +24,7 @@ async function seed() {
       continue
     }
     const hash = await bcrypt.hash(u.password, 10)
-    await sql`INSERT INTO users (email, name, role, password_hash) VALUES (${u.email}, ${u.name}, ${u.role}, ${hash})`
+    await sql`INSERT INTO users (email, name, role, department, password_hash) VALUES (${u.email}, ${u.name}, ${u.role}, ${u.department}, ${hash})`
     console.log(`done  ${u.email}`)
   }
 
