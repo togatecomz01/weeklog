@@ -45,7 +45,7 @@ function Main() {
           <p className="main-banner-text">
             업무일지를 작성하고<br />진행 현황을 확인하세요.
           </p>
-          <button className="main-banner-btn" type="button">
+          <button className="main-banner-btn" type="button" onClick={() => navigate(`/weeklog/entry`)}>
             등록하러 가기
           </button>
         </div>
