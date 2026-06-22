@@ -12,6 +12,11 @@ import './EntryView.scss'
 import '../Entry/Entry.scss'
 
 type WorkStatus = 'done' | 'doing' | 'todo'
+type EntryViewVariant = 'user' | 'admin'
+
+interface EntryViewProps {
+  variant?: EntryViewVariant
+}
 
 interface WorkBlock {
   title?: string
@@ -61,19 +66,19 @@ const INITIAL_EDIT_DATA: EntryEditForm = {
   note: '스윗 연동 방식은 추후 확정 필요\n테스트 단계에서는 앱 저장을 우선 처리',
 }
 
-
-function EntryView() {
+function EntryView({ variant = 'user' }: EntryViewProps) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const contentRef = useRef<HTMLElement | null>(null)
   const [editOpen, setEditOpen] = useState(false)
   const isEditMode = searchParams.get('mode') === 'edit'
+  const isAdmin = variant === 'admin'
 
   useEffect(() => {
-    if (isEditMode) {
+    if (!isAdmin && isEditMode) {
       setEditOpen(true)
     }
-  }, [isEditMode])
+  }, [isAdmin, isEditMode])
 
   function handleEditClose() {
     setEditOpen(false)
@@ -91,7 +96,7 @@ function EntryView() {
   }
 
   return (
-    <div className="entry-view">
+    <div className={`entry-view ${isAdmin ? 'entry-view-admin' : ''}`.trim()}>
       <DetailHeader title="업무일지 상세" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
 
       <main ref={contentRef} className="entry-content">
@@ -118,32 +123,45 @@ function EntryView() {
                 key={`${status || title || 'work'}-${index}`}
                 title={title}
                 status={status}
-                sent={sent}
+                sent={isAdmin ? false : sent}
                 items={items}
-                onSend={status && !sent ? () => console.log('전송') : undefined}
+                onSend={!isAdmin && status && !sent ? () => console.log('전송') : undefined}
               />
             ))}
           </CompletedTaskCardList>
         </section>
 
-        <ButtonContainer>
-          <Button variant="secondary">
-            삭제
-          </Button>
-          <Button onClick={() => setEditOpen(true)}>
-            수정
-          </Button>
-        </ButtonContainer>
       </main>
+
+      <div className="entry-view-foot">
+        <ButtonContainer>
+          {isAdmin ? (
+            <Button onClick={() => navigate(-1)}>
+              확인
+            </Button>
+          ) : (
+            <>
+              <Button variant="secondary">
+                삭제
+              </Button>
+              <Button onClick={() => setEditOpen(true)}>
+                수정
+              </Button>
+            </>
+          )}
+        </ButtonContainer>
+      </div>
 
       <ScrollTop scrollTargetRef={contentRef} />
 
-      <EntryEditPopup
-        open={editOpen}
-        initialData={INITIAL_EDIT_DATA}
-        onClose={handleEditClose}
-        onConfirm={handleConfirm}
-      />
+      {!isAdmin && (
+        <EntryEditPopup
+          open={editOpen}
+          initialData={INITIAL_EDIT_DATA}
+          onClose={handleEditClose}
+          onConfirm={handleConfirm}
+        />
+      )}
     </div>
   )
 }

@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import WeekCard from '@/components/WeekCard'
 import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
@@ -50,16 +51,8 @@ const SAMPLE_CARDS: { id: number; week: string; priority: BadgeType; content: st
   },
 ]
 
-function formatDate() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
-  return `${year}.${month}.${day} ${days[now.getDay()]}`
-}
-
 function AdminList() {
+  const navigate = useNavigate()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
 
@@ -90,6 +83,7 @@ function AdminList() {
                 priority={card.priority}
                 content={card.content}
                 status={card.status}
+                onClick={() => navigate('/weeklog/admin-entry-view')}
               />
             ))}
           </WeekCardList>

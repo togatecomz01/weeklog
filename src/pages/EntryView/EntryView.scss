@@ -1,18 +1,34 @@
 .entry-view {
     position: relative;
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: 480px;
-    min-height: 100svh;
+    height: 100svh;
     margin: 0 auto;
     background: $color-white;
     color: $color-text-black;
+    overflow: hidden;
 
     .entry-content {
-        height: calc(100svh - 50px);
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+        width: 100%;
+        min-height: 0;
         padding: 10px 20px 20px;
+        gap: 20px;
+        overflow-y: auto;
     }
+
+    &-foot {
+        flex: 0 0 auto;
+        padding: 12px 20px 20px;
+        background: $color-white;
+    }
+
     .scroll-top {
-        bottom: 20px;
+        bottom: 97px;
     }
 }
 .view {

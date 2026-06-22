@@ -50,14 +50,14 @@
       .status-hold{background:#eef2f6;color:#52606d;}
       .path{position:static;display:inline-block;width:auto;height:auto;padding:4px 7px;margin:0;border:1px solid #d7e0ea;border-radius:4px;background:#f8fafc;font:700 12px/1.3 Consolas,"Courier New",monospace;color:#334155;line-height:1.3;vertical-align:middle;}
       .txt-muted{position:static;display:inline-block;width:auto;height:auto;padding:0;margin:0;border:0;background:transparent;font:600 12px/1.45 "Noto Sans KR","S-Core Dream",Arial,sans-serif;color:#8a94a3;line-height:1.45;}
-      .col-id{width:88px;}
-      .col-depth{width:130px;}
-      .col-page{width:190px;}
+      .col-id{width:151px;}
+      .col-depth{width:110px;}
+      .col-page{width:160px;}
       .col-type{width:96px;}
-      .col-url{width:170px;}
+      .col-url{width:140px;}
       .col-status{width:82px;}
       .col-worker{width:90px;}
-      .col-date{width:112px;}
+      .col-date{width:80px;}
       .col-note{width:auto;}
     </style>
   </head>
@@ -90,19 +90,19 @@
 
       <div class="summary">
         <div class="summary-item">
-          <strong>6</strong>
+          <strong>10</strong>
           <span>전체 화면</span>
         </div>
         <div class="summary-item">
-          <strong>0</strong>
+          <strong>5</strong>
           <span>완료</span>
         </div>
         <div class="summary-item">
-          <strong>3</strong>
+          <strong>5</strong>
           <span>진행중</span>
         </div>
         <div class="summary-item">
-          <strong>3</strong>
+          <strong>0</strong>
           <span>예정</span>
         </div>
       </div>
@@ -156,7 +156,7 @@
               <td></td>
             </tr>
             <tr>
-              <td class="center">WL-001</td>
+              <td class="center">WL-AUTH-LOGIN-001</td>
               <td>로그인</td>
               <td>로그인</td>
               <td class="center"><span class="type">페이지</span></td>
@@ -167,7 +167,7 @@
               <td>로그인 진입 화면</td>
             </tr>
             <tr>
-              <td class="center">WL-002</td>
+              <td class="center">WL-AUTH-LOGIN-002</td>
               <td>비밀번호 초기화</td>
               <td>비밀번호 초기화</td>
               <td class="center"><span class="type">페이지</span></td>
@@ -178,7 +178,7 @@
               <td>비밀번호 초기화 화면</td>
             </tr>
             <tr>
-              <td class="center">WL-003</td>
+              <td class="center">WL-MAIN-001</td>
               <td>메인</td>
               <td>메인</td>
               <td class="center"><span class="type">페이지</span></td>
@@ -189,7 +189,7 @@
               <td>업무일지 목록, 필터, 등록 진입 버튼 포함</td>
             </tr>
             <tr>
-              <td class="center">WL-004</td>
+              <td class="center">WL-ADMAIN-001</td>
               <td>관리자 메인</td>
               <td>관리자 메인 리스트 1</td>
               <td class="center"><span class="type">페이지</span></td>
@@ -200,7 +200,7 @@
               <td>관리자 메인 화면</td>
             </tr>
             <tr>
-              <td class="center">WL-005</td>
+              <td class="center">WL-ADMAIN-002</td>
               <td>관리자 메인</td>
               <td>관리자 메인 리스트 2</td>
               <td class="center"><span class="type">페이지</span></td>
@@ -211,7 +211,7 @@
               <td>관리자 메인 화면</td>
             </tr>
             <tr>
-              <td class="center">WL-006</td>
+              <td class="center">WL-MY-001</td>
               <td>마이페이지</td>
               <td>비밀번호 변경</td>
               <td class="center"><span class="type">페이지</span></td>
@@ -222,7 +222,7 @@
               <td>아이디, 현재 비밀번호, 새 비밀번호, 새 비밀번호 확인</td>
             </tr>
             <tr>
-              <td class="center">WL-004</td>
+              <td class="center">WL-ENTRY-REG-001</td>
               <td>업무일지</td>
               <td>등록</td>
               <td class="center"><span class="type">페이지</span></td>
@@ -233,26 +233,37 @@
               <td>신규 업무일지 작성 페이지</td>
             </tr>
             <tr>
-              <td class="center">WL-005</td>
+              <td class="center">WL-ENTRY-EDIT-001</td>
               <td>업무일지</td>
               <td>수정</td>
               <td class="center"><span class="type">풀팝업</span></td>
               <td><a href="http://localhost:5173/weeklog/entry-view?mode=edit" target="_blank">/weeklog/entry-view?mode=edit</a></td>
-              <td class="center"><span class="status status-ing">진행</span></td>
+              <td class="center"><span class="status status-done">완료</span></td>
               <td class="center">퍼블</td>
               <td class="center"><span class="txt-muted">-</span></td>
               <td>상세 화면에서 수정 풀팝업 자동 오픈</td>
             </tr>
             <tr>
-              <td class="center">WL-006</td>
+              <td class="center">WL-ENTRY-VIEW-001</td>
               <td>업무일지</td>
               <td>상세</td>
               <td class="center"><span class="type">페이지</span></td>
               <td><a href="http://localhost:5173/weeklog/entry-view" target="_blank">/weeklog/entry-view</a></td>
-              <td class="center"><span class="status status-ing">진행</span></td>
+              <td class="center"><span class="status status-done">완료</span></td>
               <td class="center">퍼블</td>
               <td class="center"><span class="txt-muted">-</span></td>
               <td>업무일지 내용 확인, 수정 풀팝업 진입 기준 화면</td>
+            </tr>
+            <tr>
+              <td class="center">WL-ADM-VIEW-001</td>
+              <td>관리자</td>
+              <td>업무일지 상세</td>
+              <td class="center"><span class="type">페이지</span></td>
+              <td><a href="http://localhost:5173/weeklog/admin-entry-view" target="_blank">/weeklog/admin-entry-view</a></td>
+              <td class="center"><span class="status status-done">완료</span></td>
+              <td class="center">퍼블</td>
+              <td class="center"><span class="txt-muted">-</span></td>
+              <td>관리자용 업무일지 상세, 확인 버튼 단독 노출</td>
             </tr>
           </tbody>
         </table>

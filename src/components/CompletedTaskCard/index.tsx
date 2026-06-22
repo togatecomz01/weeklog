@@ -7,7 +7,7 @@ type TaskStatus = 'todo' | 'doing' | 'done'
 
 const STATUS_CONFIG: Record<TaskStatus, { title: string; label: string }> = {
   todo: { title: '차주 예정 업무', label: '→ todo' },
-  doing: { title: '진행중 업무', label: '→ doing' },
+  doing: { title: '진행 업무', label: '→ doing' },
   done: { title: '금주 완료 업무', label: '→ done' },
 }
 
