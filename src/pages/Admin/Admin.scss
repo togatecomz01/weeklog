@@ -15,23 +15,29 @@
   &-content {
     flex: 1;
     min-height: 0;
-    padding: 68px 20px 95px;
+    padding: 70px 20px 95px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
   }
 
+  &-top {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
   &-update {
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 6px;
+    gap: 8px;
 
     &-text {
       font-size: $font12;
-      font-weight: $font-w-r;
-      color: $color-text-gray-light;
+      font-weight: 200;
+      color: $color-text-gray;
     }
 
     &-refresh {
@@ -42,7 +48,7 @@
       border: none;
       padding: 0;
       cursor: pointer;
-      color: $color-text-gray-light;
+      color: $color-text-gray;
 
       &:hover {
         color: $color-primary;
@@ -56,21 +62,19 @@
     border-radius: 16px;
     padding: 20px;
     color: $color-white;
-    min-height: 100px;
     display: flex;
     flex-direction: column;
     gap: 6px;
 
     &-text {
-      font-size: $font20;
+      font-size: $font16;
       font-weight: $font-w-b;
       line-height: 1.4;
     }
 
     &-desc {
-      font-size: $font14;
+      font-size: $font12;
       font-weight: $font-w-r;
-      opacity: 0.85;
     }
   }
 
@@ -84,18 +88,19 @@
       border-radius: 12px;
       padding: 16px 20px;
       display: flex;
-      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
       gap: 6px;
     }
 
     &-label {
-      font-size: $font12;
+      font-size: $font14;
       font-weight: $font-w-m;
       color: $color-primary;
     }
 
     &-count {
-      font-size: $font20;
+      font-size: $font14;
       font-weight: $font-w-b;
       color: $color-primary;
     }
