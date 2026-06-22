@@ -83,7 +83,7 @@ function AdminList() {
                 priority={card.priority}
                 content={card.content}
                 status={card.status}
-                onClick={() => navigate('/weeklog/admin-entry-view')}
+                onClick={() => navigate('/admin-entry-view')}
               />
             ))}
           </WeekCardList>

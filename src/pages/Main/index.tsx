@@ -46,7 +46,7 @@ function Main() {
           <p className="main-banner-text">
             업무일지를 작성하고<br />진행 현황을 확인하세요.
           </p>
-          <button className="main-banner-btn" type="button" onClick={() => navigate(`/weeklog/entry`)}>
+          <button className="main-banner-btn" type="button" onClick={() => navigate(`/entry`)}>
             등록하러 가기
           </button>
         </div>
@@ -70,7 +70,7 @@ function Main() {
                 priority={card.priority}
                 content={getWeeklogEntryPreview(card)}
                 status={card.status}
-                onClick={() => navigate(`/weeklog/entry-view?id=${card.id}`)}
+                onClick={() => navigate(`/entry-view?id=${card.id}`)}
               />
             ))}
           </WeekCardList>

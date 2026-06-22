@@ -24,7 +24,7 @@ function ResetPassword() {
       </div>
 
       <div className="auth-options">
-        <button type="button" className="auth-link" onClick={() => navigate('/weeklog/login')}>
+        <button type="button" className="auth-link" onClick={() => navigate('/login')}>
           로그인 페이지로 이동
         </button>
       </div>

@@ -23,8 +23,8 @@ function Login() {
     const role = form.email.includes('admin') ? 'admin' : 'user'
     login({ name: form.email, role })
 
-    if (role === 'admin') navigate('/weeklog/admin')
-    else navigate('/weeklog/main')
+    if (role === 'admin') navigate('/admin')
+    else navigate('/main')
   }
 
   return (
@@ -57,7 +57,7 @@ function Login() {
           checked={autoLogin}
           onChange={(e) => setAutoLogin(e.target.checked)}
         />
-        <button type="button" className="auth-link" onClick={() => navigate('/weeklog/reset-password')}>
+        <button type="button" className="auth-link" onClick={() => navigate('/reset-password')}>
           새 비밀번호 설정
         </button>
       </div>
