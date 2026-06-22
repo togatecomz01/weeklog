@@ -75,4 +75,11 @@
     width: 134px;
   }
 
+  &-empty {
+    font-size: $font14;
+    color: $color-text-gray-light;
+    text-align: center;
+    padding: 40px 0;
+  }
+
 }
