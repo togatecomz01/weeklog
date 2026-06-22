@@ -3,6 +3,7 @@ import express from 'express'
 import cors from 'cors'
 import sql from './db.js'
 import authRouter from './routes/auth.js'
+import entriesRouter from './routes/entries.js'
 
 const app = express()
 const PORT = Number(process.env.PORT) || 3000
@@ -11,6 +12,7 @@ app.use(cors({ origin: process.env.CLIENT_ORIGIN ?? 'http://localhost:5173' }))
 app.use(express.json())
 
 app.use('/api/auth', authRouter)
+app.use('/api/entries', entriesRouter)
 
 app.get('/api/health', async (_req, res) => {
   try {

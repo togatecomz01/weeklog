@@ -7,7 +7,7 @@ import Button from '@/components/Button'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
-import { getWeeklogEntries, getWeeklogEntryPreview } from '@/data/weeklogEntries'
+import { useEntries } from '@/hooks/useEntries'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -31,10 +31,10 @@ function Main() {
   const navigate = useNavigate()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
-  const entries = getWeeklogEntries()
+  const { entries, loading, loadingMore, error, hasMore, loadMore } = useEntries()
 
-  const filteredCards =
-    filter === 'all' ? entries : entries.filter((c) => c.priority === filter)
+  const filteredEntries =
+    filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
 
   return (
     <div className="main">
@@ -46,7 +46,7 @@ function Main() {
           <p className="main-banner-text">
             업무일지를 작성하고<br />진행 현황을 확인하세요.
           </p>
-          <button className="main-banner-btn" type="button" onClick={() => navigate(`/entry`)}>
+          <button className="main-banner-btn" type="button" onClick={() => navigate('/entry')}>
             등록하러 가기
           </button>
         </div>
@@ -62,22 +62,34 @@ function Main() {
             />
           </div>
 
-          <WeekCardList>
-            {filteredCards.map((card) => (
-              <WeekCard
-                key={card.id}
-                week={card.week}
-                priority={card.priority}
-                content={getWeeklogEntryPreview(card)}
-                status={card.status}
-                onClick={() => navigate(`/entry-view?id=${card.id}`)}
-              />
-            ))}
-          </WeekCardList>
+          {loading && <p className="main-empty">불러오는 중...</p>}
+          {error && <p className="main-empty">{error}</p>}
 
-          <Button variant="secondary" fullWidth>
-            더보기
-          </Button>
+          {!loading && !error && (
+            <>
+              <WeekCardList>
+                {filteredEntries.map((entry) => (
+                  <WeekCard
+                    key={entry.id}
+                    week={entry.week}
+                    priority={entry.priority}
+                    content={entry.content}
+                    onClick={() => navigate(`/entry-view?id=${entry.id}`)}
+                  />
+                ))}
+              </WeekCardList>
+
+              {filteredEntries.length === 0 && (
+                <p className="main-empty">업무일지가 없습니다.</p>
+              )}
+
+              {hasMore && (
+                <Button variant="secondary" fullWidth onClick={loadMore} disabled={loadingMore}>
+                  {loadingMore ? '불러오는 중...' : '더보기'}
+                </Button>
+              )}
+            </>
+          )}
         </div>
       </div>
 
