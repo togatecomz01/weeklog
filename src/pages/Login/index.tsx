@@ -69,8 +69,9 @@ function Login() {
           placeholder="비밀번호"
           value={form.password}
           onChange={handleChange('password')}
+          error={!!error}
+          errorMessage={error}
         />
-        {error && <p className="auth-error">{error}</p>}
       </div>
 
       <div className="auth-options">
