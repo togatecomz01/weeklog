@@ -11,6 +11,8 @@ function Login() {
   const { login } = useAuth()
   const [form, setForm] = useState({ email: '', password: '' })
   const [autoLogin, setAutoLogin] = useState(false)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
   function handleChange(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -18,19 +20,38 @@ function Login() {
     }
   }
 
-  function handleLogin() {
-    // TODO: 실제 API 연동 시 응답의 role 값을 사용
-    const role = form.email.includes('admin') ? 'admin' : 'user'
-    login({ name: form.email, role })
+  async function handleLogin() {
+    setError('')
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: form.email, password: form.password }),
+      })
 
-    if (role === 'admin') navigate('/admin')
-    else navigate('/main')
+      const data = await res.json()
+
+      if (!res.ok) {
+        setError(data.message ?? '로그인에 실패했습니다.')
+        return
+      }
+
+      login(data.user, data.token, autoLogin)
+
+      if (data.user.role === 'admin') navigate('/admin')
+      else navigate('/main')
+    } catch {
+      setError('서버에 연결할 수 없습니다.')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
     <AuthLayout
       title="로그인"
-      footer={<Button fullWidth onClick={handleLogin}>로그인</Button>}
+      footer={<Button fullWidth onClick={handleLogin} disabled={loading}>{loading ? '로그인 중...' : '로그인'}</Button>}
     >
       <div className="auth-inputs">
         <Input
@@ -49,6 +70,7 @@ function Login() {
           value={form.password}
           onChange={handleChange('password')}
         />
+        {error && <p className="auth-error">{error}</p>}
       </div>
 
       <div className="auth-options">
