@@ -16,6 +16,8 @@
   &-left {
     display: inline-flex;
     align-items: center;
+
+    img { display: block; width: 88px; height: 30px; object-fit: contain; }
   }
 
   &-right {
