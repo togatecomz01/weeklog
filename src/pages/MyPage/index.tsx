@@ -11,16 +11,16 @@ import './MyPage.scss'
 
 function MyPage() {
   const contentRef = useRef<HTMLDivElement | null>(null)
-  const { logout } = useAuth()
+  const { user, token, logout } = useAuth()
   const navigate = useNavigate()
   const [form, setForm] = useState({
-    id: 'Id_123@togate.kr',
     currentPassword: '',
     newPassword: '',
     confirmPassword: '',
   })
-
   const [alertOpen, setAlertOpen] = useState(false)
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
 
   const passwordMismatch =
     form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword
@@ -31,12 +31,45 @@ function MyPage() {
     }
   }
 
+  async function handleSubmit() {
+    if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
+      setErrorAlertOpen(true)
+      return
+    }
+    if (form.newPassword !== form.confirmPassword) return
+
+    setSubmitting(true)
+    try {
+      const res = await fetch('/api/auth/password', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          currentPassword: form.currentPassword,
+          newPassword: form.newPassword,
+        }),
+      })
+      if (!res.ok) {
+        setErrorAlertOpen(true)
+        return
+      }
+      setForm({ currentPassword: '', newPassword: '', confirmPassword: '' })
+      setAlertOpen(true)
+    } catch {
+      setErrorAlertOpen(true)
+    } finally {
+      setSubmitting(false)
+    }
+  }
+
   return (
     <div className="mypage">
       <header className="mypage-header">
         <div className="mypage-user-info">
-          <span className="mypage-username">홍길동</span>
-          <span className="mypage-position">과장</span>
+          <span className="mypage-username">{user?.name ?? ''}</span>
+          <span className="mypage-position">{user?.department ?? ''}</span>
         </div>
         <Button variant="secondary" logout startIcon={<LogoutIcon />} onClick={() => { logout(); navigate('/login') }}>
           로그아웃
@@ -50,15 +83,14 @@ function MyPage() {
             <Input
               id="user-id"
               label="아이디"
-              placeholder="아이디를 입력하세요"
-              value={form.id}
+              value={user?.email ?? ''}
               disabled
             />
             <Input
               id="current-password"
               label="현재 비밀번호"
               type="password"
-              placeholder="이번 주에 완료한 업무를 줄바꿈으로 구분하여 입력하세요."
+              placeholder=""
               value={form.currentPassword}
               onChange={handleChange('currentPassword')}
             />
@@ -82,7 +114,9 @@ function MyPage() {
               errorMessage="비밀번호를 다시 입력해 주세요."
             />
           </div>
-          <Button onClick={() => setAlertOpen(true)}>비밀번호 변경하기</Button>
+          <Button onClick={handleSubmit} disabled={submitting || passwordMismatch}>
+            {submitting ? '변경 중...' : '비밀번호 변경하기'}
+          </Button>
         </div>
       </div>
 
@@ -90,6 +124,12 @@ function MyPage() {
         open={alertOpen}
         message="비밀번호가 변경되었습니다."
         onCancel={() => setAlertOpen(false)}
+        cancelText="닫기"
+      />
+      <AlertPopup
+        open={errorAlertOpen}
+        message="현재 비밀번호가 올바르지 않습니다."
+        onCancel={() => setErrorAlertOpen(false)}
         cancelText="닫기"
       />
       <ScrollTop scrollTargetRef={contentRef} />

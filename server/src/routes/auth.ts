@@ -2,6 +2,7 @@ import { Router } from 'express'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
 import sql from '../db.js'
+import { requireAuth } from '../middleware/auth.js'
 
 const router = Router()
 
@@ -40,6 +41,28 @@ router.post('/login', async (req, res) => {
     token,
     user: { id: user.id, name: user.name, email: user.email, role: user.role, department: user.department },
   })
+})
+
+router.put('/password', requireAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body
+
+  if (!currentPassword || !newPassword) {
+    res.status(400).json({ message: '현재 비밀번호와 새 비밀번호를 입력해주세요.' })
+    return
+  }
+
+  const [user] = await sql`SELECT password_hash FROM users WHERE id = ${req.user!.id}`
+
+  const valid = await bcrypt.compare(currentPassword, user.password_hash)
+  if (!valid) {
+    res.status(401).json({ message: '현재 비밀번호가 올바르지 않습니다.' })
+    return
+  }
+
+  const hash = await bcrypt.hash(newPassword, 10)
+  await sql`UPDATE users SET password_hash = ${hash} WHERE id = ${req.user!.id}`
+
+  res.json({ message: '비밀번호가 변경되었습니다.' })
 })
 
 export default router
