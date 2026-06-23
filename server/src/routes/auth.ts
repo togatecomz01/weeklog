@@ -43,6 +43,28 @@ router.post('/login', async (req, res) => {
   })
 })
 
+router.post('/reset-password', async (req, res) => {
+  const { email } = req.body
+  if (!email) {
+    res.status(400).json({ message: '이메일을 입력해주세요.' })
+    return
+  }
+
+  const [user] = await sql`SELECT id FROM users WHERE email = ${email}`
+  if (!user) {
+    res.status(404).json({ message: '존재하지 않는 아이디입니다.' })
+    return
+  }
+
+  const chars = 'ABCDEFGHJKMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789!@#$'
+  const newPassword = Array.from({ length: 12 }, () => chars[Math.floor(Math.random() * chars.length)]).join('')
+
+  const hash = await bcrypt.hash(newPassword, 10)
+  await sql`UPDATE users SET password_hash = ${hash} WHERE id = ${user.id}`
+
+  res.json({ password: newPassword })
+})
+
 router.put('/password', requireAuth, async (req, res) => {
   const { currentPassword, newPassword } = req.body
 

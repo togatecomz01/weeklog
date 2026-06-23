@@ -8,10 +8,46 @@ import AlertPopup from '@/components/AlertPopup'
 function ResetPassword() {
   const navigate = useNavigate()
   const [email, setEmail] = useState('')
+  const [newPassword, setNewPassword] = useState('')
   const [alertOpen, setAlertOpen] = useState(false)
+  const [errorAlertOpen, setErrorAlertOpen] = useState(false)
+  const [errorMessage, setErrorMessage] = useState('')
+  const [loading, setLoading] = useState(false)
+
+  async function handleReset() {
+    if (!email) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/auth/reset-password', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        setErrorMessage(data.message ?? '초기화에 실패했습니다.')
+        setErrorAlertOpen(true)
+        return
+      }
+      setNewPassword(data.password)
+      setAlertOpen(true)
+    } catch {
+      setErrorMessage('서버에 연결할 수 없습니다.')
+      setErrorAlertOpen(true)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   return (
-    <AuthLayout title="비밀번호 초기화" footer={<Button fullWidth onClick={() => setAlertOpen(true)}>비밀번호 초기화</Button>}>
+    <AuthLayout
+      title="비밀번호 초기화"
+      footer={
+        <Button fullWidth onClick={handleReset} disabled={loading || !email}>
+          {loading ? '초기화 중...' : '비밀번호 초기화'}
+        </Button>
+      }
+    >
       <div className="auth-inputs">
         <Input
           label="이메일 주소"
@@ -32,9 +68,15 @@ function ResetPassword() {
       <AlertPopup
         open={alertOpen}
         message="비밀번호가 초기화되었습니다."
-        onCancel={() => setAlertOpen(false)}
+        description={`초기화된 비밀번호: ${newPassword}`}
+        onCancel={() => { setAlertOpen(false); navigate('/login') }}
+        cancelText="로그인하기"
+      />
+      <AlertPopup
+        open={errorAlertOpen}
+        message={errorMessage}
+        onCancel={() => setErrorAlertOpen(false)}
         cancelText="닫기"
-        description='초기화된 비밀번호: togate123!'
       />
     </AuthLayout>
   )
