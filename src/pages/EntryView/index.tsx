@@ -55,6 +55,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
   const [editOpen, setEditOpen] = useState(false)
+  const [sentStatuses, setSentStatuses] = useState<Set<string>>(new Set())
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -78,6 +79,27 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   useEffect(() => {
     if (!isAdmin && isEditMode) setEditOpen(true)
   }, [isAdmin, isEditMode])
+
+  async function handleSend(status: string, items: string[]) {
+    try {
+      const res = await fetch('/api/swit/send', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ status, items }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        alert(data.message ?? '전송 실패')
+        return
+      }
+      setSentStatuses((prev) => new Set(prev).add(status))
+    } catch {
+      alert('서버에 연결할 수 없습니다.')
+    }
+  }
 
   function handleEditClose() {
     setEditOpen(false)
@@ -172,9 +194,11 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
                 key={`${status ?? title ?? index}`}
                 title={title}
                 status={status}
-                sent={false}
+                sent={status ? sentStatuses.has(status) : false}
                 items={items}
-                onSend={!isAdmin && status ? () => console.log('전송') : undefined}
+                onSend={!isAdmin && status && !sentStatuses.has(status)
+                  ? () => handleSend(status, items)
+                  : undefined}
               />
             ))}
           </CompletedTaskCardList>
