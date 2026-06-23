@@ -51,7 +51,7 @@ function Entry() {
   const contentRef = useRef<HTMLElement | null>(null)
   const { user, token } = useAuth()
   const [form, setForm] = useState({
-    writeDate: '',
+    writeDate: new Date().toISOString().slice(0, 10),
     title: '',
     priority: '보통' as Priority,
     completedWork: '',

@@ -2,11 +2,13 @@ import { useState, useEffect, useCallback } from 'react'
 import { useAuth } from '@/contexts/AuthContext'
 
 type BadgeType = 'normal' | 'important' | 'urgent'
+type SendStatus = 'unsent' | 'partial' | 'sent'
 
 export interface Entry {
   id: number
   week: string
   priority: BadgeType
+  status: SendStatus
   content: string
   week_year: number
   week_month: number
@@ -17,6 +19,9 @@ export interface Entry {
   ongoing_work: string
   next_week_plan: string
   notes: string
+  sent_done: boolean
+  sent_doing: boolean
+  sent_todo: boolean
   created_at: string
 }
 
@@ -35,11 +40,18 @@ function toPreview(completed_work: string, ongoing_work: string) {
   return lines.slice(0, 3).map((line, i) => `${i + 1}. ${line}`).join('\n')
 }
 
+function getSendStatus(done: boolean, doing: boolean, todo: boolean): SendStatus {
+  if (done && doing && todo) return 'sent'
+  if (done || doing || todo) return 'partial'
+  return 'unsent'
+}
+
 function mapEntry(raw: any): Entry {
   return {
     ...raw,
     week: `${raw.week_month}월 ${raw.week_number}주`,
     priority: PRIORITY_MAP[raw.priority] ?? 'normal',
+    status: getSendStatus(raw.sent_done, raw.sent_doing, raw.sent_todo),
     content: toPreview(raw.completed_work, raw.ongoing_work),
   }
 }

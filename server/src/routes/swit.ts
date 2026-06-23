@@ -1,5 +1,6 @@
 import { Router } from 'express'
 import { requireAuth } from '../middleware/auth.js'
+import sql from '../db.js'
 
 const router = Router()
 
@@ -57,7 +58,7 @@ router.get('/callback', async (req, res) => {
 
 // 스윗 태스크 전송
 router.post('/send', requireAuth, async (req, res) => {
-  const { title, items, status } = req.body
+  const { title, items, status, entry_id } = req.body
 
   if (!items?.length) {
     res.status(400).json({ message: '보낼 항목이 없습니다.' })
@@ -104,6 +105,12 @@ router.post('/send', requireAuth, async (req, res) => {
     const reason = (failed[0] as PromiseRejectedResult).reason?.message
     res.status(500).json({ message: reason ?? `${failed.length}개 항목 전송 실패` })
     return
+  }
+
+  // DB에 전송 상태 업데이트
+  if (entry_id && ['done', 'doing', 'todo'].includes(status)) {
+    const col = `sent_${status}` as 'sent_done' | 'sent_doing' | 'sent_todo'
+    await sql`UPDATE entries SET ${sql(col)} = TRUE WHERE id = ${entry_id} AND user_id = ${req.user!.id}`
   }
 
   res.json({ message: '전송 완료', count: items.length })

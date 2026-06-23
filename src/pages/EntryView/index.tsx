@@ -32,6 +32,9 @@ interface ApiEntry {
   ongoing_work: string
   next_week_plan: string
   notes: string
+  sent_done: boolean
+  sent_doing: boolean
+  sent_todo: boolean
   created_at: string
   user_name?: string
 }
@@ -77,6 +80,15 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }, [id, token])
 
   useEffect(() => {
+    if (!entry) return
+    const initial = new Set<string>()
+    if (entry.sent_done) initial.add('done')
+    if (entry.sent_doing) initial.add('doing')
+    if (entry.sent_todo) initial.add('todo')
+    setSentStatuses(initial)
+  }, [entry])
+
+  useEffect(() => {
     if (!isAdmin && isEditMode) setEditOpen(true)
   }, [isAdmin, isEditMode])
 
@@ -88,7 +100,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status, items }),
+        body: JSON.stringify({ status, items, entry_id: entry.id }),
       })
       if (!res.ok) {
         const data = await res.json()

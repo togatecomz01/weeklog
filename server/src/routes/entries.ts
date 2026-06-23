@@ -28,8 +28,7 @@ router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
 router.get('/', requireAuth, requireRole('admin'), async (_req, res) => {
   const entries = await sql`
     SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
-           e.department, e.title, e.completed_work, e.ongoing_work,
-           e.next_week_plan, e.notes, e.created_at, e.updated_at,
+    e.next_week_plan, e.notes, e.created_at, e.updated_at,
            u.id AS user_id, u.name AS user_name, u.email AS user_email
     FROM entries e
     JOIN users u ON u.id = e.user_id

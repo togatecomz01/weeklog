@@ -73,6 +73,7 @@ function Main() {
                     key={entry.id}
                     week={entry.week}
                     priority={entry.priority}
+                    status={entry.status}
                     content={entry.content}
                     onClick={() => navigate(`/entry-view?id=${entry.id}`)}
                   />
