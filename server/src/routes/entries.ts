@@ -15,7 +15,8 @@ router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
   const entries = await sql`
     SELECT id, week_year, week_month, week_number, priority,
            department, title, completed_work, ongoing_work,
-           next_week_plan, notes, created_at, updated_at
+           next_week_plan, notes, sent_done, sent_doing, sent_todo,
+           created_at, updated_at
     FROM entries
     WHERE user_id = ${req.user!.id}
     ORDER BY week_year DESC, week_month DESC, week_number DESC
@@ -42,7 +43,8 @@ router.get('/:id', requireAuth, async (req, res) => {
   const [entry] = await sql`
     SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
            e.department, e.title, e.completed_work, e.ongoing_work,
-           e.next_week_plan, e.notes, e.created_at, e.updated_at,
+           e.next_week_plan, e.notes, e.sent_done, e.sent_doing, e.sent_todo,
+           e.created_at, e.updated_at,
            u.id AS user_id, u.name AS user_name
     FROM entries e
     JOIN users u ON u.id = e.user_id
