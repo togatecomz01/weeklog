@@ -115,7 +115,14 @@ function Entry() {
       <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
       <main ref={contentRef} className="entry-content">
         <section className="entry-section">
+        <h2 className="entry-title">작성정보</h2>
           <div className="entry-form">
+          <div className="acc-info-box">
+              <ul className="acc-info">
+                <li className="name">{user?.name ?? ''}</li>
+                <li className="depart">{user?.department ?? ''}</li>
+              </ul>
+            </div>
             <Input
               id="entry-write-date"
               type="date"
@@ -123,18 +130,6 @@ function Entry() {
               value={form.writeDate}
               onChange={handleChange('writeDate')}
               required
-            />
-            <Input
-              id="entry-writer"
-              label="작성자"
-              value={user?.name ?? ''}
-              disabled
-            />
-            <Input
-              id="entry-department"
-              label="부서"
-              value={user?.department ?? ''}
-              disabled
             />
             <Input
               id="entry-title"

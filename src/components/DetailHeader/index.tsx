@@ -54,7 +54,7 @@ function DetailHeader({
       <button type="button" className="header-button" onClick={onClick}>
         <img className="header-icon" src={isClose ? closeIcon : arrowIcon} alt="" />
       </button>
-      <strong className="header-title">{title}</strong>
+      <h1 className="header-title">{title}</h1>
     </header>
   )
 }

@@ -1,6 +1,8 @@
 @mixin info-icon(
     $top: 12px,
     $left:8px,
+    $w:20px,
+    $h:20px,
     $img: "../../assets/svg/ico_info.svg",
     ) {
     &::before {
@@ -9,8 +11,8 @@
         top: $top;
         left: $left;
         display: inline-block;
-        width: 20px;
-        height: 20px;
+        width: $w;
+        height: $h;
         background: url(#{$img}) no-repeat center center;
         background-size: contain;
     }
