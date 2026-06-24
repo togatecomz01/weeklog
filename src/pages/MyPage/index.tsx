@@ -1,10 +1,11 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
+import ButtonContainer from '@/components/ButtonContainer'
 import Input from '@/components/Input'
+import DetailHeader from '@/components/DetailHeader'
 import BottomNav from '@/components/BottomNav'
 import AlertPopup from '@/components/AlertPopup'
-import LogoutIcon from '@/components/icons/LogoutIcon'
 import ScrollTop from '@/components/ScrollTop'
 import { useAuth } from '@/contexts/AuthContext'
 import './MyPage.scss'
@@ -66,17 +67,21 @@ function MyPage() {
 
   return (
     <div className="mypage">
-      <header className="mypage-header">
-        <div className="mypage-user-info">
-          <span className="mypage-username">{user?.name ?? ''}</span>
-          <span className="mypage-position">{user?.department ?? ''}</span>
-        </div>
-        <Button variant="secondary" logout startIcon={<LogoutIcon />} onClick={() => { logout(); navigate('/login') }}>
-          로그아웃
-        </Button>
-      </header>
+      <DetailHeader title="마이" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
 
       <div ref={contentRef} className="mypage-content">
+        <div className="user-info-section">
+          <div className="user-info">
+            <div>
+              <span className="username">{user?.name ?? ''}</span>
+              <span className="user-position">{user?.department ?? ''}</span>
+            </div>
+            <Button variant="primary" logout onClick={() => { logout(); navigate('/login') }}>
+              로그아웃
+            </Button>
+          </div>
+          <p className="user-desc">계정 및 보안 정보를 관리 할 수 있습니다.</p>
+        </div>
         <div className="mypage-section">
           <h2 className="mypage-section-title">업무내용</h2>
           <div className="mypage-form">
@@ -114,11 +119,13 @@ function MyPage() {
               errorMessage="비밀번호를 다시 입력해 주세요."
             />
           </div>
-          <Button onClick={handleSubmit} disabled={submitting || passwordMismatch}>
-            {submitting ? '변경 중...' : '비밀번호 변경하기'}
-          </Button>
         </div>
       </div>
+      <ButtonContainer>
+        <Button onClick={handleSubmit} disabled={submitting || passwordMismatch}>
+          {submitting ? '변경 중...' : '비밀번호 변경하기'}
+        </Button>
+      </ButtonContainer>
 
       <AlertPopup
         open={alertOpen}

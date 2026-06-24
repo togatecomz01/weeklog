@@ -10,7 +10,7 @@
   text-align: center;
   color: $color-white;
   font-size: $font16;
-  font-weight: $font-w-m;
+  font-weight: $font-w-b;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 
@@ -23,8 +23,7 @@
   }
 
   &:disabled {
-    background: $color-disabled;
-    color: $color-input-placeholder;
+    background: #cdcdcd;
     cursor: not-allowed;
   }
 
@@ -80,9 +79,12 @@
   }
 
   &-logout {
-    padding: 8px 10px;
+    padding: 10px 14px;
     min-width: 0;
     width: fit-content;
+    border-radius: 100px;
+    background-color: #3571FF;
     font-size: $font14;
+    color: $color-white;
   }
 }

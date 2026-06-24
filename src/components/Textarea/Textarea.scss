@@ -1,10 +1,11 @@
 textarea.textarea {
     display: block;
     width: 100%;
-    min-height: 43px;
+    min-height: 45px;
     max-height: 77px;
-    padding: 12px 16px 13px;
-    border: 1px solid $color-input-border;
+    padding: 12px;
+    border: 1px solid $color-border;
+    border-radius: 4px;
     background: $color-white;
     font-size: $font14;
     font-weight: $font-w-r;
@@ -16,7 +17,7 @@ textarea.textarea {
 
     &::placeholder {
         font-size: $font14;
-        color: $color-input-placeholder;
+        color: $color-text-gray-9;
     }
 
     &:focus {

@@ -10,7 +10,7 @@
         max-width: 480px;
         min-height: 0;
         height: calc(100svh - 75px);
-        padding: 10px 20px 80px;
+        padding: 20px 20px 80px;
         margin: 0 auto;
         overflow-y: auto;
     }
@@ -28,13 +28,13 @@
     &-form {
         display: flex;
         flex-direction: column;
-        gap: 20px;
+        gap: 24px;
         width: 100%;
     }
     &-title {
-        margin-bottom: 17px;
-        font-size: $font20;
-        font-weight: $font-w-b;
-        color: $color-text-black;
+        margin-bottom: 26px;
+        font-size: $font18;
+        font-weight: $font-w-sb;
+        color: $color-text-gray;
     }
 }

@@ -12,19 +12,20 @@
     &-label {
         display: block;
         font-size: $font14;
-        font-weight: $font-w-b;
-        color: $color-text-black;
+        font-weight: $font-w-sb;
+        color: $color-text-gray-light;
         margin-bottom: 8px;
     }
 
     &-required {
+        padding-left: 2px;
         font-size: $font14;
         color: $color-error;
     }
 
     &-hint {
         margin-top: 6px;
-        font-size: $font12;
+        font-size: $font11;
         font-weight: $font-w-r;
         color: $color-text-gray-light;
     }
@@ -48,7 +49,8 @@
 input.input {
     width: 100%;
     padding: 12px 16px 13px;
-    border: 1px solid $color-input-border;
+    border: 1px solid $color-border;
+    border-radius: 4px;
     background: $color-white;
     font-size: $font14;
     font-weight: $font-w-r;
