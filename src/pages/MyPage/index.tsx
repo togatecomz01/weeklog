@@ -32,8 +32,10 @@ function MyPage() {
     }
   }
 
+  const isValid = Boolean(form.newPassword.trim() && form.confirmPassword.trim())
+
   async function handleSubmit() {
-    if (!form.currentPassword || !form.newPassword || !form.confirmPassword) {
+    if (!isValid || !form.currentPassword || !form.newPassword || !form.confirmPassword) {
       setErrorAlertOpen(true)
       return
     }
@@ -83,7 +85,7 @@ function MyPage() {
           <p className="user-desc">계정 및 보안 정보를 관리 할 수 있습니다.</p>
         </div>
         <div className="mypage-section">
-          <h2 className="mypage-section-title">업무내용</h2>
+          <h2 className="mypage-section-title">초기 비밀번호 설정</h2>
           <div className="mypage-form">
             <Input
               id="user-id"
@@ -122,7 +124,7 @@ function MyPage() {
         </div>
       </div>
       <ButtonContainer>
-        <Button onClick={handleSubmit} disabled={submitting || passwordMismatch}>
+        <Button onClick={handleSubmit} disabled={!isValid || submitting || passwordMismatch}>
           {submitting ? '변경 중...' : '비밀번호 변경하기'}
         </Button>
       </ButtonContainer>

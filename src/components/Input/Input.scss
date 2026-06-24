@@ -69,7 +69,16 @@ input.input {
 
     &:disabled {
         background: $color-disabled;
-        color: $color-input-placeholder;
+        color: $color-text-gray-9;
         cursor: not-allowed;
     }
+    &:-webkit-autofill,
+    &:-webkit-autofill:hover,
+    &:-webkit-autofill:focus,
+    &:-webkit-autofill:active {
+        -webkit-box-shadow: 0 0 0 30px $color-white inset !important;
+        -webkit-text-fill-color: $color-text-gray !important;
+        transition: background-color 5000s ease-in-out 0s;
+    }
+
 }
