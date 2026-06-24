@@ -48,7 +48,7 @@ function Select({ options, value, onChange, placeholder = '선택하세요', dis
       )}
       <button
         type="button"
-        className={['select-btn', open ? 'is-open' : ''].filter(Boolean).join(' ')}
+        className={['select-btn', open ? 'is-open' : '', selected ? 'is-selected' : '',].filter(Boolean).join(' ')}
         disabled={disabled}
         onClick={() => !disabled && setOpen((prev) => !prev)}
       >
@@ -60,7 +60,7 @@ function Select({ options, value, onChange, placeholder = '선택하세요', dis
             <path d="M24 24L24 0L0 2.86197e-07L2.86197e-07 24L24 24Z" fill="#222222"/>
           </mask>
           <g mask="url(#mask0_102_4823)">
-            <path fillRule="evenodd" clipRule="evenodd" d="M19.6241 7.97578C19.8584 8.2101 19.8584 8.59 19.6241 8.82431L12.4241 16.0243C12.1898 16.2586 11.8099 16.2586 11.5755 16.0243L4.37554 8.82431C4.14122 8.59 4.14122 8.2101 4.37554 7.97578C4.60985 7.74147 4.98975 7.74147 5.22407 7.97578L11.9998 14.7515L18.7755 7.97578C19.0099 7.74147 19.3898 7.74147 19.6241 7.97578Z" fill="#666666"/>
+            <path fillRule="evenodd" clipRule="evenodd" d="M19.6241 7.97578C19.8584 8.2101 19.8584 8.59 19.6241 8.82431L12.4241 16.0243C12.1898 16.2586 11.8099 16.2586 11.5755 16.0243L4.37554 8.82431C4.14122 8.59 4.14122 8.2101 4.37554 7.97578C4.60985 7.74147 4.98975 7.74147 5.22407 7.97578L11.9998 14.7515L18.7755 7.97578C19.0099 7.74147 19.3898 7.74147 19.6241 7.97578Z" fill="currentColor"/>
           </g>
         </svg>
       </button>

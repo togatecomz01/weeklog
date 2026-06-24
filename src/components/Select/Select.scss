@@ -5,10 +5,10 @@
         display: flex;
         align-items: center;
         gap: 2px;
-        margin-bottom: 8px;
+        margin-bottom: 6px;
         font-size: $font14;
-        font-weight: $font-w-b;
-        color: $color-text-black;
+        font-weight: $font-w-sb;
+        color: $color-text-gray-light;
     }
     &-required {
         font-size: $font14;
@@ -20,15 +20,21 @@
         justify-content: space-between;
         width: 100%;
         padding: 10px;
-        border: 1px solid $color-input-border;
+        border: 1px solid $color-border;
+        border-radius: 4px;
         background: $color-white;
         font-size: 14px;
         font-weight: 500;
         line-height: normal;
-        color: $color-text-black;
+        color: $color-text-gray-9;
         text-align: left;
         cursor: pointer;
-        outline: none;
+        &.is-open {
+            border-color: #9AC8FF;
+        }
+        &.is-selected {
+            color: $color-text-black;
+        }
         &:disabled {
             background: $color-disabled;
             color: $color-input-placeholder;
@@ -46,26 +52,24 @@
         color: $color-input-placeholder;
     }
     &-list {
-        position: absolute;
-        left: 0;
-        right: 0;
-        z-index: 100;
-        max-height: 200px;
+        max-height: 198px;
+        margin-top: 12px;
         overflow-y: auto;
-        border: 1px solid $color-input-border;
+        border: 1px solid #ccc;
+        border-radius: 4px;
         background: $color-white;
     }
     &-option {
-        padding: 10px;
-        font-size: 12px;
-        font-weight: 300;
+        padding: 12px 18px;
+        font-size: $font14;
+        font-weight: $font-w-r;
         line-height: normal;
-        color: $color-text-gray-light;
+        color: $color-text-gray;
         cursor: pointer;
         &:hover,
         &.is-selected{
-            background: #E5EEF8;
-            color: $color-text-gray;
+            background: #E6F0FD;
+            color: $color-text-black;
         }
     }
 }

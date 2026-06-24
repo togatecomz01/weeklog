@@ -5,7 +5,7 @@ import './AlertPopup.scss'
 interface AlertPopupProps {
   open: boolean
   message?: string
-  description?: string
+  description?: React.ReactNode
   cancelText?: string
   confirmText?: string
   className?: string

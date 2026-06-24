@@ -31,6 +31,9 @@
       font-weight: $font-w-r;
       color: $color-text-gray;
       text-align: center;
+      .r-pwd {
+        color: $color-text-black;
+      }
     }
 
     &-btns {

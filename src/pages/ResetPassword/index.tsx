@@ -74,7 +74,12 @@ function ResetPassword() {
       <AlertPopup
         open={alertOpen}
         message="비밀번호가 초기화되었습니다."
-        description={`초기화된 비밀번호: ${newPassword}`}
+        description={
+          <>
+            초기화된 비밀번호:{' '}
+            <span className="r-pwd">{newPassword}</span>
+          </>
+        }
         onCancel={() => { setAlertOpen(false); navigate('/login') }}
         cancelText="로그인하기"
       />
