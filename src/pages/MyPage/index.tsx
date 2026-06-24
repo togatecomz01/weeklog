@@ -87,12 +87,9 @@ function MyPage() {
         <div className="mypage-section">
           <h2 className="mypage-section-title">초기 비밀번호 설정</h2>
           <div className="mypage-form">
-            <Input
-              id="user-id"
-              label="아이디"
-              value={user?.email ?? ''}
-              disabled
-            />
+            <div className="acc-info-box">
+              <p className="info-id"><span>아이디 : </span>{user?.email ?? ''}</p>
+            </div>
             <Input
               id="current-password"
               label="현재 비밀번호"

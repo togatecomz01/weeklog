@@ -1,4 +1,5 @@
 import Button from '@/components/Button'
+import ButtonContainer from '@/components/ButtonContainer'
 import './AlertPopup.scss'
 
 interface AlertPopupProps {
@@ -32,14 +33,16 @@ function AlertPopup({
         <p className="alert-pop-msg">{message}</p>
         {description && <p className="alert-pop-desc">{description}</p>}
         <div className="alert-pop-btns">
-          <Button variant="secondary" fullWidth onClick={onCancel}>
-            {cancelText}
-          </Button>
-          {onConfirm && (
-            <Button variant="primary" fullWidth onClick={onConfirm}>
-              {confirmText}
-            </Button>)
-          }
+          <ButtonContainer>
+            <Button variant="secondary" onClick={onCancel}>
+              {cancelText}
+            </Button>
+            {onConfirm && (
+              <Button variant="primary" onClick={onConfirm}>
+                {confirmText}
+              </Button>)
+            }
+          </ButtonContainer>
         </div>
       </div>
     </div>

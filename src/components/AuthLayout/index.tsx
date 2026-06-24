@@ -3,18 +3,22 @@ import ScrollTop from '@/components/ScrollTop'
 import './AuthLayout.scss'
 
 interface AuthLayoutProps {
-  title: string
+  title: React.ReactNode
+  subTitle: React.ReactNode
   footer: React.ReactNode
   children: React.ReactNode
 }
 
-function AuthLayout({ title, footer, children }: AuthLayoutProps) {
+function AuthLayout({ title, subTitle, footer, children }: AuthLayoutProps) {
   const bodyRef = React.useRef<HTMLDivElement | null>(null)
 
   return (
     <div className="auth-layout">
       <div ref={bodyRef} className="auth-layout-body">
-        <h1 className="auth-layout-title">{title}</h1>
+        <div className="auth-top">
+          <h1 className="auth-layout-title">안녕하세요!<br />{title}</h1>
+          <p className="auth-layout-sub">{subTitle}</p>
+        </div>
         <div className="auth-layout-form">{children}</div>
       </div>
       <div className="auth-layout-footer">{footer}</div>

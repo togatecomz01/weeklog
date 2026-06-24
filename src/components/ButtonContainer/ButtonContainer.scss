@@ -13,7 +13,7 @@
         font-size: $font16;
         line-height: 58px;
 
-        &:first-child:nth-last-child(2) {
+        &:first-child:nth-last-child(2):not(.alert-pop-btns .btn) {
             flex: 0 0 116px;
             width: 116px;
             min-width: 0;

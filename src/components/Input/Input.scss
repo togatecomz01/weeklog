@@ -60,7 +60,7 @@ input.input {
 
     &::placeholder {
         font-size: $font14;
-        color: $color-input-placeholder;
+        color: #ccc;
     }
 
     &:focus {
@@ -77,7 +77,6 @@ input.input {
     &:-webkit-autofill:focus,
     &:-webkit-autofill:active {
         -webkit-box-shadow: 0 0 0 30px $color-white inset !important;
-        -webkit-text-fill-color: $color-text-gray !important;
         transition: background-color 5000s ease-in-out 0s;
     }
 

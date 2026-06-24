@@ -50,7 +50,8 @@ function Login() {
 
   return (
     <AuthLayout
-      title="로그인"
+      title="로그인 정보를 입력해주세요."
+      subTitle="기존 회사계정으로 로그인이 가능해요"
       footer={<Button fullWidth onClick={handleLogin} disabled={loading}>{loading ? '로그인 중...' : '로그인'}</Button>}
     >
       <div className="auth-inputs">

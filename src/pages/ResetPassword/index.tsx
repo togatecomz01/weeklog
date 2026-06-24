@@ -4,6 +4,7 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import AuthLayout from '@/components/AuthLayout'
 import AlertPopup from '@/components/AlertPopup'
+import ArrowIcon from '@/components/icons/ArrowIcon'
 
 function ResetPassword() {
   const navigate = useNavigate()
@@ -41,7 +42,8 @@ function ResetPassword() {
 
   return (
     <AuthLayout
-      title="비밀번호 초기화"
+      title="비밀번호 초기화를 진행할게요."
+      subTitle="비밀번호 재설정을 위해 이메일을 입력하세요"
       footer={
         <Button fullWidth onClick={handleReset} disabled={loading || !email}>
           {loading ? '초기화 중...' : '비밀번호 초기화'}
@@ -59,9 +61,13 @@ function ResetPassword() {
         />
       </div>
 
+      <div className="info-box">
+        <p className="info-txt">비밀번호 초기화 후 로그인 페이지로 이동하여 발급 된 새로운 비밀번호로 로그인해주세요.</p>
+      </div>
+
       <div className="auth-options">
-        <button type="button" className="auth-link" onClick={() => navigate('/login')}>
-          로그인 페이지로 이동
+        <button type="button" className="auth-link arr" onClick={() => navigate('/login')}>
+          로그인 페이지로 이동{<ArrowIcon />}
         </button>
       </div>
 

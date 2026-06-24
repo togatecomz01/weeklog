@@ -1,0 +1,13 @@
+@mixin info-icon($top: 12px, $left:8px) {
+    &::before {
+        content: "";
+        position: absolute;
+        top: $top;
+        left: $left;
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        background: url("../assets/svg/ico_info.svg") no-repeat center center;
+        background-size: contain;
+    }
+}

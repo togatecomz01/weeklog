@@ -12,8 +12,8 @@
 
     &-box {
       width: 335px;
-      padding: 40px 20px 15px;
-      border-radius: 8px;
+      padding: 40px 20px 0;
+      border-radius: 12px;
       background: $color-white;
     }
 
@@ -26,7 +26,7 @@
     }
 
     &-desc {
-      margin: 12px 0 0;
+      margin: 16px 0 0;
       font-size: $font16;
       font-weight: $font-w-r;
       color: $color-text-gray;
@@ -36,7 +36,13 @@
     &-btns {
       display: flex;
       gap: 8px;
-      margin-top: 26px;
+      margin-top: 16px;
+      padding: 20px 0;
+      .btn {
+        width: 100%;
+        padding: 15px 10px;
+        font-weight: $font-w-m;
+      }
     }
 
 }

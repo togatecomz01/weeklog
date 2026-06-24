@@ -1,3 +1,5 @@
+@use '@/styles/mixin' as *;
+
 .mypage {
   height: 100svh;
   display: flex;
@@ -89,5 +91,19 @@
     font-size: $font14;
     font-weight: $font-w-r;
     color: $color-text-gray-light;
+  }
+}
+
+.acc-info-box {
+  position: relative;
+  padding: 12px 8px;
+  border-radius: 4px;
+  background-color: $color-background;
+  @include info-icon();
+  .info-id {
+    padding-left: 28px;
+    font-size: $font14;
+    font-weight: $font-w-m;
+    color: $color-text-black;
   }
 }
