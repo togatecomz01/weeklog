@@ -108,9 +108,17 @@ router.post('/send', requireAuth, async (req, res) => {
   }
 
   // DB에 전송 상태 업데이트
-  if (entry_id && ['done', 'doing', 'todo'].includes(status)) {
-    const col = `sent_${status}` as 'sent_done' | 'sent_doing' | 'sent_todo'
-    await sql`UPDATE entries SET ${sql(col)} = TRUE WHERE id = ${entry_id} AND user_id = ${req.user!.id}`
+  const eid = Number(entry_id)
+  if (eid) {
+    let result
+    if (status === 'done') {
+      result = await sql`UPDATE entries SET sent_done = TRUE WHERE id = ${eid} AND user_id = ${req.user!.id}`
+    } else if (status === 'doing') {
+      result = await sql`UPDATE entries SET sent_doing = TRUE WHERE id = ${eid} AND user_id = ${req.user!.id}`
+    } else if (status === 'todo') {
+      result = await sql`UPDATE entries SET sent_todo = TRUE WHERE id = ${eid} AND user_id = ${req.user!.id}`
+    }
+    console.log(`[swit/send] eid=${eid} uid=${req.user!.id}(${typeof req.user!.id}) status=${status} affected=${result?.count}`)
   }
 
   res.json({ message: '전송 완료', count: items.length })
