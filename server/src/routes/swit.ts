@@ -17,7 +17,7 @@ router.get('/connect', (_req, res) => {
     client_id: process.env.SWIT_CLIENT_ID,
     redirect_uri: process.env.SWIT_REDIRECT_URI,
     response_type: 'code',
-    scope: 'task:write',
+    scope: 'task:write project:read',
   })
   res.redirect(`https://openapi.swit.io/oauth/authorize?${params}`)
 })
@@ -56,9 +56,46 @@ router.get('/callback', async (req, res) => {
   res.send('<p>토큰 발급 완료. 서버 콘솔에서 토큰을 복사해 .env에 저장하세요.</p>')
 })
 
+// 스윗 프로젝트 목록 조회
+router.get('/projects', requireAuth, async (_req, res) => {
+  const token = process.env.SWIT_ACCESS_TOKEN
+  if (!token) {
+    res.status(503).json({ message: 'Swit 연동이 설정되지 않았습니다.' })
+    return
+  }
+
+  const workspaceId = process.env.SWIT_WORKSPACE_ID
+  if (!workspaceId) {
+    res.status(503).json({ message: 'SWIT_WORKSPACE_ID가 .env에 없습니다.' })
+    return
+  }
+
+  const resp = await fetch(`${SWIT_API}/project.list?workspace_id=${workspaceId}&limit=100`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  const text = await resp.text()
+  console.log('[swit/projects] project.list:', text.slice(0, 500))
+
+  if (!resp.ok) {
+    res.status(502).json({ message: `프로젝트 목록 오류 (${resp.status})` })
+    return
+  }
+
+  const data = JSON.parse(text)
+  if (data.code && data.code !== 200) {
+    res.status(502).json({ message: data.message ?? '프로젝트 목록을 가져올 수 없습니다.' })
+    return
+  }
+
+  const projects = (data.data?.projects ?? data.data?.project ?? [])
+    .map((p: any) => ({ id: p.id, name: p.name }))
+
+  res.json(projects)
+})
+
 // 스윗 태스크 전송
 router.post('/send', requireAuth, async (req, res) => {
-  const { title, items, status, entry_id } = req.body
+  const { title, items, status, entry_id, project_id } = req.body
 
   if (!items?.length) {
     res.status(400).json({ message: '보낼 항목이 없습니다.' })
@@ -66,7 +103,8 @@ router.post('/send', requireAuth, async (req, res) => {
   }
 
   const token = process.env.SWIT_ACCESS_TOKEN
-  const channelId = process.env.SWIT_CHANNEL_ID ?? process.env.SWIT_PROJECT_ID
+  const defaultChannelId = process.env.SWIT_CHANNEL_ID ?? process.env.SWIT_PROJECT_ID
+  const channelId = project_id ?? defaultChannelId
 
   if (!token || !channelId) {
     res.status(503).json({ message: 'Swit 연동이 설정되지 않았습니다.' })

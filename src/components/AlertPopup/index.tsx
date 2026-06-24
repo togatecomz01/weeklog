@@ -31,7 +31,7 @@ function AlertPopup({
     <div className={classes}>
       <div className="alert-pop-box">
         <p className="alert-pop-msg">{message}</p>
-        {description && <p className="alert-pop-desc">{description}</p>}
+        {description && <div className="alert-pop-desc">{description}</div>}
         <div className="alert-pop-btns">
           <ButtonContainer>
             <Button variant="secondary" onClick={onCancel}>

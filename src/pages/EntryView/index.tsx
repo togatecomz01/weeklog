@@ -7,6 +7,8 @@ import CompletedTaskCard from '@/components/CompletedTaskCard'
 import CompletedTaskCardList from '@/components/CompletedTaskCard/CompletedTaskCardList'
 import DetailHeader from '@/components/DetailHeader'
 import ScrollTop from '@/components/ScrollTop'
+import Select from '@/components/Select'
+import AlertPopup from '@/components/AlertPopup'
 import { useAuth } from '@/contexts/AuthContext'
 import EntryEditPopup, { type EntryEditForm } from './EntryEditPopup'
 import './EntryView.scss'
@@ -59,6 +61,11 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [error, setError] = useState('')
   const [editOpen, setEditOpen] = useState(false)
   const [sentStatuses, setSentStatuses] = useState<Set<string>>(new Set())
+  const [projectOpen, setProjectOpen] = useState(false)
+  const [projects, setProjects] = useState<{ id: string; name: string }[]>([])
+  const [selectedProject, setSelectedProject] = useState('')
+  const [loadingProjects, setLoadingProjects] = useState(false)
+  const [pendingSend, setPendingSend] = useState<{ status: string; items: string[] } | null>(null)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -92,7 +99,36 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     if (!isAdmin && isEditMode) setEditOpen(true)
   }, [isAdmin, isEditMode])
 
-  async function handleSend(status: string, items: string[]) {
+  async function openProjectPicker(status: string, items: string[]) {
+    setPendingSend({ status, items })
+    setLoadingProjects(true)
+    setProjectOpen(true)
+    try {
+      const res = await fetch('/api/swit/projects', {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) throw new Error('프로젝트 목록을 가져올 수 없습니다.')
+      const data: { id: string; name: string }[] = await res.json()
+      setProjects(data)
+      setSelectedProject(data[0]?.id ?? '')
+    } catch (err: any) {
+      alert(err.message)
+      setProjectOpen(false)
+      setPendingSend(null)
+    } finally {
+      setLoadingProjects(false)
+    }
+  }
+
+  function handleSend(status: string, items: string[]) {
+    openProjectPicker(status, items)
+  }
+
+  async function handleProjectConfirm() {
+    if (!pendingSend || !selectedProject) return
+    setProjectOpen(false)
+    const { status, items } = pendingSend
+    setPendingSend(null)
     try {
       const res = await fetch('/api/swit/send', {
         method: 'POST',
@@ -100,7 +136,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ status, items, entry_id: entry.id }),
+        body: JSON.stringify({ status, items, entry_id: entry!.id, project_id: selectedProject }),
       })
       if (!res.ok) {
         const data = await res.json()
@@ -240,6 +276,28 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           onConfirm={handleConfirm}
         />
       )}
+
+      <AlertPopup
+        open={projectOpen}
+        message="프로젝트를 선택해주세요."
+        description={
+          loadingProjects
+            ? '불러오는 중...'
+            : (
+              <Select
+                className="entry-select"
+                label="프로젝트명"
+                options={projects.map((p) => ({ value: p.id, label: p.name }))}
+                value={selectedProject}
+                onChange={setSelectedProject}
+              />
+            )
+        }
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={handleProjectConfirm}
+        onCancel={() => { setProjectOpen(false); setPendingSend(null) }}
+      />
     </div>
   )
 }
