@@ -1,72 +1,68 @@
 .week-card {
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 10px 20px;
-  border: 1px solid $color-text-gray-light;
-  border-radius: 16px;
+  gap: 20px;
   width: 100%;
+  padding: 10px 20px;
+  background-color: $color-white;
   text-align: left;
 
-  &-clickable { cursor: pointer; }
-
-  &-partial {
-    border-color: #B45309;
-
-    .week-card-status {
-      color: #B45309;
-    }
-  }
-
-  &-sent {
-    border-color: #15803D;
-
-    .week-card-status {
-      color: #15803D;
-    }
-  }
-
-  &-header {
+  &-top {
     display: flex;
     align-items: center;
     gap: 8px;
   }
 
-  &-title {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-    color: $color-text-black;
-    white-space: nowrap;
-  }
-
-  &-status {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    margin-left: auto;
-    color: $color-text-gray-light;
-  }
-
-  &-status-label {
-    font-size: 14px;
-    font-weight: 500;
-    line-height: 1.4;
-  }
-
   &-content {
-    padding-top: 10px;
-
-    p {
-      font-size: 14px;
-      font-weight: 400;
-      line-height: 1.6;
+    display: flex;
+    gap: 12px;
+    padding: 20px 0 7px;
+    border-top: 1px solid $color-border;
+    .tit {
+      width: 70px;
+      font-size: $font14;
+      font-weight: $font-w-sb;
       color: $color-text-black;
+    }
+    p {
       display: -webkit-box;
       -webkit-line-clamp: 3;
       line-clamp: 3;
       -webkit-box-orient: vertical;
       overflow: hidden;
+      font-size: $font14;
+      font-weight: $font-w-r;
+      line-height: 1.5;
+      color: $color-text-gray;
     }
   }
 }
+
+.card {
+  &-icon {
+    flex-shrink: 0;
+    img {
+      display: block;
+      width: 42px;
+      height: 42px;
+    }
+  }
+  &-label {
+    font-size: $font12;
+    font-weight: $font-w-r;
+    color: #666666;
+    line-height: 1.5;
+  }
+  &-week {
+    display: block;
+    margin-bottom: 7px;
+    font-size: $font18;
+    font-weight: $font-w-m;
+    color: $color-text-black;
+  }
+  &-badge-group {
+    display: flex;
+    gap: 7px;
+  }
+}
+

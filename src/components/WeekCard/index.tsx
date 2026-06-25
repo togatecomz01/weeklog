@@ -1,5 +1,8 @@
 import Badge from '@/components/Badge'
 import './WeekCard.scss'
+import unsentIcon from '@/assets/images/unsent.png'
+import partialIcon from '@/assets/images/partial.png'
+import sentIcon from '@/assets/images/sent.png'
 
 type BadgeType = 'normal' | 'important' | 'urgent'
 type SendStatus = 'unsent' | 'partial' | 'sent'
@@ -13,28 +16,36 @@ interface WeekCardProps {
   onClick?: () => void
 }
 
-const STATUS_LABEL: Record<SendStatus, string> = {
-  unsent: '미전송',
-  partial: '일부 전송',
-  sent: '전송완료',
+const STATUS_ICON: Record<SendStatus, string> = {
+  unsent: unsentIcon,
+  partial: partialIcon,
+  sent: sentIcon,
 }
 
 function WeekCard({ week, priority, content, status = 'unsent', className = '', onClick }: WeekCardProps) {
-  const classes = `week-card week-card-${status} ${onClick ? 'week-card-clickable' : ''} ${className}`.trim()
   const cardContent = (
     <>
-      <div className="week-card-header">
-        <span className="week-card-title">week: {week}</span>
-        <Badge type={priority} />
-        <div className="week-card-status">
-          <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 17 17" fill="none">
-            <path d="M15.7501 0.75L7.41675 9.0833" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-            <path d="M15.75 0.75L10.75 15.75L7.41667 9.0833L0.75 5.75L15.75 0.75Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-          </svg>
-          <span className="week-card-status-label">{STATUS_LABEL[status]}</span>
+      <div className="week-card-top">
+        <div className="card-icon">
+          <img
+            src={STATUS_ICON[status]}
+            alt=""
+            aria-hidden="true"
+          />
+        </div>
+        <div className="card-info">
+          <span className="card-label">Week</span>
+
+          <strong className="card-week">{week} 업무일지</strong>
+
+          <div className="card-badge-group">
+            <Badge type={status} />
+            <Badge type={priority} />
+          </div>
         </div>
       </div>
       <div className="week-card-content">
+        <p className="tit">주요업무</p>
         <p>
           {content.split('\n').map((line, i, arr) => (
             <span key={i}>
@@ -49,16 +60,18 @@ function WeekCard({ week, priority, content, status = 'unsent', className = '', 
 
   if (onClick) {
     return (
-      <button type="button" className={classes} onClick={onClick}>
+      <button
+        type="button"
+        className={`week-card ${className}`.trim()}
+        onClick={onClick}
+      >
         {cardContent}
       </button>
     )
   }
 
   return (
-    <div className={classes}>
-      {cardContent}
-    </div>
+    <div className={`week-card ${className}`.trim()}>{cardContent}</div>
   )
 }
 
