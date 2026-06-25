@@ -12,6 +12,7 @@
     border-radius: 50%;
     background: $color-white;
     color: $color-text-gray;
+    z-index: 110;
 
     &-line {
         position: absolute;

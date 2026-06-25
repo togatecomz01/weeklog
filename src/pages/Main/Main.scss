@@ -2,8 +2,6 @@
   padding: 0 20px;
 
   .banner {
-    padding: 20px 0 0;
-  
     &-date {
       margin-bottom: 12px;
       font-size: $font24;
@@ -44,7 +42,7 @@
   &-content {
     flex: 1;
     min-height: 0;
-    padding: 62px 0 95px;
+    padding: 20px 0 95px;
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -56,6 +54,7 @@
     align-items: center;
     justify-content: space-between;
     padding: 20px;
+    border-top: 1px solid $color-border;
     border-bottom: 1px solid $color-border;
     border-radius: 20px 20px 0 0;
     background-color: $color-white;
@@ -64,7 +63,6 @@
   }
 
   &-section-title {
-    border-top: 1px solid $color-border;
     font-size: $font16;
     font-weight: $font-w-sb;
     color: $color-text-black;
