@@ -10,6 +10,7 @@ import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
 import ScrollTop from '@/components/ScrollTop'
 import Textarea from '@/components/Textarea'
+import AccInfoBox from '@/components/AccInfoBox'
 import { useAuth } from '@/contexts/AuthContext'
 import './Entry.scss'
 
@@ -118,10 +119,11 @@ function Entry() {
         <h2 className="entry-title">작성정보</h2>
           <div className="entry-form">
             <div className="acc-info-box">
-              <ul className="acc-info">
-                <li className="name">{user?.name ?? ''}</li>
-                <li className="depart">{user?.department ?? ''}</li>
-              </ul>
+              <AccInfoBox
+                type="user"
+                tit={user?.name ?? ''}
+                subTit={user?.department ?? ''}
+              />
             </div>
             <Input
               id="entry-write-date"
