@@ -43,6 +43,10 @@
   &-sent-icon {
     display: flex;
     align-items: center;
+    gap: 6px;
+    color: $color-primary;
+    font-size: $font14;
+    font-weight: $font-w-m;
   }
 
   &-items {

@@ -32,6 +32,7 @@ function CompletedTaskCard({ title, status, sent = false, items, onSend, classNa
           sent ? (
             <span className="completed-task-card-sent-icon">
               <CheckCircleSolidIcon />
+              전송 완료
             </span>
           ) : (
             <button className="completed-task-card-send-btn" onClick={onSend}>
