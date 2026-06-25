@@ -8,6 +8,7 @@ import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
 import { useEntries } from '@/hooks/useEntries'
+import { useAuth } from '@/contexts/AuthContext'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -32,6 +33,7 @@ function Main() {
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
   const { entries, loading, loadingMore, error, hasMore, loadMore } = useEntries()
+  const { user } = useAuth()
 
   const filteredEntries =
     filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
@@ -44,7 +46,7 @@ function Main() {
         <div className="main-banner">
           <p className="main-banner-date">{formatDate()}</p>
           <p className="main-banner-text">
-            업무일지를 작성하고<br />진행 현황을 확인하세요.
+            {user?.name}님, 안녕하세요!<br />업무일지를 작성하고 진행 현황을 확인하세요.
           </p>
           <button className="main-banner-btn" type="button" onClick={() => navigate('/entry')}>
             등록하러 가기
