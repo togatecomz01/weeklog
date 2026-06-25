@@ -16,43 +16,6 @@
     overflow-y: auto;
   }
 
-  &-banner {
-    position: relative;
-    background-color: $color-primary;
-    border-radius: 16px;
-    padding: 20px;
-    color: $color-white;
-    min-height: 148px;
-
-    &-date {
-      font-size: $font12;
-      font-weight: $font-w-b;
-      margin-bottom: 10px;
-    }
-
-    &-text {
-      font-size: $font20;
-      font-weight: $font-w-b;
-      line-height: 1.4;
-    }
-
-    &-btn {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      background: $color-white;
-      border-radius: 10px;
-      padding: 8px 12px;
-      font-size: $font12;
-      font-weight: $font-w-sb;
-      color: $color-text-gray;
-      cursor: pointer;
-      white-space: nowrap;
-      font-family: inherit;
-      line-height: 1.4;
-    }
-  }
-
   &-section {
     display: flex;
     flex-direction: column;
@@ -82,4 +45,30 @@
     padding: 40px 0;
   }
 
+}
+
+.banner {
+  padding: 20px 0 0;
+
+  &-date {
+    margin-bottom: 12px;
+    font-size: $font24;
+    font-weight: $font-w-b;
+    color: $color-text-black;
+  }
+
+  &-text {
+    font-size: $font16;
+    font-weight: $font-w-r;
+    color: $color-text-gray-light;
+  }
+
+  &-btn {
+    margin-top: 24px;
+    border-radius: 44px;
+    padding: 15px 12px 16px;
+    font-size: $font18;
+    font-weight: $font-w-sb;
+    box-shadow: 1px 2px 10px 0 rgba(0, 0, 0, 0.20);
+  }
 }

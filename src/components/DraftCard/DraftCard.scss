@@ -1,0 +1,22 @@
+.draft-card {
+    width: 100%;
+    padding: 20px;
+    margin: 16px 0 0;
+    border-radius: 16px;
+    background: url("../../assets/images/draft.png") no-repeat right center / contain;
+
+    &-btn {
+        display: inline-flex;
+        align-items: center;
+        margin-bottom: 12px;
+        font-size: $font16;
+        font-weight: $font-w-b;
+        color: $color-text-black;
+    }
+
+    &-date {
+        font-size: $font14;
+        font-weight: $font-w-r;
+        color: $color-text-gray;
+    }
+}
