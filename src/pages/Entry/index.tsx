@@ -190,15 +190,15 @@ function Entry() {
           </div>
         </section>
 
-        <ButtonContainer>
-          <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-            취소
-          </Button>
-          <Button type="button" disabled={!isValid || loading} onClick={handleSubmit}>
-            {loading ? '등록 중...' : '등록'}
-          </Button>
-        </ButtonContainer>
       </main>
+      <ButtonContainer>
+        <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
+          임시저장
+        </Button>
+        <Button type="button" disabled={!isValid || loading} onClick={handleSubmit}>
+          {loading ? '등록 중...' : '등록'}
+        </Button>
+      </ButtonContainer>
       <ScrollTop scrollTargetRef={contentRef} />
       <BottomNav active="register" />
     </div>

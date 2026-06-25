@@ -2,18 +2,21 @@
 
 .entry {
     max-width: 480px;
-    padding: 0 0 80px;
+    height: 100vh;
+    height: 100svh;
+    height: 100dvh;
     margin: 0 auto;
+    overflow: hidden;
     &-content {
         display: flex;
         flex-direction: column;
         gap: 32px;
         width: 100%;
         max-width: 480px;
-        min-height: 0;
-        height: calc(100svh - 75px);
-        padding: 20px 20px 80px;
-        margin: 0 auto;
+        height: calc(100vh - 225px);
+        height: calc(100svh - 225px);
+        height: calc(100dvh - 225px);
+        padding: 20px 20px 32px;
         overflow-y: auto;
     }
     &-section {
@@ -21,7 +24,7 @@
         width: 100%;
         &+.entry-section {
             padding-top: 32px;
-            border-top: 1px solid $color-border-strong;
+            border-top: 1px solid $color-border;
         }
         &+.button-container {
             margin-top: 10px;
@@ -38,6 +41,17 @@
         font-size: $font18;
         font-weight: $font-w-sb;
         color: $color-text-gray;
+    }
+    > .button-container {
+        position: fixed;
+        left: 50%;
+        bottom: 75px;
+        z-index: 90;
+        width: 100%;
+        max-width: 480px;
+        padding: 0 20px 30px;
+        background: $color-white;
+        transform: translateX(-50%);
     }
 }
 
