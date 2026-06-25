@@ -9,17 +9,32 @@
   white-space: nowrap;
 
   &-normal {
-    background: #F3F4F6;
-    color: #4B5563;
+    background: #F4F4F5;
+    color: $color-text-gray;
   }
 
   &-important {
-    background: #FEF3C7;
-    color: #B45309;
+    background: #E6F0FD;
+    color: $color-primary;
   }
 
   &-urgent {
-    background: #FEE2E2;
-    color: #B91C1C;
+    background: #FFE7E7;
+    color: #F00;
+  }
+
+  &-urgent {
+    background: #FF4C4E;
+    color: $color-white;
+  }
+
+  &-partial {
+    background: #FCA335;
+    color: $color-white;
+  }
+
+  &-sent {
+    background: #228DF5;
+    color: $color-white;
   }
 }
