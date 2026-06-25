@@ -5,27 +5,27 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  height: 75px;
+  padding: 15px 40px;
+  // height: 75px;
   background: #fff;
   border-top: 1px solid $color-border-strong;
   display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 54px;
+  justify-content: space-between;
   z-index: 100;
 
   &-item {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
+    gap: 8px;
     background: none;
     border: none;
     cursor: pointer;
     padding: 0;
     color: $color-text-gray-9;
     font-size: $font12;
-    font-weight: $font-w-b;
+    font-weight: $font-w-sb;
     font-family: inherit;
 
     &-active {
