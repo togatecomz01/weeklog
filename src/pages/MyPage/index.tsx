@@ -76,7 +76,7 @@ function MyPage() {
           <div className="user-info">
             <div>
               <span className="username">{user?.name ?? ''}</span>
-              <span className="user-position">{user?.department ?? ''}</span>
+              <span className="user-position">{user?.position ?? ''}</span>
             </div>
             <Button variant="primary" logout onClick={() => { logout(); navigate('/login') }}>
               로그아웃

@@ -17,7 +17,7 @@ router.get('/connect', (_req, res) => {
     client_id: process.env.SWIT_CLIENT_ID,
     redirect_uri: process.env.SWIT_REDIRECT_URI,
     response_type: 'code',
-    scope: 'task:write project:read',
+    scope: 'task:write task:read project:read',
   })
   res.redirect(`https://openapi.swit.io/oauth/authorize?${params}`)
 })
@@ -54,6 +54,33 @@ router.get('/callback', async (req, res) => {
   console.log('========================\n')
 
   res.send('<p>토큰 발급 완료. 서버 콘솔에서 토큰을 복사해 .env에 저장하세요.</p>')
+})
+
+// 프로젝트 내 태스크에서 status_id 목록 추출
+router.get('/status-ids', requireAuth, async (req, res) => {
+  const token = process.env.SWIT_ACCESS_TOKEN
+  const projectId = String(req.query.project_id ?? '')
+  if (!token || !projectId) {
+    res.status(400).json({ message: 'token 또는 project_id 없음' })
+    return
+  }
+  const resp = await fetch(`${SWIT_API}/task.list?project_id=${projectId}&limit=100`, {
+    headers: { Authorization: `Bearer ${token}` },
+  })
+  const text = await resp.text()
+  console.log('[swit/status-ids] task.list:', text.slice(0, 800))
+  try {
+    const data = JSON.parse(text)
+    const tasks = data?.data?.tasks ?? data?.data?.task ?? []
+    const seen = new Map<string, object>()
+    for (const t of tasks) {
+      const sc = t.status_custom
+      if (sc?.status_id && !seen.has(sc.status_id)) seen.set(sc.status_id, sc)
+    }
+    res.json([...seen.values()])
+  } catch {
+    res.status(502).json({ message: 'task.list 파싱 실패', raw: text.slice(0, 200) })
+  }
 })
 
 // 스윗 프로젝트 목록 조회

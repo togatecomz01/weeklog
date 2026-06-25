@@ -15,7 +15,7 @@ router.post('/login', async (req, res) => {
   }
 
   const [user] = await sql`
-    SELECT id, email, name, role, department, password_hash
+    SELECT id, email, name, role, department, position, password_hash
     FROM users
     WHERE email = ${email}
   `
@@ -39,7 +39,7 @@ router.post('/login', async (req, res) => {
 
   res.json({
     token,
-    user: { id: user.id, name: user.name, email: user.email, role: user.role, department: user.department },
+    user: { id: user.id, name: user.name, email: user.email, role: user.role, department: user.department, position: user.position },
   })
 })
 
