@@ -190,7 +190,6 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const createdDate = entry.created_at.slice(0, 10).replace(/-/g, '.')
 
   const detailInfo = [
-    { label: '주차', value: week },
     { label: '작성일자', value: createdDate },
     { label: '작성자', value: entry.user_name ?? '-' },
     { label: '부서', value: entry.department },
@@ -221,20 +220,23 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
       <DetailHeader title="업무일지 상세" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
 
       <main ref={contentRef} className="entry-content">
-        <section className="entry-section view-info">
-          {detailInfo.map(({ label, value }) => (
-            <div className="view-row" key={label}>
-              <strong className="view-label">{label}</strong>
-              <span className="view-value">{value}</span>
+        <section className="entry-view-section">
+          <h2 className="entry-title">작성정보</h2>
+          <div className="view-info">
+            {detailInfo.map(({ label, value }) => (
+              <div className="view-row" key={label}>
+                <strong className="view-label">{label}</strong>
+                <span className="view-value">{value}</span>
+              </div>
+            ))}
+            <div className="view-row">
+              <strong className="view-label">중요도</strong>
+              <span className="view-value"><Badge type={priority} /></span>
             </div>
-          ))}
-          <div className="view-row">
-            <strong className="view-label">중요도</strong>
-            <span className="view-value"><Badge type={priority} /></span>
           </div>
         </section>
 
-        <section className="entry-view-work">
+        <section className="entry-view-section-work">
           <h2 className="entry-title">업무내용</h2>
           <CompletedTaskCardList>
             {workBlocks.map(({ title, status, items }, index) => (

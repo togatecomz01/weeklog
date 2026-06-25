@@ -6,7 +6,7 @@
     max-width: 480px;
     height: 100svh;
     margin: 0 auto;
-    background: $color-white;
+    background: $color-background;
     color: $color-text-black;
     overflow: hidden;
 
@@ -16,8 +16,8 @@
         flex: 1;
         width: 100%;
         min-height: 0;
-        padding: 10px 20px 20px;
-        gap: 20px;
+        padding: 20px 0;
+        gap: 30px;
         overflow-y: auto;
     }
 
@@ -37,48 +37,63 @@
     .scroll-top {
         bottom: 97px;
     }
+
+    &-section {
+        display: block;
+        width: 100%;
+        padding: 0 20px;
+
+        &-work {
+            display: block;
+            width: 100%;
+            padding: 30px 20px;
+            background-color: $color-white;
+        }
+    }
 }
+
 .view {
     &-info {
         display: block;
         width: 100%;
-        padding: 20px 16px;
-        border: 1px solid $color-border-strong;
-        border-radius: 10px;
+        padding: 10px 20px;
+        border-radius: 12px;
         background: $color-white;
     }
 
     &-row {
         width: 100%;
-        padding: 10px 0;
-        & + .entry-view-row {
+        padding: 16px 0;
+
+        &+.entry-view-row {
             margin-top: 22px;
         }
     }
-    
+
     &-label {
         display: inline-block;
         width: 65px;
         font-size: $font14;
-        font-weight: $font-w-b;
-        color: $color-text-black;
+        font-weight: $font-w-l;
+        color: $color-text-gray;
         text-align: left;
     }
 
     &-value {
         display: inline-block;
         width: calc(100% - 65px);
-        font-size: $font16;
-        font-weight: $font-w-r;
+        font-size: $font14;
+        font-weight: $font-w-m;
         color: $color-text-gray;
         text-align: right;
         word-break: keep-all;
         overflow-wrap: anywhere;
 
         .badge {
-            padding: 3px 8px;
-            border-radius: 9px;
+            padding: 4px 8px;
+            border-radius: 4px;
             font-size: $font14;
+            font-weight: $font-w-m;
             line-height: 1.4;
         }
     }
