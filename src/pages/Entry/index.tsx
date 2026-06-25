@@ -1,6 +1,6 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import BottomNav from '@/components/BottomNav'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
@@ -49,6 +49,7 @@ function getWeekInfo(dateStr: string) {
 
 function Entry() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
   const contentRef = useRef<HTMLElement | null>(null)
   const { user, token } = useAuth()
   const [form, setForm] = useState({
@@ -62,6 +63,49 @@ function Entry() {
   })
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [draftLoading, setDraftLoading] = useState(false)
+  const [hasDraft, setHasDraft] = useState(false)
+
+  const draftId = searchParams.get('draftId')
+
+  function applyDraft(draft: Record<string, string>) {
+    setForm({
+      writeDate: draft.write_date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
+      title: draft.title ?? '',
+      priority: (draft.priority as Priority) ?? '보통',
+      completedWork: draft.completed_work ?? '',
+      progressWork: draft.ongoing_work ?? '',
+      nextWork: draft.next_week_plan ?? '',
+      note: draft.notes ?? '',
+    })
+  }
+
+  useEffect(() => {
+    if (!token) return
+    if (draftId) {
+      setDraftLoading(true)
+      fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => res.ok ? res.json() : null)
+        .then((draft) => { if (draft) applyDraft(draft) })
+        .finally(() => setDraftLoading(false))
+    } else {
+      fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+        .then((res) => res.ok ? res.json() : null)
+        .then((draft) => setHasDraft(Boolean(draft)))
+    }
+  }, [token, draftId])
+
+  async function handleLoadDraft() {
+    if (!token) return
+    setDraftLoading(true)
+    try {
+      const res = await fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+      const draft = res.ok ? await res.json() : null
+      if (draft) { applyDraft(draft); setHasDraft(false) }
+    } finally {
+      setDraftLoading(false)
+    }
+  }
 
   function handleChange(field: keyof typeof form) {
     return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -70,6 +114,38 @@ function Entry() {
   }
 
   const isValid = Boolean(form.writeDate.trim() && form.title.trim())
+
+  async function handleDraftSave() {
+    if (!token) return
+    setLoading(true)
+    try {
+      const res = await fetch('/api/drafts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          write_date: form.writeDate,
+          title: form.title,
+          priority: form.priority,
+          completed_work: form.completedWork,
+          ongoing_work: form.progressWork,
+          next_week_plan: form.nextWork,
+          notes: form.note,
+        }),
+      })
+      if (!res.ok) {
+        setError('임시저장에 실패했습니다.')
+        return
+      }
+      navigate('/main', { replace: true })
+    } catch {
+      setError('서버에 연결할 수 없습니다.')
+    } finally {
+      setLoading(false)
+    }
+  }
 
   async function handleSubmit() {
     if (!isValid) return
@@ -103,6 +179,12 @@ function Entry() {
         return
       }
 
+      // 등록 성공 시 임시저장 삭제
+      await fetch('/api/drafts', {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+
       navigate('/main', { replace: true })
     } catch {
       setError('서버에 연결할 수 없습니다.')
@@ -111,12 +193,21 @@ function Entry() {
     }
   }
 
+  if (draftLoading) {
+    return (
+      <div className="entry">
+        <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
+        <main ref={contentRef} className="entry-content" />
+      </div>
+    )
+  }
+
   return (
     <div className="entry">
       <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
       <main ref={contentRef} className="entry-content">
         <section className="entry-section">
-        <h2 className="entry-title">작성정보</h2>
+          <h2 className="entry-title">작성정보</h2>
           <div className="entry-form">
             <div className="acc-info-box">
               <AccInfoBox
@@ -194,9 +285,15 @@ function Entry() {
 
       </main>
       <ButtonContainer>
-        <Button type="button" variant="secondary" onClick={() => navigate(-1)}>
-          임시저장
-        </Button>
+        {hasDraft && !draftId ? (
+          <Button type="button" variant="secondary" disabled={draftLoading} onClick={handleLoadDraft}>
+            임시저장<br />불러오기
+          </Button>
+        ) : (
+          <Button type="button" variant="secondary" disabled={loading} onClick={handleDraftSave}>
+            임시저장
+          </Button>
+        )}
         <Button type="button" disabled={!isValid || loading} onClick={handleSubmit}>
           {loading ? '등록 중...' : '등록'}
         </Button>
