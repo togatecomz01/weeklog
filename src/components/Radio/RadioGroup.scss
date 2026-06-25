@@ -3,12 +3,11 @@
     flex-direction: column;
     gap: 12px;
     &-label {
-        display: flex;
-        align-items: center;
-        gap: 2px;
+        display: block;
         font-size: $font14;
-        font-weight: $font-w-b;
-        color: $color-text-black;
+        font-weight: $font-w-sb;
+        color: $color-text-gray-light;
+        margin-bottom: 8px;
     }
     &-required {
         font-size: $font14;

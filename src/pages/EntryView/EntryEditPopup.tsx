@@ -4,8 +4,8 @@ import FullPopup from '@/components/FullPopup'
 import Input from '@/components/Input'
 import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
-import Select from '@/components/Select'
 import Textarea from '@/components/Textarea'
+import AccInfoBox from '@/components/AccInfoBox'
 import '../Entry/Entry.scss'
 
 export interface EntryEditForm {
@@ -27,13 +27,6 @@ interface EntryEditPopupProps {
   onConfirm: (form: EntryEditForm) => void
 }
 
-const DEPARTMENT_OPTIONS = [
-  { value: 'planning', label: '기획팀' },
-  { value: 'development', label: '개발팀' },
-  { value: 'operation', label: '운영팀' },
-  { value: 'design', label: '디자인' },
-]
-
 const PRIORITY_OPTIONS = [
   { value: 'normal', label: '보통' },
   { value: 'important', label: '중요' },
@@ -52,12 +45,6 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
   function handleChange(field: keyof EntryEditForm) {
     return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }))
-    }
-  }
-
-  function handleSelectChange(field: keyof EntryEditForm) {
-    return (value: string) => {
-      setForm((prev) => ({ ...prev, [field]: value }))
     }
   }
 
@@ -82,32 +69,18 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
     >
       <section className="entry-section">
         <div className="entry-form">
-          <Input
-            id="edit-write-date"
-            type="date"
-            label="작성일자"
-            value={form.writeDate}
-            onChange={handleChange('writeDate')}
-            disabled
-            required
+          <div className="acc-info-box">
+          <AccInfoBox
+            type="user"
+            tit={form.writer}
+            subTit={form.department}
           />
-          <Input
-            id="edit-writer"
-            label="작성자"
-            value={form.writer}
-            onChange={handleChange('writer')}
-            disabled
-            required
-          />
-          <Select
-            className="entry-select"
-            label="부서"
-            options={DEPARTMENT_OPTIONS}
-            value={form.department}
-            onChange={handleSelectChange('department')}
-            disabled
-            required
-          />
+            <AccInfoBox
+              type="date"
+              tit="작성일자"
+              subTit={form.writeDate}
+            />
+          </div>
           <Input
             id="edit-title"
             label="제목"
