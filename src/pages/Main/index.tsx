@@ -10,6 +10,7 @@ import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
 import DraftCard from '@/components/DraftCard'
 import { useEntries } from '@/hooks/useEntries'
+import { useAuth } from '@/contexts/AuthContext'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -40,6 +41,7 @@ function Main() {
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
   const { entries, loading, loadingMore, error, hasMore, loadMore } = useEntries()
+  const { user } = useAuth()
 
   const filteredEntries =
     filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
