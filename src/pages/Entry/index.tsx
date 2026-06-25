@@ -207,7 +207,7 @@ function Entry() {
       <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
       <main ref={contentRef} className="entry-content">
         <section className="entry-section">
-        <h2 className="entry-title">작성정보</h2>
+          <h2 className="entry-title">작성정보</h2>
           <div className="entry-form">
             <div className="acc-info-box">
               <AccInfoBox
@@ -287,7 +287,7 @@ function Entry() {
       <ButtonContainer>
         {hasDraft && !draftId ? (
           <Button type="button" variant="secondary" disabled={draftLoading} onClick={handleLoadDraft}>
-            임시저장 불러오기
+            임시저장<br />불러오기
           </Button>
         ) : (
           <Button type="button" variant="secondary" disabled={loading} onClick={handleDraftSave}>
