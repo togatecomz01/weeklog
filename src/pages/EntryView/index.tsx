@@ -158,9 +158,43 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     }
   }
 
-  function handleConfirm(form: EntryEditForm) {
-    console.log('저장:', form)
-    handleEditClose()
+  const PRIORITY_TO_KO: Record<string, string> = {
+    normal: '보통',
+    important: '중요',
+    high: '긴급',
+  }
+
+  async function handleConfirm(form: EntryEditForm) {
+    if (!id || !token) return
+    try {
+      const res = await fetch(`/api/entries/${id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          title: form.title,
+          priority: PRIORITY_TO_KO[form.priority] ?? form.priority,
+          completed_work: form.completedWork,
+          ongoing_work: form.progressWork,
+          next_week_plan: form.nextWork,
+          notes: form.note,
+        }),
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        alert(data.message ?? '수정 실패')
+        return
+      }
+      const updated = await fetch(`/api/entries/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (updated.ok) setEntry(await updated.json())
+      handleEditClose()
+    } catch {
+      alert('서버에 연결할 수 없습니다.')
+    }
   }
 
   if (loading) {

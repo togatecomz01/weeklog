@@ -113,13 +113,13 @@ router.put('/:id', requireAuth, requireRole('user'), async (req, res) => {
 
   await sql`
     UPDATE entries SET
-      priority       = COALESCE(${priority}, priority),
-      department     = COALESCE(${department}, department),
-      title          = COALESCE(${title}, title),
-      completed_work = COALESCE(${completed_work}, completed_work),
-      ongoing_work   = COALESCE(${ongoing_work}, ongoing_work),
-      next_week_plan = COALESCE(${next_week_plan}, next_week_plan),
-      notes          = COALESCE(${notes}, notes),
+      priority       = COALESCE(${priority ?? null}, priority),
+      department     = COALESCE(${department ?? null}, department),
+      title          = COALESCE(${title ?? null}, title),
+      completed_work = COALESCE(${completed_work ?? null}, completed_work),
+      ongoing_work   = COALESCE(${ongoing_work ?? null}, ongoing_work),
+      next_week_plan = COALESCE(${next_week_plan ?? null}, next_week_plan),
+      notes          = COALESCE(${notes ?? null}, notes),
       updated_at     = NOW()
     WHERE id = ${req.params.id}
   `
