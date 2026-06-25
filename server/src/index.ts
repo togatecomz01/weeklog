@@ -5,6 +5,7 @@ import sql from './db.js'
 import authRouter from './routes/auth.js'
 import entriesRouter from './routes/entries.js'
 import switRouter from './routes/swit.js'
+import draftsRouter from './routes/drafts.js'
 
 const app = express()
 const PORT = Number(process.env.PORT) || 3000
@@ -15,6 +16,7 @@ app.use(express.json())
 app.use('/api/auth', authRouter)
 app.use('/api/entries', entriesRouter)
 app.use('/api/swit', switRouter)
+app.use('/api/drafts', draftsRouter)
 
 app.get('/api/health', async (_req, res) => {
   try {

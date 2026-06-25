@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
+import { useEntries } from '@/hooks/useEntries'
 import WeekCard from '@/components/WeekCard'
 import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
@@ -10,7 +11,6 @@ import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
 import DraftCard from '@/components/DraftCard'
-import { useEntries } from '@/hooks/useEntries'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
 
@@ -30,17 +30,26 @@ const FILTER_OPTIONS = [
 //   return `${year}.${month}.${day} ${days[now.getDay()]}`
 // }
 
-const draft = {
-  id: 1,
-  savedAt: '2026.06.18 15:53',
-}
-
 function Main() {
   const navigate = useNavigate()
-  const { user } = useAuth()
+  const { user, token } = useAuth()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
   const { entries, loading, loadingMore, error, hasMore, loadMore } = useEntries()
+  const [draft, setDraft] = useState<{ id: number; savedAt: string } | null>(null)
+
+  useEffect(() => {
+    if (!token) return
+    fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+      .then((res) => res.ok ? res.json() : null)
+      .then((data) => {
+        if (!data) return
+        const saved = new Date(data.saved_at)
+        const pad = (n: number) => String(n).padStart(2, '0')
+        const savedAt = `${saved.getFullYear()}.${pad(saved.getMonth() + 1)}.${pad(saved.getDate())} ${pad(saved.getHours())}:${pad(saved.getMinutes())}`
+        setDraft({ id: data.id, savedAt })
+      })
+  }, [token])
 
   const filteredEntries =
     filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
