@@ -5,19 +5,19 @@
   transform: translateX(-50%);
   width: 100%;
   max-width: 480px;
-  height: 68px;
+  height: 62px;
   background: $color-white;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 16px 20px;
   z-index: 100;
 
   &-left {
     display: inline-flex;
     align-items: center;
 
-    img { display: block; width: 88px; height: 30px; object-fit: contain; }
+    img { display: block; width: 89px; height: 30px; object-fit: contain; }
   }
 
   &-right {

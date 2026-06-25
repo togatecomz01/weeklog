@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 import WeekCard from '@/components/WeekCard'
 import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
@@ -7,6 +8,7 @@ import Button from '@/components/Button'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
+import DraftCard from '@/components/DraftCard'
 import { useEntries } from '@/hooks/useEntries'
 import './Main.scss'
 import logo from '@/assets/images/logo.png'
@@ -18,17 +20,23 @@ const FILTER_OPTIONS = [
   { value: 'urgent', label: '긴급' },
 ]
 
-function formatDate() {
-  const now = new Date()
-  const year = now.getFullYear()
-  const month = String(now.getMonth() + 1).padStart(2, '0')
-  const day = String(now.getDate()).padStart(2, '0')
-  const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
-  return `${year}.${month}.${day} ${days[now.getDay()]}`
+// function formatDate() {
+//   const now = new Date()
+//   const year = now.getFullYear()
+//   const month = String(now.getMonth() + 1).padStart(2, '0')
+//   const day = String(now.getDate()).padStart(2, '0')
+//   const days = ['일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일']
+//   return `${year}.${month}.${day} ${days[now.getDay()]}`
+// }
+
+const draft = {
+  id: 1,
+  savedAt: '2026.06.18 15:53',
 }
 
 function Main() {
   const navigate = useNavigate()
+  const { user } = useAuth()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
   const { entries, loading, loadingMore, error, hasMore, loadMore } = useEntries()
@@ -41,14 +49,19 @@ function Main() {
       <AppHeader left={<img src={logo} alt="weeklog" />} />
 
       <div ref={contentRef} className="main-content">
-        <div className="main-banner">
-          <p className="main-banner-date">{formatDate()}</p>
-          <p className="main-banner-text">
-            업무일지를 작성하고<br />진행 현황을 확인하세요.
-          </p>
-          <button className="main-banner-btn" type="button" onClick={() => navigate('/entry')}>
-            등록하러 가기
-          </button>
+        <div>
+          <div className="banner">
+            <p className="banner-date">안녕하세요! {user?.name ?? '사용자'}님.</p>
+            <p className="banner-text">업무일지를 작성하고 진행 현황을 확인하세요.</p>
+            <Button className="banner-btn" fullWidth type="button" onClick={() => navigate('/entry')}>업무일지 쓰러가기</Button>
+          </div>
+
+          {draft && (
+            <DraftCard
+              savedAt={draft.savedAt}
+              onClick={() => navigate(`/entry?draftId=${draft.id}`)}
+            />
+          )}
         </div>
 
         <div className="main-section">

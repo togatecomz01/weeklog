@@ -117,7 +117,7 @@ function Entry() {
         <section className="entry-section">
         <h2 className="entry-title">작성정보</h2>
           <div className="entry-form">
-          <div className="acc-info-box">
+            <div className="acc-info-box">
               <ul className="acc-info">
                 <li className="name">{user?.name ?? ''}</li>
                 <li className="depart">{user?.department ?? ''}</li>
