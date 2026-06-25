@@ -1,3 +1,38 @@
+.intro-section  {
+  padding: 0 20px;
+
+  .banner {
+    padding: 20px 0 0;
+  
+    &-date {
+      margin-bottom: 12px;
+      font-size: $font24;
+      font-weight: $font-w-b;
+      color: $color-text-black;
+    }
+  
+    &-text {
+      font-size: $font16;
+      font-weight: $font-w-r;
+      color: $color-text-gray-light;
+    }
+  
+    &-btn {
+      margin-top: 24px;
+      border-radius: 44px;
+      padding: 15px 12px 16px;
+      font-size: $font18;
+      font-weight: $font-w-sb;
+      box-shadow: 1px 2px 10px 0 rgba(0, 0, 0, 0.20);
+    }
+  }
+  
+  &:not(:has(.draft-card)) {
+    &+ .main-section {
+        margin-top: 20px;
+    }
+  }
+}
 .main {
   height: 100svh;
   display: flex;
@@ -9,33 +44,62 @@
   &-content {
     flex: 1;
     min-height: 0;
-    padding: 68px 20px 95px;
+    padding: 62px 0 95px;
     display: flex;
     flex-direction: column;
     gap: 20px;
     overflow-y: auto;
   }
 
-  &-section {
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-
   &-section-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: 20px;
+    border-bottom: 1px solid $color-border;
+    border-radius: 20px 20px 0 0;
+    background-color: $color-white;
+    box-shadow: 0 -4px 16px 0 rgba(0, 0, 0, 0.10);
+
   }
 
   &-section-title {
+    border-top: 1px solid $color-border;
     font-size: $font16;
-    font-weight: $font-w-b;
+    font-weight: $font-w-sb;
     color: $color-text-black;
   }
 
   &-filter {
-    width: 134px;
+    position: relative;
+    width: auto;
+    .select-btn {
+      gap: 4px;
+      padding: 0;
+      border: 0;
+      border-radius: 0;
+      &.is-selected {
+        color: $color-text-gray;
+      }
+    }
+    .select-arrow {
+      width: 16px;
+      height: 16px;
+    }
+    .select-list {
+      position: absolute;
+      right: 0;
+      width: 90px;
+      border: 0;
+      border-radius: 12px;
+      box-shadow: 1px 2px 10px 0 rgba(0, 0, 0, 0.15);
+    }
+    .select-option:hover,
+    .select-option.is-selected {
+      background: transparent;
+      font-weight: $font-w-sb;
+      color: $color-primary;
+    }
   }
 
   &-empty {
@@ -45,30 +109,10 @@
     padding: 40px 0;
   }
 
-}
-
-.banner {
-  padding: 20px 0 0;
-
-  &-date {
-    margin-bottom: 12px;
-    font-size: $font24;
-    font-weight: $font-w-b;
-    color: $color-text-black;
+  .more-btn {
+    margin: 16px 20px 0;
+    background-color: $color-border;
+    color: $color-text-gray;
   }
 
-  &-text {
-    font-size: $font16;
-    font-weight: $font-w-r;
-    color: $color-text-gray-light;
-  }
-
-  &-btn {
-    margin-top: 24px;
-    border-radius: 44px;
-    padding: 15px 12px 16px;
-    font-size: $font18;
-    font-weight: $font-w-sb;
-    box-shadow: 1px 2px 10px 0 rgba(0, 0, 0, 0.20);
-  }
 }

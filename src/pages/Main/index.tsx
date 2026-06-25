@@ -5,6 +5,7 @@ import WeekCard from '@/components/WeekCard'
 import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
 import Button from '@/components/Button'
+import ButtonContainer from '@/components/ButtonContainer'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
@@ -49,7 +50,7 @@ function Main() {
       <AppHeader left={<img src={logo} alt="weeklog" />} />
 
       <div ref={contentRef} className="main-content">
-        <div>
+        <div className="intro-section">
           <div className="banner">
             <p className="banner-date">안녕하세요! {user?.name ?? '사용자'}님.</p>
             <p className="banner-text">업무일지를 작성하고 진행 현황을 확인하세요.</p>
@@ -66,7 +67,7 @@ function Main() {
 
         <div className="main-section">
           <div className="main-section-header">
-            <h2 className="main-section-title">내 업무일지</h2>
+            <h2 className="main-section-title">MY 업무일지</h2>
             <Select
               options={FILTER_OPTIONS}
               value={filter}
@@ -97,11 +98,13 @@ function Main() {
                 <p className="main-empty">업무일지가 없습니다.</p>
               )}
 
-              {hasMore && (
-                <Button variant="secondary" fullWidth onClick={loadMore} disabled={loadingMore}>
-                  {loadingMore ? '불러오는 중...' : '더보기'}
-                </Button>
-              )}
+              <ButtonContainer>
+                {hasMore && (
+                  <Button className="more-btn" fullWidth onClick={loadMore} disabled={loadingMore}>
+                    {loadingMore ? '불러오는 중...' : '더보기'}
+                  </Button>
+                )}
+              </ButtonContainer>
             </>
           )}
         </div>

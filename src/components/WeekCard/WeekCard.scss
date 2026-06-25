@@ -5,7 +5,12 @@
   width: 100%;
   padding: 10px 20px;
   background-color: $color-white;
+  border-bottom: 8px solid #F7F8FA;
   text-align: left;
+
+  &:last-child {
+    border-bottom: 0;
+  }
 
   &-top {
     display: flex;
