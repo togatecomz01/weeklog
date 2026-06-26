@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react'
 import { useEntries } from '@/hooks/useEntries'
+import { useNavigate } from 'react-router-dom'
 import AppHeader from '@/components/AppHeader'
 import BottomNav from '@/components/BottomNav'
 import Button from '@/components/Button'
@@ -42,6 +43,7 @@ function formatUpdateTime() {
 }
 
 function Admin() {
+  const navigate = useNavigate()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [updateTime, setUpdateTime] = useState(formatUpdateTime)
   const [activeTab, setActiveTab] = useState<TabType>('all')
@@ -56,7 +58,7 @@ function Admin() {
 
   return (
     <div className="admin">
-      <AppHeader left={<img src={logo} alt="weeklog" />} />
+      <AppHeader left={<img src={logo} alt="weeklog" />} variant="basics" />
       <div ref={contentRef} className="admin-content">
         <section className="admin-top">
           <div className="admin-update">
@@ -104,7 +106,7 @@ function Admin() {
 
           <div className="admin-list">
             {filteredCards.map((card) => (
-              <div key={card.id} className="admin-card">
+              <div key={card.id} className="admin-card" onClick={() => navigate('/adminlist')}>
                 <div className="card-header">
                   <div className="card-title">
                     <img

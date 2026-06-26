@@ -1,18 +1,17 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import WeekCard from '@/components/WeekCard'
-import WeekCardList from '@/components/WeekCard/WeekCardList'
+import AdminListCardWrap from '@/components/AdminListCard/AdminListCardWrap'
+import AdminListCard from '@/components/AdminListCard'
 import Select from '@/components/Select'
 import Button from '@/components/Button'
+import ButtonContainer from '@/components/ButtonContainer'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
-// import './AdminList.scss'
-import '../Main/Main.scss'
+import './AdminList.scss'
 import logo from '@/assets/images/logo.png'
 
 type BadgeType = 'normal' | 'important' | 'urgent'
-type SendStatus = 'unsent' | 'partial' | 'sent'
 
 const FILTER_OPTIONS = [
   { value: 'all', label: '전체' },
@@ -21,34 +20,34 @@ const FILTER_OPTIONS = [
   { value: 'urgent', label: '긴급' },
 ]
 
-const SAMPLE_CARDS: { id: number; week: string; priority: BadgeType; content: string; status: SendStatus }[] = [
+const SAMPLE_CARDS: { id: number; tit: string; subTit: string; priority: BadgeType; content: string; }[] = [
   {
     id: 1,
-    week: '6월 2주',
+    tit: '홍길동',
+    subTit: '디자인',
     priority: 'important',
     content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정',
-    status: 'unsent',
   },
   {
     id: 2,
-    week: '6월 1주',
+    tit: '강길동',
+    subTit: '기획',
     priority: 'normal',
     content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중',
-    status: 'partial',
   },
   {
     id: 3,
-    week: '5월 4주',
+    tit: '남길동',
+    subTit: '퍼블',
     priority: 'urgent',
     content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정',
-    status: 'sent',
   },
   {
     id: 4,
-    week: '5월 3주',
+    tit: '구길동',
+    subTit: '퍼블',
     priority: 'normal',
-    content: '1. 업무보고 시스템 개발 완료',
-    status: 'unsent',
+    content: '1. 업무보고 시스템 개발 완료 \n 2. ERP 연동 설계 진행중 _마무리 단계',
   },
 ]
 
@@ -61,7 +60,7 @@ function AdminList() {
     filter === 'all' ? SAMPLE_CARDS : SAMPLE_CARDS.filter((c) => c.priority === filter)
 
   return (
-    <div className="main">
+    <div className="admin">
       <AppHeader left={<img src={logo} alt="weeklog" />} />
 
       <div ref={contentRef} className="main-content">
@@ -76,26 +75,28 @@ function AdminList() {
             />
           </div>
 
-          <WeekCardList>
+          <AdminListCardWrap>
             {filteredCards.map((card) => (
-              <WeekCard
+              <AdminListCard
                 key={card.id}
-                week={card.week}
+                tit={card.tit}
+                subTit={card.subTit}
                 priority={card.priority}
                 content={card.content}
-                status={card.status}
                 onClick={() => navigate('/admin-entry-view')}
               />
             ))}
-          </WeekCardList>
+          </AdminListCardWrap>
 
-          <Button variant="secondary" fullWidth>
-            더보기
-          </Button>
+          <ButtonContainer>
+            <Button variant="more" fullWidth>
+              더보기
+            </Button>
+          </ButtonContainer>
         </div>
       </div>
 
-      <ScrollTop scrollTargetRef={contentRef} />
+      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
       <BottomNav active="home" />
     </div>
   )
