@@ -2,8 +2,9 @@ import './Badge.scss'
 
 type PriorityBadgeType = 'normal' | 'important' | 'urgent'
 type StatusBadgeType = 'unsent' | 'partial' | 'sent'
+type ConfirmBadgeType = 'confirmed' | 'unconfirmed'
 
-export type BadgeType = PriorityBadgeType | StatusBadgeType
+export type BadgeType = PriorityBadgeType | StatusBadgeType | ConfirmBadgeType
 
 const BADGE_LABEL: Record<BadgeType, string> = {
   normal: '보통',
@@ -12,6 +13,8 @@ const BADGE_LABEL: Record<BadgeType, string> = {
   unsent: '미전송',
   partial: '일부 전송',
   sent: '전송완료',
+  confirmed: '확인완료',
+  unconfirmed: '미확인',
 }
 
 interface BadgeProps {

@@ -3,6 +3,7 @@
   border-radius: 4px;
   font-size: $font12;
   font-weight: $font-w-m;
+  line-height: 1.4;
   white-space: nowrap;
 
   &-normal {
@@ -20,7 +21,8 @@
     color: #F00;
   }
 
-  &-unsent {
+  &-unsent,
+  &-unconfirmed  {
     background: #FF4C4E;
     color: $color-white;
   }
@@ -30,7 +32,8 @@
     color: $color-white;
   }
 
-  &-sent {
+  &-sent,
+  &-confirmed {
     background: #228DF5;
     color: $color-white;
   }

@@ -1,6 +1,6 @@
 import './Button.scss'
 
-type ButtonVariant = 'primary' | 'secondary' | 'inbox'
+type ButtonVariant = 'primary' | 'secondary' | 'inbox' | 'more'
 type ButtonType = 'button' | 'submit' | 'reset'
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
