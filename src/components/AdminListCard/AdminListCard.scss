@@ -1,0 +1,47 @@
+.admin-card-list {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    width: 100%;
+    padding: 0 20px;
+}
+.admin-week-card {
+    border: 1px solid $color-border;
+    border-radius: 4px;
+}
+.admin-card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-right: 12px;
+    background-color: $color-background;
+
+    .acc-info {
+        background: transparent;
+    }
+    .badge {
+        height: fit-content;
+        &.badge-normal {
+            border: 1px solid $color-border;
+            background-color: $color-white;
+        }
+    }
+}
+
+.admin-card-content {
+    display: flex;
+    gap: 12px;
+    padding: 16px 0 15px;
+    border-top: 1px solid $color-border;
+    p {
+        text-align: left;
+        line-height: 1.5;
+    }
+    .tit {
+        width: 70px;
+        font-size: $font14;
+        font-weight: $font-w-sb;
+        color: $color-text-black;
+        text-align: center;
+    }
+}
