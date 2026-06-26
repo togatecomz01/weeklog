@@ -66,6 +66,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [selectedProject, setSelectedProject] = useState('')
   const [loadingProjects, setLoadingProjects] = useState(false)
   const [pendingSend, setPendingSend] = useState<{ status: string; items: string[] } | null>(null)
+  const [confirmed, setConfirmed] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -249,6 +250,24 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     note: entry.notes,
   }
 
+  async function handleAdminConfirm() {
+    if (confirmed) return
+  
+    try {
+      // TODO: API 연결
+      // await fetch(`/api/entries/${id}/confirm`, {
+      //   method: 'POST',
+      //   headers: {
+      //     Authorization: `Bearer ${token}`,
+      //   },
+      // })
+  
+      setConfirmed(true)
+    } catch {
+      alert('확인 처리에 실패했습니다.')
+    }
+  }
+
   return (
     <div className={`entry-view ${isAdmin ? 'entry-view-admin' : ''}`.trim()}>
       <DetailHeader title="업무일지 상세" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
@@ -292,7 +311,12 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
       <div className="entry-view-foot">
         <ButtonContainer>
           {isAdmin ? (
-            <Button onClick={() => navigate(-1)}>확인</Button>
+            <Button
+            onClick={handleAdminConfirm}
+            disabled={confirmed}
+          >
+            {confirmed ? '확인완료' : '확인'}
+          </Button>
           ) : (
             <>
               <Button variant="secondary">삭제</Button>

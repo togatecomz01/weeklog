@@ -83,7 +83,7 @@ function AdminList() {
                 subTit={card.subTit}
                 priority={card.priority}
                 content={card.content}
-                onClick={() => navigate('/admin-entry-view')}
+                onClick={() => navigate(`/admin-entry-view?id=${card.id}`)}
               />
             ))}
           </AdminListCardWrap>
