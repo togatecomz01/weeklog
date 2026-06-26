@@ -44,15 +44,14 @@ function ButtonGuide() {
                 <div className="guide-example">
                     <Button variant="more" fullWidth >더보기</Button>
                     <Button fullWidth>로그인</Button>
-                    <Button variant="inbox" fullWidth startIcon={<SendIcon />}>스윗으로 보내기</Button>
-                    <Button variant="inbox" fullWidth startIcon={<CheckCircleIcon />} disabled>전송 완료</Button>
                 </div>
             </div>
 
             <div className="guide-section">
                 <h2 className="guide-section-title">기타</h2>
                 <div className="guide-example">
-                    <Button variant="secondary" logout startIcon={<LogoutIcon />}>로그아웃</Button>
+                    <Button variant="send"><SendIcon /> 보내기</Button>
+                    <Button variant="secondary" logout>로그아웃</Button>
                 </div>
             </div>
         </div>

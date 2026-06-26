@@ -1,6 +1,7 @@
 import SendIcon from '@/components/icons/SendIcon'
 import CheckCircleSolidIcon from '@/components/icons/CheckCircleSolidIcon'
 import './CompletedTaskCard.scss'
+import Button from '../Button'
 
 type TaskStatus = 'todo' | 'doing' | 'done'
 
@@ -35,10 +36,7 @@ function CompletedTaskCard({ title, status, sent = false, items, onSend, classNa
               전송 완료
             </span>
           ) : (
-            <button className="completed-task-card-send-btn" onClick={onSend}>
-              <SendIcon />
-              보내기
-            </button>
+            <Button variant="send" onClick={onSend}><SendIcon />더보기</Button>
           )
         )}
       </div>

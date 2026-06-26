@@ -10,7 +10,7 @@
   text-align: center;
   color: $color-white;
   font-size: $font16;
-  font-weight: $font-w-b;
+  font-weight: $font-w-m;
   cursor: pointer;
   transition: background-color 0.15s, color 0.15s, border-color 0.15s;
 
@@ -64,20 +64,6 @@
     min-width: unset;
   }
 
-  &-inbox {
-    border-color: $color-border;
-    background-color: $color-white;
-    font-size: $font14;
-    color: $color-text-gray;
-
-    &:disabled {
-      background: $color-disabled;
-      border-color: transparent;
-      color: $color-input-placeholder;
-    }
-
-  }
-
   &-logout {
     padding: 10px 14px;
     min-width: 0;
@@ -85,12 +71,37 @@
     border-radius: 100px;
     background-color: #3571FF;
     font-size: $font14;
+    font-weight: $font-w-sb;
     color: $color-white;
   }
 
   &-more {
     margin: 16px 0 0;
     background-color: $color-border;
+    font-weight: $font-w-r;
     color: $color-text-gray;
+  }
+
+  &-send {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+    width: fit-content;
+    padding: 4px 8px 4px 6px;
+    border: 1px solid $color-primary;
+    border-radius: 4px;
+    background: none;
+    color: $color-primary;
+    font-size: $font14;
+    font-weight: $font-w-m;
+    cursor: pointer;
+    line-height: 1.4;
+
+    svg {
+      width: 14px;
+      height: 14px;
+    }
+
   }
 }

@@ -19,27 +19,6 @@
     color: $color-text-black;
   }
 
-  &-send-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 4px 8px 4px 6px;
-    border: 1px solid $color-primary;
-    border-radius: 4px;
-    background: none;
-    color: $color-primary;
-    font-size: $font14;
-    font-weight: $font-w-m;
-    cursor: pointer;
-    line-height: 1.4;
-
-    svg {
-      width: 14px;
-      height: 14px;
-    }
-
-  }
-
   &-sent-icon {
     display: flex;
     align-items: center;
