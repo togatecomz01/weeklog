@@ -21,4 +21,8 @@
     display: inline-flex;
     align-items: center;
   }
+
+  &.basics {
+    background-color: $color-background;
+  }
 }
