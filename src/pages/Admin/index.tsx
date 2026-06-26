@@ -1,9 +1,15 @@
 import { useRef, useState } from 'react'
+import { useEntries } from '@/hooks/useEntries'
 import AppHeader from '@/components/AppHeader'
 import BottomNav from '@/components/BottomNav'
+import Button from '@/components/Button'
+import ButtonContainer from '@/components/ButtonContainer'
+import Badge from '@/components/Badge'
 import ScrollTop from '@/components/ScrollTop'
 import './Admin.scss'
 import logo from '@/assets/images/logo.png'
+import confirmedIcon from '@/assets/images/confirmed.png'
+import unconfirmedIcon from '@/assets/images/unconfirmed.png'
 
 type TabType = 'all' | 'confirmed' | 'unconfirmed'
 type StatusType = 'confirmed' | 'unconfirmed'
@@ -14,16 +20,16 @@ const TABS: { value: TabType; label: string }[] = [
   { value: 'unconfirmed', label: '미확인' },
 ]
 
+const STATUS_ICON: Record<StatusType, string> = {
+  confirmed: confirmedIcon,
+  unconfirmed: unconfirmedIcon,
+}
+
 const SAMPLE_CARDS = [
   { id: 1, week: '6월 2주차', status: 'unconfirmed' as StatusType, rate: 65, confirmed: 10, total: 15 },
   { id: 2, week: '6월 1주차', status: 'confirmed' as StatusType, rate: 100, confirmed: 15, total: 15 },
   { id: 3, week: '5월 4주차', status: 'unconfirmed' as StatusType, rate: 40, confirmed: 6, total: 15 },
 ]
-
-const STATUS_LABEL: Record<StatusType, string> = {
-  confirmed: '확인완료',
-  unconfirmed: '미확인',
-}
 
 function formatUpdateTime() {
   const now = new Date()
@@ -39,6 +45,7 @@ function Admin() {
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [updateTime, setUpdateTime] = useState(formatUpdateTime)
   const [activeTab, setActiveTab] = useState<TabType>('all')
+  const { loadingMore, loadMore } = useEntries()
 
   function handleRefresh() {
     setUpdateTime(formatUpdateTime())
@@ -51,7 +58,7 @@ function Admin() {
     <div className="admin">
       <AppHeader left={<img src={logo} alt="weeklog" />} />
       <div ref={contentRef} className="admin-content">
-        <div className="admin-top">
+        <section className="admin-top">
           <div className="admin-update">
             <span className="admin-update-text">최근 업데이트 : {updateTime}</span>
             <button type="button" className="admin-update-refresh" onClick={handleRefresh}>
@@ -72,53 +79,70 @@ function Admin() {
           <div className="admin-stats">
             <div className="admin-stats-item">
               <p className="admin-stats-label">확인 완료</p>
-              <p className="admin-stats-count">10건</p>
+              <p className="admin-stats-count"><span className="completed">10</span> 건</p>
             </div>
             <div className="admin-stats-item">
               <p className="admin-stats-label">미확인</p>
-              <p className="admin-stats-count">3건</p>
+              <p className="admin-stats-count"><span>3</span> 건</p>
             </div>
           </div>
-        </div>
+        </section>
 
-        <div className="admin-tabs">
-          {TABS.map((tab) => (
-            <button
-              key={tab.value}
-              type="button"
-              className={`admin-tabs-item${activeTab === tab.value ? ' admin-tabs-item--active' : ''}`}
-              onClick={() => setActiveTab(tab.value)}
-            >
-              {tab.label}
-            </button>
-          ))}
-        </div>
+        <section className="admin-section">
+          <div className="admin-tabs">
+            {TABS.map((tab) => (
+              <button
+                key={tab.value}
+                type="button"
+                className={`admin-tabs-item${activeTab === tab.value ? ' active' : ''}`}
+                onClick={() => setActiveTab(tab.value)}
+              >
+                {tab.label}
+              </button>
+            ))}
+          </div>
 
-        <div className="admin-list">
-          {filteredCards.map((card) => (
-            <div key={card.id} className="admin-card">
-              <div className="admin-card-header">
-                <span className="admin-card-week">{card.week}</span>
-                <span className={`admin-card-badge admin-card-badge--${card.status}`}>
-                  {STATUS_LABEL[card.status]}
-                </span>
-              </div>
-              <div className="admin-card-rate">
-                <div className="admin-card-rate-header">
-                  <span className="admin-card-rate-label">확인율</span>
-                  <span className="admin-card-rate-value">{card.rate}%</span>
+          <div className="admin-list">
+            {filteredCards.map((card) => (
+              <div key={card.id} className="admin-card">
+                <div className="card-header">
+                  <div className="card-title">
+                    <img
+                        src={STATUS_ICON[card.status]}
+                        alt=""
+                        className="card-icon"
+                        aria-hidden="true"
+                    />
+                    <span className="card-week">{card.week}</span>
+                  </div>
+                  <Badge type={card.status} />
                 </div>
-                <div className="admin-card-rate-bar">
-                  <div className="admin-card-rate-fill" style={{ width: `${card.rate}%` }} />
+                <div className="card-summary">
+                  <div className="card-rate-info">
+                    <strong className="card-rate-value">{card.rate}%</strong>
+                    <span className="card-label">확인율</span>
+                  </div>
+
+                  <div className="card-rate-bar" aria-hidden="true">
+                    <div className="card-rate-fill" style={{ width: `${card.rate}%` }} />
+                  </div>
+
+                  <div className="card-confirmer">
+                    <strong className="card-confirmer-value">
+                      {card.confirmed}<span> / {card.total}명</span>
+                    </strong>
+                    <span className="card-label">확인자 수</span>
+                  </div>
                 </div>
               </div>
-              <div className="admin-card-confirmer">
-                <span className="admin-card-confirmer-label">확인자 수</span>
-                <span className="admin-card-confirmer-value">{card.confirmed}명 / {card.total}명</span>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+          <ButtonContainer>
+            <Button variant="more" fullWidth onClick={loadMore} disabled={loadingMore}>
+              {loadingMore ? '불러오는 중...' : '더보기'}
+            </Button>
+          </ButtonContainer>
+        </section>
       </div>
       <ScrollTop scrollTargetRef={contentRef} />
       <BottomNav active="home" />

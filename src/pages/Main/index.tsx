@@ -109,7 +109,7 @@ function Main() {
 
               <ButtonContainer>
                 {hasMore && (
-                  <Button className="more-btn" fullWidth onClick={loadMore} disabled={loadingMore}>
+                  <Button variant="more" fullWidth onClick={loadMore} disabled={loadingMore}>
                     {loadingMore ? '불러오는 중...' : '더보기'}
                   </Button>
                 )}
