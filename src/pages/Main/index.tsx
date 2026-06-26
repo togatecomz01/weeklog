@@ -119,7 +119,7 @@ function Main() {
         </div>
       </div>
 
-      <ScrollTop scrollTargetRef={contentRef} />
+      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
       <BottomNav active="home" />
     </div>
   )

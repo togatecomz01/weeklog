@@ -298,7 +298,7 @@ function Entry() {
           {loading ? '등록 중...' : '등록'}
         </Button>
       </ButtonContainer>
-      <ScrollTop scrollTargetRef={contentRef} />
+      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
       <BottomNav active="register" />
     </div>
   )

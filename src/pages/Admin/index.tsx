@@ -144,7 +144,7 @@ function Admin() {
           </ButtonContainer>
         </section>
       </div>
-      <ScrollTop scrollTargetRef={contentRef} />
+      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
       <BottomNav active="home" />
     </div>
   )

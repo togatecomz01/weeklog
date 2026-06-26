@@ -51,6 +51,10 @@ function BottomNav({ active = 'home', onTabChange }: BottomNavProps) {
   const location = useLocation()
   const { user } = useAuth()
 
+  const visibleTabs = user?.role === 'admin'
+  ? TABS.filter((tab) => tab.key !== 'register')
+  : TABS
+
   function getHomePath() {
     if (user?.role === 'admin' || location.pathname.startsWith('/admin')) {
       return '/admin'
@@ -74,7 +78,7 @@ function BottomNav({ active = 'home', onTabChange }: BottomNavProps) {
 
   return (
     <nav className="bottom-nav">
-      {TABS.map(({ key, label, icon }) => (
+      {visibleTabs.map(({ key, label, icon }) => (
         <button
           key={key}
           type="button"

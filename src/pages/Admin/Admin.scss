@@ -6,6 +6,10 @@
   margin: 0 auto;
   overflow: hidden;
 
+  .app-header {
+    background-color: $color-background;
+  }
+
   &-title {
     font-size: $font20;
     font-weight: $font-w-b;
@@ -15,7 +19,7 @@
   &-content {
     flex: 1;
     min-height: 0;
-    padding: 0 0 95px;
+    padding: 0 0 75px;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
@@ -117,8 +121,11 @@
   }
 
   &-section {
-    padding: 13px 0 16px;
+    padding-top: 13px;
     background-color: $color-white;
+    .button-container {
+      padding-bottom: 30px;
+    }
   }
   &-tabs {
     display: flex;
@@ -150,6 +157,11 @@
     font-size: $font16;
     font-weight: $font-w-b;
     color: $color-text-black;
+  }
+
+  .bottom-nav {
+    justify-content: center;
+    gap: 120px;
   }
 }
 

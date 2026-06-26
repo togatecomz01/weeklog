@@ -14,6 +14,10 @@
     color: $color-text-gray;
     z-index: 110;
 
+    &.scroll-top-with-button {
+        bottom: 160px;
+    }
+
     &-line {
         position: absolute;
         top: 8px;

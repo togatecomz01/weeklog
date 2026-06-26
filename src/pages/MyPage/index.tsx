@@ -138,7 +138,7 @@ function MyPage() {
         onCancel={() => setErrorAlertOpen(false)}
         cancelText="닫기"
       />
-      <ScrollTop scrollTargetRef={contentRef} />
+      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
       <BottomNav active="my" />
     </div>
   )
