@@ -82,6 +82,7 @@
     font-size: $font14;
     font-weight: $font-w-sb;
     color: $color-white;
+    height: auto;
   }
 
   &-send {
@@ -99,6 +100,7 @@
     font-weight: $font-w-m;
     cursor: pointer;
     line-height: 1.4;
+    height: auto;
 
     svg {
       width: 14px;
