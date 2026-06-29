@@ -21,6 +21,7 @@ function MyPage() {
   })
   const [alertOpen, setAlertOpen] = useState(false)
   const [errorAlertOpen, setErrorAlertOpen] = useState(false)
+  const [samePwAlertOpen, setSamePwAlertOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   const passwordMismatch =
@@ -40,6 +41,11 @@ function MyPage() {
       return
     }
     if (form.newPassword !== form.confirmPassword) return
+
+    if (form.currentPassword.trim() === form.newPassword.trim()) {
+      setSamePwAlertOpen(true)
+      return
+    }
 
     setSubmitting(true)
     try {
@@ -136,6 +142,12 @@ function MyPage() {
         open={errorAlertOpen}
         message="현재 비밀번호가 일치하지 않습니다."
         onCancel={() => setErrorAlertOpen(false)}
+        cancelText="닫기"
+      />
+      <AlertPopup
+        open={samePwAlertOpen}
+        message="현재 비밀번호와 동일한 비밀번호로는 변경할 수 없습니다."
+        onCancel={() => setSamePwAlertOpen(false)}
         cancelText="닫기"
       />
       <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
