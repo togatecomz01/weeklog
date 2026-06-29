@@ -4,14 +4,7 @@
     width: 100%;
     padding: 0 20px;
 
-    > .btn {
-        width: auto;
-        min-width: 0;
-        height: 52px;
-        padding: 0 12px;
-        border-radius: 10px;
-        font-size: $font16;
-
+    .btn {
         &:first-child:nth-last-child(2):not(.alert-pop-btns .btn) {
             min-width: 100px;
 

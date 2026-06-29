@@ -68,6 +68,7 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
       onConfirm={() => isValid && onConfirm(form)}
     >
       <section className="entry-section">
+      <h2 className="entry-title">작성정보</h2>
         <div className="entry-form">
           <div className="acc-info-box">
           <AccInfoBox
