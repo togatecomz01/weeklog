@@ -134,7 +134,7 @@ function MyPage() {
       />
       <AlertPopup
         open={errorAlertOpen}
-        message="현재 비밀번호가 올바르지 않습니다."
+        message="현재 비밀번호가 일치하지 않습니다."
         onCancel={() => setErrorAlertOpen(false)}
         cancelText="닫기"
       />
