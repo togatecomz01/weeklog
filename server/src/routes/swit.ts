@@ -144,6 +144,12 @@ router.post('/send', requireAuth, async (req, res) => {
     todo: '차주 예정 업무',
   }
 
+  const switStatus: Record<string, string> = {
+    done: 'Done',
+    doing: 'Doing',
+    todo: 'ToDo',
+  }
+
   const results = await Promise.allSettled(
     (items as string[]).map((item) =>
       fetch(`${SWIT_API}/task.create`, {
@@ -156,6 +162,7 @@ router.post('/send', requireAuth, async (req, res) => {
           project_id: channelId,
           title: item,
           content: `[${statusLabel[status] ?? title ?? status}] ${item}`,
+          step: switStatus[status] ?? null,
         }),
       }).then(async (r) => {
         const data = await r.json()
