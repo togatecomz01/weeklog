@@ -55,7 +55,7 @@ function ResetPassword() {
           label="이메일 주소"
           id="email"
           type="email"
-          placeholder="이메일 주소"
+          placeholder="예) Id_123@togate.kr"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
