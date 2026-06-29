@@ -18,7 +18,8 @@ export default defineConfig({
   css: {
     preprocessorOptions: {
       scss: {
-        additionalData: `@use 'sass:color'; @use '${path.resolve(__dirname, 'src/styles/variables')}' as *;`,
+        additionalData: `@use 'sass:color'; @use 'variables' as *;`,
+        loadPaths: [path.resolve(__dirname, 'src/styles')],
       },
     },
   },

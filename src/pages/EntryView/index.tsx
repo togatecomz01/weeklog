@@ -221,7 +221,6 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   const priority = PRIORITY_MAP[entry.priority] ?? 'normal'
-  const week = `${entry.week_month}월 ${entry.week_number}주`
   const createdDate = entry.created_at.slice(0, 10).replace(/-/g, '.')
 
   const detailInfo = [

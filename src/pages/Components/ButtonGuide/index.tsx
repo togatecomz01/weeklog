@@ -3,8 +3,6 @@ import '../Components.scss'
 import ButtonContainer from '@/components/ButtonContainer'
 import Button from '@/components/Button'
 import SendIcon from '@/components/icons/SendIcon'
-import CheckCircleIcon from '@/components/icons/CheckCircleIcon'
-import LogoutIcon from '@/components/icons/LogoutIcon'
 
 function ButtonGuide() {
     return (
