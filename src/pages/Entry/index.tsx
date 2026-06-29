@@ -287,7 +287,7 @@ function Entry() {
       <ButtonContainer>
         {hasDraft && !draftId ? (
           <Button type="button" variant="secondary" disabled={draftLoading} onClick={handleLoadDraft}>
-            임시저장<br />불러오기
+            임시저장 불러오기
           </Button>
         ) : (
           <Button type="button" variant="secondary" disabled={loading} onClick={handleDraftSave}>

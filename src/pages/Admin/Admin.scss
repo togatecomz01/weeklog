@@ -92,6 +92,7 @@
       align-items: center;
       gap: 5px;
       &:first-child {
+        border-right: 1px solid $color-border;
         border-radius: 12px 0 0 12px;
       }
     }
