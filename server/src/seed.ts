@@ -4,7 +4,9 @@ import sql from './db.js'
 
 const SEED_USERS = [
   { email: 'admin@weeklog.com', password: 'admin1234', name: '관리자', role: 'admin', department: '',     position: '' },
-  { email: 'user@weeklog.com',  password: 'user1234',  name: '홍길동', role: 'user',  department: '개발팀', position: '대리' },
+  { email: 'user@weeklog.com',        password: 'user1234', name: '홍길동', role: 'user', department: '개발팀', position: '대리' },
+  { email: 'leesoli0122@gmail.com',   password: 'user1234', name: '이솔',   role: 'user', department: '퍼블팀', position: '대리' },
+  { email: 'togatecomz.mj@gmail.com', password: 'user1234', name: '강민정', role: 'user', department: '퍼블팀', position: '주임' },
 ]
 
 const SEED_ENTRIES = [
