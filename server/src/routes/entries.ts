@@ -1,6 +1,7 @@
 import { Router } from 'express'
 import sql from '../db.js'
 import { requireAuth, requireRole } from '../middleware/auth.js'
+import { sendKakaoUrgentMessage } from './kakao.js'
 
 const router = Router()
 
@@ -86,6 +87,14 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
          ${next_week_plan ?? ''}, ${notes ?? ''})
       RETURNING id
     `
+
+    if (priority === '긴급') {
+      const userName = req.user!.name ?? '직원'
+      sendKakaoUrgentMessage(
+        `[긴급] ${userName}님이 긴급 업무일지를 등록했습니다.\n제목: ${title}`
+      ).catch((err) => console.error('[kakao] 긴급 알림 전송 오류:', err))
+    }
+
     res.status(201).json({ id: entry.id })
   } catch (err: any) {
     if (err.code === '23505') {

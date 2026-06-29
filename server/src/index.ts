@@ -6,6 +6,7 @@ import authRouter from './routes/auth.js'
 import entriesRouter from './routes/entries.js'
 import switRouter from './routes/swit.js'
 import draftsRouter from './routes/drafts.js'
+import kakaoRouter from './routes/kakao.js'
 
 const app = express()
 const PORT = Number(process.env.PORT) || 3000
@@ -17,6 +18,7 @@ app.use('/api/auth', authRouter)
 app.use('/api/entries', entriesRouter)
 app.use('/api/swit', switRouter)
 app.use('/api/drafts', draftsRouter)
+app.use('/api/kakao', kakaoRouter)
 
 app.get('/api/health', async (_req, res) => {
   try {
