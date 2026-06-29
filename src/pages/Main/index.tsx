@@ -16,9 +16,9 @@ import logo from '@/assets/images/logo.png'
 
 const FILTER_OPTIONS = [
   { value: 'all', label: '전체' },
-  { value: 'normal', label: '보통' },
-  { value: 'important', label: '중요' },
   { value: 'urgent', label: '긴급' },
+  { value: 'important', label: '중요' },
+  { value: 'normal', label: '보통' },
 ]
 
 // function formatDate() {
