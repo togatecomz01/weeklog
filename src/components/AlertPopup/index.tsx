@@ -6,6 +6,7 @@ interface AlertPopupProps {
   open: boolean
   message?: string
   description?: React.ReactNode
+  descriptionSize?: 'sm'
   cancelText?: string
   confirmText?: string
   className?: string
@@ -17,6 +18,7 @@ function AlertPopup({
   open,
   message = '임시저장 하시겠습니까?',
   description,
+  descriptionSize,
   cancelText = '취소',
   confirmText = '확인',
   className = '',
@@ -31,7 +33,11 @@ function AlertPopup({
     <div className={classes}>
       <div className="alert-pop-box">
         <p className="alert-pop-msg">{message}</p>
-        {description && <div className="alert-pop-desc">{description}</div>}
+        {description && (
+          <div className={['alert-pop-desc', descriptionSize === 'sm' ? 'alert-pop-desc--sm' : ''].filter(Boolean).join(' ')}>
+            {description}
+          </div>
+        )}
         <div className="alert-pop-btns">
           <ButtonContainer>
             <Button variant="secondary" onClick={onCancel}>

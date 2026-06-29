@@ -135,4 +135,21 @@ router.put('/:id', requireAuth, requireRole('user'), async (req, res) => {
   res.json({ message: '수정되었습니다.' })
 })
 
+// 업무일지 삭제 (본인 것만)
+router.delete('/:id', requireAuth, requireRole('user'), async (req, res) => {
+  const [entry] = await sql`SELECT user_id FROM entries WHERE id = ${req.params.id}`
+
+  if (!entry) {
+    res.status(404).json({ message: '업무일지를 찾을 수 없습니다.' })
+    return
+  }
+  if (entry.user_id !== req.user!.id) {
+    res.status(403).json({ message: '권한이 없습니다.' })
+    return
+  }
+
+  await sql`DELETE FROM entries WHERE id = ${req.params.id}`
+  res.json({ message: '삭제되었습니다.' })
+})
+
 export default router

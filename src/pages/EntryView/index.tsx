@@ -67,6 +67,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [loadingProjects, setLoadingProjects] = useState(false)
   const [pendingSend, setPendingSend] = useState<{ status: string; items: string[] } | null>(null)
   const [confirmed, setConfirmed] = useState(false)
+  const [deleteOpen, setDeleteOpen] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -249,9 +250,27 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     note: entry.notes,
   }
 
+  async function handleDelete() {
+    if (!id || !token) return
+    try {
+      const res = await fetch(`/api/entries/${id}`, {
+        method: 'DELETE',
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      if (!res.ok) {
+        const data = await res.json()
+        alert(data.message ?? '삭제 실패')
+        return
+      }
+      navigate(-1)
+    } catch {
+      alert('서버에 연결할 수 없습니다.')
+    }
+  }
+
   async function handleAdminConfirm() {
     if (confirmed) return
-  
+
     try {
       // TODO: API 연결
       // await fetch(`/api/entries/${id}/confirm`, {
@@ -260,7 +279,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
       //     Authorization: `Bearer ${token}`,
       //   },
       // })
-  
+
       setConfirmed(true)
     } catch {
       alert('확인 처리에 실패했습니다.')
@@ -311,14 +330,14 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
         <ButtonContainer>
           {isAdmin ? (
             <Button
-            onClick={handleAdminConfirm}
-            disabled={confirmed}
-          >
-            {confirmed ? '확인완료' : '확인'}
-          </Button>
+              onClick={handleAdminConfirm}
+              disabled={confirmed}
+            >
+              {confirmed ? '확인완료' : '확인'}
+            </Button>
           ) : (
             <>
-              <Button variant="secondary">삭제</Button>
+              <Button variant="secondary" onClick={() => setDeleteOpen(true)}>삭제</Button>
               <Button onClick={() => setEditOpen(true)}>수정</Button>
             </>
           )}
@@ -335,6 +354,17 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           onConfirm={handleConfirm}
         />
       )}
+
+      <AlertPopup
+        open={deleteOpen}
+        message="업무일지를 삭제하시겠습니까?"
+        description="삭제된 업무일지는 복구할 수 없습니다."
+        descriptionSize="sm"
+        confirmText="삭제"
+        cancelText="취소"
+        onConfirm={handleDelete}
+        onCancel={() => setDeleteOpen(false)}
+      />
 
       <AlertPopup
         open={projectOpen}
