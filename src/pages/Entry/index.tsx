@@ -115,10 +115,10 @@ function Entry() {
 
   const isValid = Boolean(form.writeDate.trim() && form.title.trim())
   const isDraftValid = Boolean(
-    form.title.trim() &&
-    form.completedWork.trim() &&
-    form.progressWork.trim() &&
-    form.nextWork.trim() &&
+    form.title.trim() ||
+    form.completedWork.trim() ||
+    form.progressWork.trim() ||
+    form.nextWork.trim() ||
     form.note.trim()
   )
 
