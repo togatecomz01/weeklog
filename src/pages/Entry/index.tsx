@@ -11,6 +11,7 @@ import RadioGroup from '@/components/Radio/RadioGroup'
 import ScrollTop from '@/components/ScrollTop'
 import Textarea from '@/components/Textarea'
 import AccInfoBox from '@/components/AccInfoBox'
+import AlertPopup from '@/components/AlertPopup'
 import { useAuth } from '@/contexts/AuthContext'
 import './Entry.scss'
 
@@ -65,6 +66,8 @@ function Entry() {
   const [loading, setLoading] = useState(false)
   const [draftLoading, setDraftLoading] = useState(false)
   const [hasDraft, setHasDraft] = useState(false)
+  const [submitOpen, setSubmitOpen] = useState(false)
+  const [draftOpen, setDraftOpen] = useState(false)
 
   const draftId = searchParams.get('draftId')
 
@@ -297,16 +300,32 @@ function Entry() {
             임시저장 불러오기
           </Button>
         ) : (
-          <Button type="button" variant="secondary" disabled={loading || !isDraftValid} onClick={handleDraftSave}>
+          <Button type="button" variant="secondary" disabled={loading || !isDraftValid} onClick={() => setDraftOpen(true)}>
             임시저장
           </Button>
         )}
-        <Button type="button" disabled={!isValid || loading} onClick={handleSubmit}>
+        <Button type="button" disabled={!isValid || loading} onClick={() => setSubmitOpen(true)}>
           {loading ? '등록 중...' : '등록'}
         </Button>
       </ButtonContainer>
       <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
       <BottomNav active="register" />
+      <AlertPopup
+        open={draftOpen}
+        message="임시저장 하시겠습니까?"
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={() => { setDraftOpen(false); handleDraftSave() }}
+        onCancel={() => setDraftOpen(false)}
+      />
+      <AlertPopup
+        open={submitOpen}
+        message="업무일지 등록 하시겠습니까?"
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={() => { setSubmitOpen(false); handleSubmit() }}
+        onCancel={() => setSubmitOpen(false)}
+      />
     </div>
   )
 }
