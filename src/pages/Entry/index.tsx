@@ -114,9 +114,16 @@ function Entry() {
   }
 
   const isValid = Boolean(form.writeDate.trim() && form.title.trim())
+  const isDraftValid = Boolean(
+    form.title.trim() &&
+    form.completedWork.trim() &&
+    form.progressWork.trim() &&
+    form.nextWork.trim() &&
+    form.note.trim()
+  )
 
   async function handleDraftSave() {
-    if (!token) return
+    if (!token || !isDraftValid) return
     setLoading(true)
     try {
       const res = await fetch('/api/drafts', {
@@ -290,7 +297,7 @@ function Entry() {
             임시저장 불러오기
           </Button>
         ) : (
-          <Button type="button" variant="secondary" disabled={loading} onClick={handleDraftSave}>
+          <Button type="button" variant="secondary" disabled={loading || !isDraftValid} onClick={handleDraftSave}>
             임시저장
           </Button>
         )}

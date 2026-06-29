@@ -1,74 +1,71 @@
-.button-container {
-  .btn {
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 100px;
+  height: 52px;
+  padding: 14px 12px;
+  border: 1px solid transparent;
+  border-radius: 10px;
+  text-align: center;
+  font-size: $font16;
+  font-weight: $font-w-m;
+  cursor: pointer;
+  transition: background-color 0.15s, color 0.15s, border-color 0.15s;
+
+  &-icon {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    min-width: 100px;
-    height: 52px;
-    padding: 14px 12px;
-    border: 1px solid transparent;
-    border-radius: 10px;
-    text-align: center;
-    font-size: $font16;
-    font-weight: $font-w-m;
-    cursor: pointer;
-    transition: background-color 0.15s, color 0.15s, border-color 0.15s;
-  
-    &-icon {
-      display: inline-flex;
-      align-items: center;
-      margin-right: 10px;
-      width: 16px;
-      height: 16px;
-    }
-  
-    &:disabled {
-      background: #cdcdcd;
-      cursor: not-allowed;
-    }
-  
-    &-primary {
-      width: 100%;
-      background-color: $color-primary;
-      color: $color-white;
-      &:not(.btn-full):hover:not(:disabled) {
-        background-color: $color-hover;
-        font-weight: $font-w-b;
-      }
-    }
-  
-    &-secondary {
-      background-color: $color-white;
-      color: $color-text-gray;
-      border-color: $color-border;
-  
-      &:disabled {
-        background: $color-white;
-        border-color: $color-disabled;
-      }
-  
-      &:not(.btn-full):hover:not(:disabled) {
-        border-color: $color-hover;
-        color: $color-hover;
-        font-weight: $font-w-b;
-      }
-  
-      &.btn-full {
-        padding: 10px 12px;
-      }
+    margin-right: 10px;
+    width: 16px;
+    height: 16px;
+  }
 
-    }
-    &-more {
-      width: 100%;
-      margin: 16px 0 0;
-      background-color: $color-border;
-      font-weight: $font-w-r;
-      color: $color-text-gray;
+  &:disabled {
+    background: #cdcdcd;
+    cursor: not-allowed;
+  }
+
+  &-primary {
+    width: 100%;
+    background-color: $color-primary;
+    color: $color-white;
+
+    &:not(.btn-full):hover:not(:disabled) {
+      background-color: $color-hover;
+      font-weight: $font-w-b;
     }
   }
-}
 
-.btn {
+  &-secondary {
+    background-color: $color-white;
+    color: $color-text-gray;
+    border-color: $color-border;
+
+    &:disabled {
+      background: $color-white;
+      border-color: $color-disabled;
+    }
+
+    &:not(.btn-full):hover:not(:disabled) {
+      border-color: $color-hover;
+      color: $color-hover;
+      font-weight: $font-w-b;
+    }
+
+    &.btn-full {
+      padding: 10px 12px;
+    }
+  }
+
+  &-more {
+    width: 100%;
+    margin: 16px 0 0;
+    background-color: $color-border;
+    font-weight: $font-w-r;
+    color: $color-text-gray;
+  }
+
   &-full {
     width: 100%;
     padding: 14px 12px;
@@ -107,6 +104,5 @@
       width: 14px;
       height: 14px;
     }
-
   }
 }
