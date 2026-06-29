@@ -61,7 +61,7 @@ function Login() {
           label="이메일 주소"
           id="email"
           type="email"
-          placeholder="이메일 주소"
+          placeholder="예) Id_123@togate.kr"
           value={form.email}
           onChange={handleChange('email')}
         />
@@ -69,7 +69,7 @@ function Login() {
           label="비밀번호"
           id="password"
           type="password"
-          placeholder="비밀번호"
+          placeholder="비밀번호를 입력하세요"
           value={form.password}
           onChange={handleChange('password')}
           error={!!error}
