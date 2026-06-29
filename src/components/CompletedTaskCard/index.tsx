@@ -36,7 +36,7 @@ function CompletedTaskCard({ title, status, sent = false, items, onSend, classNa
               전송 완료
             </span>
           ) : (
-            <Button variant="send" onClick={onSend}><SendIcon />더보기</Button>
+            <Button variant="send" onClick={onSend}><SendIcon />보내기</Button>
           )
         )}
       </div>
