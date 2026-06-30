@@ -28,6 +28,7 @@
       font-size: $font14;
       font-weight: $font-w-sb;
       color: $color-text-black;
+      text-align: center;
     }
     p {
       display: -webkit-box;
@@ -50,6 +51,7 @@
       display: block;
       width: 42px;
       height: 42px;
+      margin: 14px;
     }
   }
   &-label {
