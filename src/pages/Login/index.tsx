@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Navigate } from 'react-router-dom'
 import Button from '@/components/Button'
 import Input from '@/components/Input'
 import Checkbox from '@/components/Checkbox'
@@ -8,7 +8,11 @@ import { useAuth } from '@/contexts/AuthContext'
 
 function Login() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { user, login } = useAuth()
+
+  if (user) {
+    return <Navigate to={user.role === 'admin' ? '/admin' : '/main'} replace />
+  }
   const [form, setForm] = useState({ email: '', password: '' })
   const [autoLogin, setAutoLogin] = useState(false)
   const [error, setError] = useState('')
