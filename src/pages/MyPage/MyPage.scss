@@ -83,6 +83,22 @@
   }
 }
 
+.swit-connect-box {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  .swit-status {
+    font-size: $font14;
+    font-weight: $font-w-m;
+    color: $color-text-gray-light;
+
+    &.connected {
+      color: $color-primary;
+    }
+  }
+}
+
 .user-info-section {
   padding: 16px 0;
   border-bottom: 1px solid $color-border;
