@@ -16,21 +16,19 @@ interface AuthContextType {
   token: string | null
   login: (user: User, token: string, persist: boolean) => void
   logout: () => void
+  apiFetch: (url: string, options?: RequestInit) => Promise<Response>
 }
 
 const STORAGE_KEY = 'weeklog_auth'
-const TAB_KEY     = 'weeklog_tabs'    // localStorage: 열린 탭 수
-const CLOSE_KEY   = 'weeklog_closing' // localStorage: 마지막 탭 닫힘 마커
-const SESSION_KEY = 'weeklog_session' // sessionStorage: 이 탭 활성 마커
+const TAB_KEY     = 'weeklog_tabs'
+const CLOSE_KEY   = 'weeklog_closing'
+const SESSION_KEY = 'weeklog_session'
 
 function loadAuth(): { user: User; token: string } | null {
-  // 이전 세션에서 마지막 탭이 닫혔던 경우 처리
   if (localStorage.getItem(CLOSE_KEY)) {
     if (sessionStorage.getItem(SESSION_KEY)) {
-      // sessionStorage가 살아있음 = 새로고침 → 로그인 유지
       localStorage.removeItem(CLOSE_KEY)
     } else {
-      // sessionStorage 없음 = 브라우저 재실행 → 로그아웃
       localStorage.removeItem(STORAGE_KEY)
       localStorage.removeItem(CLOSE_KEY)
       localStorage.removeItem(TAB_KEY)
@@ -56,8 +54,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     let unloaded = false
-
-    // 이 탭을 카운터에 등록
     const count = Number(localStorage.getItem(TAB_KEY) || '0') + 1
     localStorage.setItem(TAB_KEY, String(count))
     sessionStorage.setItem(SESSION_KEY, '1')
@@ -101,8 +97,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setToken(null)
   }
 
+  async function apiFetch(url: string, options: RequestInit = {}): Promise<Response> {
+    const res = await fetch(url, {
+      ...options,
+      headers: {
+        ...options.headers,
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    if (res.status === 401) logout()
+    return res
+  }
+
   return (
-    <AuthContext.Provider value={{ user, token, login, logout }}>
+    <AuthContext.Provider value={{ user, token, login, logout, apiFetch }}>
       {children}
     </AuthContext.Provider>
   )

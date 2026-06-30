@@ -12,7 +12,7 @@ import './MyPage.scss'
 
 function MyPage() {
   const contentRef = useRef<HTMLDivElement | null>(null)
-  const { user, token, logout } = useAuth()
+  const { user, token, logout, apiFetch } = useAuth()
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const [form, setForm] = useState({
@@ -29,12 +29,11 @@ function MyPage() {
   const [switDisconnectAlert, setSwitDisconnectAlert] = useState(false)
 
   useEffect(() => {
-    if (!token) return
-    fetch('/api/swit/status', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/swit/status')
       .then((r) => r.json())
       .then((d) => setSwitConnected(d.connected))
       .catch(() => setSwitConnected(false))
-  }, [token])
+  }, [apiFetch])
 
   useEffect(() => {
     if (searchParams.get('swit') === 'connected') {
@@ -47,10 +46,7 @@ function MyPage() {
   }, [searchParams, setSearchParams])
 
   async function handleSwitDisconnect() {
-    await fetch('/api/swit/disconnect', {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    await apiFetch('/api/swit/disconnect', { method: 'DELETE' })
     setSwitConnected(false)
     setSwitDisconnectAlert(true)
   }
@@ -84,12 +80,9 @@ function MyPage() {
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/auth/password', {
+      const res = await apiFetch('/api/auth/password', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           currentPassword: form.currentPassword,
           newPassword: form.newPassword,

@@ -1,0 +1,3 @@
+ALTER TABLE entries
+  ADD COLUMN IF NOT EXISTS confirmed_at  TIMESTAMPTZ,
+  ADD COLUMN IF NOT EXISTS confirmed_by  INTEGER REFERENCES users(id);

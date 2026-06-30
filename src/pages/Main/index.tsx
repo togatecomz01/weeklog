@@ -32,15 +32,14 @@ const FILTER_OPTIONS = [
 
 function Main() {
   const navigate = useNavigate()
-  const { user, token } = useAuth()
+  const { user, apiFetch } = useAuth()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
   const { entries, loading, loadingMore, error, hasMore, loadMore } = useEntries()
   const [draft, setDraft] = useState<{ id: number; savedAt: string } | null>(null)
 
   useEffect(() => {
-    if (!token) return
-    fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+    apiFetch('/api/drafts')
       .then((res) => res.ok ? res.json() : null)
       .then((data) => {
         if (!data) return
@@ -49,7 +48,7 @@ function Main() {
         const savedAt = `${saved.getFullYear()}.${pad(saved.getMonth() + 1)}.${pad(saved.getDate())} ${pad(saved.getHours())}:${pad(saved.getMinutes())}`
         setDraft({ id: data.id, savedAt })
       })
-  }, [token])
+  }, [apiFetch])
 
   const filteredEntries =
     filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
