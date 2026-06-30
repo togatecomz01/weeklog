@@ -37,6 +37,7 @@ interface ApiEntry {
   sent_done: boolean
   sent_doing: boolean
   sent_todo: boolean
+  confirmed_at: string | null
   created_at: string
   user_name?: string
 }
@@ -55,7 +56,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const navigate = useNavigate()
   const [searchParams, setSearchParams] = useSearchParams()
   const contentRef = useRef<HTMLElement | null>(null)
-  const { token } = useAuth()
+  const { apiFetch } = useAuth()
   const [entry, setEntry] = useState<ApiEntry | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
@@ -66,7 +67,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [selectedProject, setSelectedProject] = useState('')
   const [loadingProjects, setLoadingProjects] = useState(false)
   const [pendingSend, setPendingSend] = useState<{ status: string; items: string[] } | null>(null)
-  const [confirmed, setConfirmed] = useState(false)
+  const [confirmed, setConfirmed] = useState<boolean>(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
@@ -74,11 +75,9 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const id = searchParams.get('id')
 
   useEffect(() => {
-    if (!id || !token) return
+    if (!id) return
     setLoading(true)
-    fetch(`/api/entries/${id}`, {
-      headers: { Authorization: `Bearer ${token}` },
-    })
+    apiFetch(`/api/entries/${id}`)
       .then((res) => {
         if (!res.ok) throw new Error('불러오기 실패')
         return res.json()
@@ -86,7 +85,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
       .then(setEntry)
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [id, token])
+  }, [id, apiFetch])
 
   useEffect(() => {
     if (!entry) return
@@ -95,6 +94,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     if (entry.sent_doing) initial.add('doing')
     if (entry.sent_todo) initial.add('todo')
     setSentStatuses(initial)
+    setConfirmed(Boolean(entry.confirmed_at))
   }, [entry])
 
   useEffect(() => {
@@ -106,9 +106,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     setLoadingProjects(true)
     setProjectOpen(true)
     try {
-      const res = await fetch('/api/swit/projects', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const res = await apiFetch('/api/swit/projects')
       if (!res.ok) throw new Error('프로젝트 목록을 가져올 수 없습니다.')
       const data: { id: string; name: string }[] = await res.json()
       setProjects(data)
@@ -132,12 +130,9 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     const { status, items } = pendingSend
     setPendingSend(null)
     try {
-      const res = await fetch('/api/swit/send', {
+      const res = await apiFetch('/api/swit/send', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status, items, entry_id: entry!.id, project_id: selectedProject }),
       })
       if (!res.ok) {
@@ -167,14 +162,11 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   async function handleConfirm(form: EntryEditForm) {
-    if (!id || !token) return
+    if (!id) return
     try {
-      const res = await fetch(`/api/entries/${id}`, {
+      const res = await apiFetch(`/api/entries/${id}`, {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           title: form.title,
           priority: PRIORITY_TO_KO[form.priority] ?? form.priority,
@@ -189,9 +181,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
         alert(data.message ?? '수정 실패')
         return
       }
-      const updated = await fetch(`/api/entries/${id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const updated = await apiFetch(`/api/entries/${id}`)
       if (updated.ok) setEntry(await updated.json())
       handleEditClose()
     } catch {
@@ -251,12 +241,9 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   async function handleDelete() {
-    if (!id || !token) return
+    if (!id) return
     try {
-      const res = await fetch(`/api/entries/${id}`, {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const res = await apiFetch(`/api/entries/${id}`, { method: 'DELETE' })
       if (!res.ok) {
         const data = await res.json()
         alert(data.message ?? '삭제 실패')
@@ -269,17 +256,14 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   async function handleAdminConfirm() {
-    if (confirmed) return
-
+    if (confirmed || !id) return
     try {
-      // TODO: API 연결
-      // await fetch(`/api/entries/${id}/confirm`, {
-      //   method: 'POST',
-      //   headers: {
-      //     Authorization: `Bearer ${token}`,
-      //   },
-      // })
-
+      const res = await apiFetch(`/api/entries/${id}/confirm`, { method: 'POST' })
+      if (!res.ok) {
+        const data = await res.json()
+        alert(data.message ?? '확인 처리에 실패했습니다.')
+        return
+      }
       setConfirmed(true)
     } catch {
       alert('확인 처리에 실패했습니다.')

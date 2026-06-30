@@ -1,5 +1,5 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
 import Input from '@/components/Input'
@@ -12,8 +12,9 @@ import './MyPage.scss'
 
 function MyPage() {
   const contentRef = useRef<HTMLDivElement | null>(null)
-  const { user, token, logout } = useAuth()
+  const { user, token, logout, apiFetch } = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [form, setForm] = useState({
     currentPassword: '',
     newPassword: '',
@@ -23,6 +24,36 @@ function MyPage() {
   const [errorAlertOpen, setErrorAlertOpen] = useState(false)
   const [samePwAlertOpen, setSamePwAlertOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
+  const [switConnected, setSwitConnected] = useState<boolean | null>(null)
+  const [switConnectedAlert, setSwitConnectedAlert] = useState(false)
+  const [switDisconnectAlert, setSwitDisconnectAlert] = useState(false)
+
+  useEffect(() => {
+    apiFetch('/api/swit/status')
+      .then((r) => r.json())
+      .then((d) => setSwitConnected(d.connected))
+      .catch(() => setSwitConnected(false))
+  }, [apiFetch])
+
+  useEffect(() => {
+    if (searchParams.get('swit') === 'connected') {
+      setSwitConnected(true)
+      setSwitConnectedAlert(true)
+      const next = new URLSearchParams(searchParams)
+      next.delete('swit')
+      setSearchParams(next, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
+
+  async function handleSwitDisconnect() {
+    await apiFetch('/api/swit/disconnect', { method: 'DELETE' })
+    setSwitConnected(false)
+    setSwitDisconnectAlert(true)
+  }
+
+  function handleSwitConnect() {
+    window.location.href = `/api/swit/connect?token=${token}`
+  }
 
   const passwordMismatch =
     form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword
@@ -49,12 +80,9 @@ function MyPage() {
 
     setSubmitting(true)
     try {
-      const res = await fetch('/api/auth/password', {
+      const res = await apiFetch('/api/auth/password', {
         method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           currentPassword: form.currentPassword,
           newPassword: form.newPassword,
@@ -89,6 +117,24 @@ function MyPage() {
             </Button>
           </div>
           <p className="user-desc">계정 및 보안 정보를 관리 할 수 있습니다.</p>
+        </div>
+        <div className="mypage-section">
+          <h2 className="mypage-section-title">Swit 연동</h2>
+          <div className="swit-connect-box">
+            {switConnected === null && <p className="swit-status">확인 중...</p>}
+            {switConnected === false && (
+              <>
+                <p className="swit-status">연결되지 않음</p>
+                <Button variant="primary" onClick={handleSwitConnect}>Swit 연결하기</Button>
+              </>
+            )}
+            {switConnected === true && (
+              <>
+                <p className="swit-status connected">연결됨</p>
+                <Button onClick={handleSwitDisconnect}>연결 해제</Button>
+              </>
+            )}
+          </div>
         </div>
         <div className="mypage-section">
           <h2 className="mypage-section-title">초기 비밀번호 설정</h2>
@@ -148,6 +194,18 @@ function MyPage() {
         open={samePwAlertOpen}
         message="현재 비밀번호와 동일한 비밀번호로는 변경할 수 없습니다."
         onCancel={() => setSamePwAlertOpen(false)}
+        cancelText="닫기"
+      />
+      <AlertPopup
+        open={switConnectedAlert}
+        message="Swit 계정이 연결되었습니다."
+        onCancel={() => setSwitConnectedAlert(false)}
+        cancelText="닫기"
+      />
+      <AlertPopup
+        open={switDisconnectAlert}
+        message="Swit 연결이 해제되었습니다."
+        onCancel={() => setSwitDisconnectAlert(false)}
         cancelText="닫기"
       />
       <ScrollTop scrollTargetRef={contentRef} hasBottomButton />

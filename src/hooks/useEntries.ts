@@ -57,7 +57,7 @@ function mapEntry(raw: any): Entry {
 }
 
 export function useEntries() {
-  const { token } = useAuth()
+  const { apiFetch } = useAuth()
   const [entries, setEntries] = useState<Entry[]>([])
   const [total, setTotal] = useState(0)
   const [loading, setLoading] = useState(true)
@@ -65,12 +65,9 @@ export function useEntries() {
   const [error, setError] = useState<string | null>(null)
 
   const fetchEntries = useCallback(async (offset: number, append: boolean) => {
-    if (!token) return
     append ? setLoadingMore(true) : setLoading(true)
     try {
-      const res = await fetch(`/api/entries/me?limit=${PAGE_SIZE}&offset=${offset}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const res = await apiFetch(`/api/entries/me?limit=${PAGE_SIZE}&offset=${offset}`)
       if (!res.ok) throw new Error('불러오기 실패')
       const { entries: raw, total } = await res.json()
       const mapped = raw.map(mapEntry)
@@ -81,7 +78,7 @@ export function useEntries() {
     } finally {
       append ? setLoadingMore(false) : setLoading(false)
     }
-  }, [token])
+  }, [apiFetch])
 
   useEffect(() => {
     fetchEntries(0, false)

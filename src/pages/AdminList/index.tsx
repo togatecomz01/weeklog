@@ -1,10 +1,9 @@
-import { useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useNavigate, useSearchParams } from 'react-router-dom'
+import { useAuth } from '@/contexts/AuthContext'
 import AdminListCardWrap from '@/components/AdminListCard/AdminListCardWrap'
 import AdminListCard from '@/components/AdminListCard'
 import Select from '@/components/Select'
-import Button from '@/components/Button'
-import ButtonContainer from '@/components/ButtonContainer'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
@@ -13,51 +12,71 @@ import logo from '@/assets/images/logo.png'
 
 type BadgeType = 'normal' | 'important' | 'urgent'
 
+interface AdminEntry {
+  id: number
+  week_year: number
+  week_month: number
+  week_number: number
+  priority: string
+  department: string
+  title: string
+  completed_work: string
+  ongoing_work: string
+  user_name: string
+}
+
 const FILTER_OPTIONS = [
   { value: 'all', label: '전체' },
-  { value: 'normal', label: '보통' },
-  { value: 'important', label: '중요' },
-  { value: 'urgent', label: '긴급' },
+  { value: '보통', label: '보통' },
+  { value: '중요', label: '중요' },
+  { value: '긴급', label: '긴급' },
 ]
 
-const SAMPLE_CARDS: { id: number; tit: string; subTit: string; priority: BadgeType; content: string; }[] = [
-  {
-    id: 1,
-    tit: '홍길동',
-    subTit: '디자인',
-    priority: 'important',
-    content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정',
-  },
-  {
-    id: 2,
-    tit: '강길동',
-    subTit: '기획',
-    priority: 'normal',
-    content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중',
-  },
-  {
-    id: 3,
-    tit: '남길동',
-    subTit: '퍼블',
-    priority: 'urgent',
-    content: '1. 업무보고 시스템 개발 완료\n2. ERP 연동 설계 진행중\n3. 모바일 앱 검토 예정',
-  },
-  {
-    id: 4,
-    tit: '구길동',
-    subTit: '퍼블',
-    priority: 'normal',
-    content: '1. 업무보고 시스템 개발 완료 \n 2. ERP 연동 설계 진행중 _마무리 단계',
-  },
-]
+const PRIORITY_MAP: Record<string, BadgeType> = {
+  '보통': 'normal',
+  '중요': 'important',
+  '긴급': 'urgent',
+}
+
+function toPreview(completed_work: string, ongoing_work: string) {
+  const source = completed_work || ongoing_work
+  if (!source) return '등록된 업무 내용이 없습니다.'
+  return source.split('\n').map((s) => s.trim()).filter(Boolean).slice(0, 3).join('\n')
+}
 
 function AdminList() {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+  const { apiFetch } = useAuth()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
+  const [entries, setEntries] = useState<AdminEntry[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const filteredCards =
-    filter === 'all' ? SAMPLE_CARDS : SAMPLE_CARDS.filter((c) => c.priority === filter)
+  const year = searchParams.get('year')
+  const month = searchParams.get('month')
+  const week = searchParams.get('week')
+  const weekLabel = month && week ? `${month}월 ${week}주` : '전체'
+
+  const fetchEntries = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params = new URLSearchParams()
+      if (year) params.set('week_year', year)
+      if (month) params.set('week_month', month)
+      if (week) params.set('week_number', week)
+      const res = await apiFetch(`/api/entries?${params}`)
+      if (!res.ok) throw new Error()
+      setEntries(await res.json())
+    } finally {
+      setLoading(false)
+    }
+  }, [apiFetch, year, month, week])
+
+  useEffect(() => { fetchEntries() }, [fetchEntries])
+
+  const filteredEntries =
+    filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
 
   return (
     <div className="admin">
@@ -66,7 +85,7 @@ function AdminList() {
       <div ref={contentRef} className="main-content">
         <div className="main-section">
           <div className="main-section-header">
-            <h2 className="main-section-title">week: 6월 2주</h2>
+            <h2 className="main-section-title">week: {weekLabel}</h2>
             <Select
               options={FILTER_OPTIONS}
               value={filter}
@@ -75,24 +94,24 @@ function AdminList() {
             />
           </div>
 
-          <AdminListCardWrap>
-            {filteredCards.map((card) => (
-              <AdminListCard
-                key={card.id}
-                tit={card.tit}
-                subTit={card.subTit}
-                priority={card.priority}
-                content={card.content}
-                onClick={() => navigate(`/admin-entry-view?id=${card.id}`)}
-              />
-            ))}
-          </AdminListCardWrap>
-
-          <ButtonContainer>
-            <Button variant="more" fullWidth>
-              더보기
-            </Button>
-          </ButtonContainer>
+          {loading && <p style={{ padding: '20px', textAlign: 'center', color: '#aaa' }}>불러오는 중...</p>}
+          {!loading && filteredEntries.length === 0 && (
+            <p style={{ padding: '20px', textAlign: 'center', color: '#aaa' }}>등록된 업무일지가 없습니다.</p>
+          )}
+          {!loading && filteredEntries.length > 0 && (
+            <AdminListCardWrap>
+              {filteredEntries.map((entry) => (
+                <AdminListCard
+                  key={entry.id}
+                  tit={entry.user_name}
+                  subTit={entry.department}
+                  priority={PRIORITY_MAP[entry.priority] ?? 'normal'}
+                  content={toPreview(entry.completed_work, entry.ongoing_work)}
+                  onClick={() => navigate(`/admin-entry-view?id=${entry.id}`)}
+                />
+              ))}
+            </AdminListCardWrap>
+          )}
         </div>
       </div>
 

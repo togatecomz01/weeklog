@@ -26,17 +26,52 @@ router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
   res.json({ entries, total: count })
 })
 
-// 전체 업무일지 목록 조회 (admin)
-router.get('/', requireAuth, requireRole('admin'), async (_req, res) => {
-  const entries = await sql`
-    SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
-    e.next_week_plan, e.notes, e.created_at, e.updated_at,
-           u.id AS user_id, u.name AS user_name, u.email AS user_email
+// 주차별 제출/확인 현황 요약 (admin)
+router.get('/admin/weeks', requireAuth, requireRole('admin'), async (_req, res) => {
+  const rows = await sql`
+    SELECT
+      e.week_year,
+      e.week_month,
+      e.week_number,
+      COUNT(DISTINCT e.user_id)::int                                             AS entry_count,
+      COUNT(DISTINCT CASE WHEN e.confirmed_at IS NOT NULL THEN e.id END)::int   AS confirmed_count,
+      (SELECT COUNT(*)::int FROM users WHERE role = 'user')                      AS total_users
     FROM entries e
-    JOIN users u ON u.id = e.user_id
-    ORDER BY e.week_year DESC, e.week_month DESC, e.week_number DESC, u.name
+    GROUP BY e.week_year, e.week_month, e.week_number
+    ORDER BY e.week_year DESC, e.week_month DESC, e.week_number DESC
   `
-  res.json(entries)
+  res.json(rows)
+})
+
+// 전체 업무일지 목록 조회 (admin) — 주차 필터 선택적
+router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
+  const { week_year, week_month, week_number } = req.query
+
+  if (week_year && week_month && week_number) {
+    const entries = await sql`
+      SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
+             e.department, e.title, e.completed_work, e.ongoing_work,
+             e.next_week_plan, e.notes, e.created_at, e.updated_at,
+             u.id AS user_id, u.name AS user_name, u.email AS user_email
+      FROM entries e
+      JOIN users u ON u.id = e.user_id
+      WHERE e.week_year  = ${Number(week_year)}
+        AND e.week_month  = ${Number(week_month)}
+        AND e.week_number = ${Number(week_number)}
+      ORDER BY u.name
+    `
+    res.json(entries)
+  } else {
+    const entries = await sql`
+      SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
+             e.next_week_plan, e.notes, e.created_at, e.updated_at,
+             u.id AS user_id, u.name AS user_name, u.email AS user_email
+      FROM entries e
+      JOIN users u ON u.id = e.user_id
+      ORDER BY e.week_year DESC, e.week_month DESC, e.week_number DESC, u.name
+    `
+    res.json(entries)
+  }
 })
 
 // 특정 업무일지 조회
@@ -45,6 +80,7 @@ router.get('/:id', requireAuth, async (req, res) => {
     SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
            e.department, e.title, e.completed_work, e.ongoing_work,
            e.next_week_plan, e.notes, e.sent_done, e.sent_doing, e.sent_todo,
+           e.confirmed_at, e.confirmed_by,
            e.created_at, e.updated_at,
            u.id AS user_id, u.name AS user_name
     FROM entries e
@@ -64,6 +100,25 @@ router.get('/:id', requireAuth, async (req, res) => {
   }
 
   res.json(entry)
+})
+
+// 업무일지 확인 (admin only)
+router.post('/:id/confirm', requireAuth, requireRole('admin'), async (req, res) => {
+  const [entry] = await sql`SELECT id, confirmed_at FROM entries WHERE id = ${req.params.id}`
+  if (!entry) {
+    res.status(404).json({ message: '업무일지를 찾을 수 없습니다.' })
+    return
+  }
+  if (entry.confirmed_at) {
+    res.status(409).json({ message: '이미 확인된 업무일지입니다.' })
+    return
+  }
+  await sql`
+    UPDATE entries
+    SET confirmed_at = NOW(), confirmed_by = ${req.user!.id}
+    WHERE id = ${req.params.id}
+  `
+  res.json({ message: '확인 완료' })
 })
 
 // 업무일지 작성 (user only)

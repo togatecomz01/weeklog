@@ -1,4 +1,5 @@
 import { Router } from 'express'
+import jwt from 'jsonwebtoken'
 import { requireAuth } from '../middleware/auth.js'
 import sql from '../db.js'
 
@@ -7,26 +8,50 @@ const router = Router()
 const SWIT_API = 'https://openapi.swit.io/v1/api'
 const SWIT_TOKEN_URL = 'https://openapi.swit.io/oauth/token'
 
-// OAuth 인가 URL로 리다이렉트
-router.get('/connect', (_req, res) => {
+// OAuth 인가 URL로 리다이렉트 — JWT를 query param으로 받아 user_id를 state에 담음
+router.get('/connect', (req, res) => {
+  const { token } = req.query
+  if (!token) {
+    res.status(401).send('token 파라미터가 필요합니다.')
+    return
+  }
+
+  let userId: number
+  try {
+    const payload = jwt.verify(String(token), process.env.JWT_SECRET!) as { id: number }
+    userId = payload.id
+  } catch {
+    res.status(401).send('유효하지 않은 토큰입니다.')
+    return
+  }
+
   if (!process.env.SWIT_CLIENT_ID || !process.env.SWIT_REDIRECT_URI) {
     res.status(503).send('SWIT_CLIENT_ID 또는 SWIT_REDIRECT_URI가 .env에 없습니다.')
     return
   }
+
   const params = new URLSearchParams({
     client_id: process.env.SWIT_CLIENT_ID,
     redirect_uri: process.env.SWIT_REDIRECT_URI,
     response_type: 'code',
-    scope: 'task:write task:read project:read',
+    scope: 'task:write task:read project:read user:read',
+    state: String(userId),
   })
   res.redirect(`https://openapi.swit.io/oauth/authorize?${params}`)
 })
 
-// OAuth 콜백 — code를 access_token으로 교환
+// OAuth 콜백 — code를 access_token으로 교환 후 DB에 유저별로 저장
 router.get('/callback', async (req, res) => {
-  const { code } = req.query
-  if (!code) {
-    res.status(400).json({ message: 'code가 없습니다.' })
+  const { code, state } = req.query
+
+  if (!code || !state) {
+    res.status(400).send('code 또는 state가 없습니다.')
+    return
+  }
+
+  const userId = Number(state)
+  if (!userId) {
+    res.status(400).send('state에 유효한 user_id가 없습니다.')
     return
   }
 
@@ -44,26 +69,54 @@ router.get('/callback', async (req, res) => {
 
   const data = await resp.json()
   if (!resp.ok) {
-    res.status(500).json({ message: 'token 교환 실패', detail: data })
+    res.status(500).send(`토큰 교환 실패: ${data.message ?? resp.status}`)
     return
   }
 
-  // 발급된 access_token을 콘솔에 출력 — .env에 SWIT_ACCESS_TOKEN으로 저장할 것
-  console.log('\n=== SWIT ACCESS TOKEN ===')
-  console.log(data.access_token)
-  console.log('========================\n')
+  await sql`
+    INSERT INTO swit_tokens (user_id, access_token)
+    VALUES (${userId}, ${data.access_token})
+    ON CONFLICT (user_id) DO UPDATE
+      SET access_token = EXCLUDED.access_token,
+          connected_at = NOW()
+  `
 
-  res.send('<p>토큰 발급 완료. 서버 콘솔에서 토큰을 복사해 .env에 저장하세요.</p>')
+  res.redirect('/mypage?swit=connected')
 })
+
+// 현재 유저의 Swit 연결 상태 확인
+router.get('/status', requireAuth, async (req, res) => {
+  const rows = await sql`SELECT 1 FROM swit_tokens WHERE user_id = ${req.user!.id}`
+  res.json({ connected: rows.length > 0 })
+})
+
+// 연결 해제
+router.delete('/disconnect', requireAuth, async (req, res) => {
+  await sql`DELETE FROM swit_tokens WHERE user_id = ${req.user!.id}`
+  res.json({ message: '연결이 해제되었습니다.' })
+})
+
+// 현재 유저의 swit_token을 DB에서 가져오는 헬퍼
+async function getUserToken(userId: number): Promise<string | null> {
+  const rows = await sql<{ access_token: string }[]>`
+    SELECT access_token FROM swit_tokens WHERE user_id = ${userId}
+  `
+  return rows[0]?.access_token ?? null
+}
 
 // 프로젝트 내 태스크에서 status_id 목록 추출
 router.get('/status-ids', requireAuth, async (req, res) => {
-  const token = process.env.SWIT_ACCESS_TOKEN
+  const token = await getUserToken(req.user!.id)
   const projectId = String(req.query.project_id ?? '')
-  if (!token || !projectId) {
-    res.status(400).json({ message: 'token 또는 project_id 없음' })
+  if (!token) {
+    res.status(403).json({ message: 'Swit 계정이 연결되지 않았습니다.' })
     return
   }
+  if (!projectId) {
+    res.status(400).json({ message: 'project_id가 없습니다.' })
+    return
+  }
+
   const resp = await fetch(`${SWIT_API}/task.list?project_id=${projectId}&limit=100`, {
     headers: { Authorization: `Bearer ${token}` },
   })
@@ -84,10 +137,10 @@ router.get('/status-ids', requireAuth, async (req, res) => {
 })
 
 // 스윗 프로젝트 목록 조회
-router.get('/projects', requireAuth, async (_req, res) => {
-  const token = process.env.SWIT_ACCESS_TOKEN
+router.get('/projects', requireAuth, async (req, res) => {
+  const token = await getUserToken(req.user!.id)
   if (!token) {
-    res.status(503).json({ message: 'Swit 연동이 설정되지 않았습니다.' })
+    res.status(403).json({ message: 'Swit 계정이 연결되지 않았습니다.' })
     return
   }
 
@@ -129,11 +182,15 @@ router.post('/send', requireAuth, async (req, res) => {
     return
   }
 
-  const token = process.env.SWIT_ACCESS_TOKEN
+  const token = await getUserToken(req.user!.id)
+  if (!token) {
+    res.status(403).json({ message: 'Swit 계정이 연결되지 않았습니다.' })
+    return
+  }
+
   const defaultChannelId = process.env.SWIT_CHANNEL_ID ?? process.env.SWIT_PROJECT_ID
   const channelId = project_id ?? defaultChannelId
-
-  if (!token || !channelId) {
+  if (!channelId) {
     res.status(503).json({ message: 'Swit 연동이 설정되지 않았습니다.' })
     return
   }
@@ -179,7 +236,6 @@ router.post('/send', requireAuth, async (req, res) => {
     return
   }
 
-  // DB에 전송 상태 업데이트
   const eid = Number(entry_id)
   if (eid) {
     let result

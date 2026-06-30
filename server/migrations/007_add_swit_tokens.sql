@@ -1,0 +1,5 @@
+CREATE TABLE IF NOT EXISTS swit_tokens (
+  user_id      INTEGER PRIMARY KEY REFERENCES users(id) ON DELETE CASCADE,
+  access_token TEXT NOT NULL,
+  connected_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);

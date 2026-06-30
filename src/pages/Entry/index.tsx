@@ -52,7 +52,7 @@ function Entry() {
   const navigate = useNavigate()
   const [searchParams] = useSearchParams()
   const contentRef = useRef<HTMLElement | null>(null)
-  const { user, token } = useAuth()
+  const { user, apiFetch } = useAuth()
   const [form, setForm] = useState({
     writeDate: new Date().toISOString().slice(0, 10),
     title: '',
@@ -84,25 +84,23 @@ function Entry() {
   }
 
   useEffect(() => {
-    if (!token) return
     if (draftId) {
       setDraftLoading(true)
-      fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+      apiFetch('/api/drafts')
         .then((res) => res.ok ? res.json() : null)
         .then((draft) => { if (draft) applyDraft(draft) })
         .finally(() => setDraftLoading(false))
     } else {
-      fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+      apiFetch('/api/drafts')
         .then((res) => res.ok ? res.json() : null)
         .then((draft) => setHasDraft(Boolean(draft)))
     }
-  }, [token, draftId])
+  }, [apiFetch, draftId])
 
   async function handleLoadDraft() {
-    if (!token) return
     setDraftLoading(true)
     try {
-      const res = await fetch('/api/drafts', { headers: { Authorization: `Bearer ${token}` } })
+      const res = await apiFetch('/api/drafts')
       const draft = res.ok ? await res.json() : null
       if (draft) { applyDraft(draft); setHasDraft(false) }
     } finally {
@@ -126,15 +124,12 @@ function Entry() {
   )
 
   async function handleDraftSave() {
-    if (!token || !isDraftValid) return
+    if (!isDraftValid) return
     setLoading(true)
     try {
-      const res = await fetch('/api/drafts', {
+      const res = await apiFetch('/api/drafts', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           write_date: form.writeDate,
           title: form.title,
@@ -163,12 +158,9 @@ function Entry() {
     setLoading(true)
     try {
       const { week_year, week_month, week_number } = getWeekInfo(form.writeDate)
-      const res = await fetch('/api/entries', {
+      const res = await apiFetch('/api/entries', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           week_year,
           week_month,
@@ -189,11 +181,7 @@ function Entry() {
         return
       }
 
-      // 등록 성공 시 임시저장 삭제
-      await fetch('/api/drafts', {
-        method: 'DELETE',
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      await apiFetch('/api/drafts', { method: 'DELETE' })
 
       navigate('/main', { replace: true })
     } catch {
