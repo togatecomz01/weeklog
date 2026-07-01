@@ -73,11 +73,18 @@ router.get('/callback', async (req, res) => {
     return
   }
 
+  const userResp = await fetch(`${SWIT_API}/user.info`, {
+    headers: { Authorization: `Bearer ${data.access_token}` },
+  })
+  const userData = await userResp.json()
+  const switUserId: string | null = userData?.data?.user?.id ?? null
+
   await sql`
-    INSERT INTO swit_tokens (user_id, access_token)
-    VALUES (${userId}, ${data.access_token})
+    INSERT INTO swit_tokens (user_id, access_token, swit_user_id)
+    VALUES (${userId}, ${data.access_token}, ${switUserId})
     ON CONFLICT (user_id) DO UPDATE
       SET access_token = EXCLUDED.access_token,
+          swit_user_id = EXCLUDED.swit_user_id,
           connected_at = NOW()
   `
 
@@ -98,11 +105,12 @@ router.delete('/disconnect', requireAuth, async (req, res) => {
 })
 
 // 현재 유저의 swit_token을 DB에서 가져오는 헬퍼
-async function getUserToken(userId: number): Promise<string | null> {
-  const rows = await sql<{ access_token: string }[]>`
-    SELECT access_token FROM swit_tokens WHERE user_id = ${userId}
+async function getUserToken(userId: number): Promise<{ accessToken: string; switUserId: string | null } | null> {
+  const rows = await sql<{ access_token: string; swit_user_id: string | null }[]>`
+    SELECT access_token, swit_user_id FROM swit_tokens WHERE user_id = ${userId}
   `
-  return rows[0]?.access_token ?? null
+  if (!rows[0]) return null
+  return { accessToken: rows[0].access_token, switUserId: rows[0].swit_user_id }
 }
 
 // 프로젝트 내 태스크에서 status_id 목록 추출
@@ -119,7 +127,7 @@ router.get('/status-ids', requireAuth, async (req, res) => {
   }
 
   const resp = await fetch(`${SWIT_API}/task.list?project_id=${projectId}&limit=100`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token.accessToken}` },
   })
   const text = await resp.text()
   console.log('[swit/status-ids] task.list:', text.slice(0, 800))
@@ -152,7 +160,7 @@ router.get('/projects', requireAuth, async (req, res) => {
   }
 
   const resp = await fetch(`${SWIT_API}/project.list?workspace_id=${workspaceId}&limit=100`, {
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token.accessToken}` },
   })
   const text = await resp.text()
   console.log('[swit/projects] project.list:', text.slice(0, 500))
@@ -208,12 +216,17 @@ router.post('/send', requireAuth, async (req, res) => {
     todo: 'ToDo',
   }
 
+  const { accessToken, switUserId } = token
+  const assignFollow = switUserId
+    ? { assign: switUserId, follow: switUserId }
+    : {}
+
   const results = await Promise.allSettled(
     (items as string[]).map((item) =>
       fetch(`${SWIT_API}/task.create`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${accessToken}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -221,6 +234,7 @@ router.post('/send', requireAuth, async (req, res) => {
           title: item,
           content: `[${statusLabel[status] ?? title ?? status}] ${item}`,
           step: switStatus[status] ?? null,
+          ...assignFollow,
         }),
       }).then(async (r) => {
         const data = await r.json()

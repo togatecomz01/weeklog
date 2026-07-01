@@ -69,6 +69,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [pendingSend, setPendingSend] = useState<{ status: string; items: string[] } | null>(null)
   const [confirmed, setConfirmed] = useState<boolean>(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
+  const [switAlertOpen, setSwitAlertOpen] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -107,6 +108,12 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     setProjectOpen(true)
     try {
       const res = await apiFetch('/api/swit/projects')
+      if (res.status === 403) {
+        setSwitAlertOpen(true)
+        setProjectOpen(false)
+        setPendingSend(null)
+        return
+      }
       if (!res.ok) throw new Error('프로젝트 목록을 가져올 수 없습니다.')
       const data: { id: string; name: string }[] = await res.json()
       setProjects(data)
@@ -338,6 +345,13 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           onConfirm={handleConfirm}
         />
       )}
+
+      <AlertPopup
+        open={switAlertOpen}
+        message="스윗 연동을 먼저 진행해주세요."
+        cancelText="닫기"
+        onCancel={() => setSwitAlertOpen(false)}
+      />
 
       <AlertPopup
         open={deleteOpen}
