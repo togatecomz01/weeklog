@@ -70,6 +70,8 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [confirmed, setConfirmed] = useState<boolean>(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [switAlertOpen, setSwitAlertOpen] = useState(false)
+  const [sendConfirmOpen, setSendConfirmOpen] = useState(false)
+  const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[] } | null>(null)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -128,7 +130,14 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   function handleSend(status: string, items: string[]) {
-    openProjectPicker(status, items)
+    setPendingConfirm({ status, items })
+    setSendConfirmOpen(true)
+  }
+
+  function handleSendConfirm() {
+    setSendConfirmOpen(false)
+    if (pendingConfirm) openProjectPicker(pendingConfirm.status, pendingConfirm.items)
+    setPendingConfirm(null)
   }
 
   async function handleProjectConfirm() {
@@ -345,6 +354,15 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           onConfirm={handleConfirm}
         />
       )}
+
+      <AlertPopup
+        open={sendConfirmOpen}
+        message={`스윗 전송 이후에는 수정할 수 없습니다.\n전송하시겠습니까?`}
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={handleSendConfirm}
+        onCancel={() => { setSendConfirmOpen(false); setPendingConfirm(null) }}
+      />
 
       <AlertPopup
         open={switAlertOpen}
