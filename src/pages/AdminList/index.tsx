@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext'
 import AdminListCardWrap from '@/components/AdminListCard/AdminListCardWrap'
 import AdminListCard from '@/components/AdminListCard'
 import Select from '@/components/Select'
+import Button from '@/components/Button'
 import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
@@ -52,11 +53,12 @@ function AdminList() {
   const [filter, setFilter] = useState('all')
   const [entries, setEntries] = useState<AdminEntry[]>([])
   const [loading, setLoading] = useState(true)
+  const [visibleCount, setVisibleCount] = useState(4)
 
   const year = searchParams.get('year')
   const month = searchParams.get('month')
   const week = searchParams.get('week')
-  const weekLabel = month && week ? `${month}월 ${week}주` : '전체'
+  const weekLabel = month && week ? `${month}월 ${week}주차` : '전체'
 
   const fetchEntries = useCallback(async () => {
     setLoading(true)
@@ -78,6 +80,14 @@ function AdminList() {
   const filteredEntries =
     filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
 
+  function handleFilterChange(val: string) {
+    setFilter(val)
+    setVisibleCount(4)
+  }
+
+  const visibleEntries = filteredEntries.slice(0, visibleCount)
+  const hasMore = filteredEntries.length > visibleCount
+
   return (
     <div className="admin">
       <AppHeader left={<img src={logo} alt="weeklog" />} />
@@ -85,11 +95,11 @@ function AdminList() {
       <div ref={contentRef} className="main-content">
         <div className="main-section">
           <div className="main-section-header">
-            <h2 className="main-section-title">week: {weekLabel}</h2>
+            <h2 className="main-section-title">Week: {weekLabel}</h2>
             <Select
               options={FILTER_OPTIONS}
               value={filter}
-              onChange={setFilter}
+              onChange={handleFilterChange}
               className="main-filter"
             />
           </div>
@@ -99,18 +109,23 @@ function AdminList() {
             <p style={{ padding: '20px', textAlign: 'center', color: '#aaa' }}>등록된 업무일지가 없습니다.</p>
           )}
           {!loading && filteredEntries.length > 0 && (
-            <AdminListCardWrap>
-              {filteredEntries.map((entry) => (
-                <AdminListCard
-                  key={entry.id}
-                  tit={entry.user_name}
-                  subTit={entry.department}
-                  priority={PRIORITY_MAP[entry.priority] ?? 'normal'}
-                  content={toPreview(entry.completed_work, entry.ongoing_work)}
-                  onClick={() => navigate(`/admin-entry-view?id=${entry.id}`)}
-                />
-              ))}
-            </AdminListCardWrap>
+              <AdminListCardWrap>
+                {visibleEntries.map((entry) => (
+                  <AdminListCard
+                    key={entry.id}
+                    tit={entry.user_name}
+                    subTit={entry.department}
+                    priority={PRIORITY_MAP[entry.priority] ?? 'normal'}
+                    content={toPreview(entry.completed_work, entry.ongoing_work)}
+                    onClick={() => navigate(`/admin-entry-view?id=${entry.id}`)}
+                  />
+                ))}
+                {hasMore && (
+                  <Button variant="more" fullWidth onClick={() => setVisibleCount((c) => c + 4)}>
+                    더보기
+                  </Button>
+                )}
+              </AdminListCardWrap>
           )}
         </div>
       </div>

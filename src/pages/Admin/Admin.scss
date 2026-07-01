@@ -172,11 +172,11 @@
   flex-direction: column;
   gap: 10px;
   padding: 20px;
-  border-bottom: 8px solid $color-background;
+  border-top: 8px solid $color-background;
   cursor: pointer;
 
-  &:last-of-type {
-    border-bottom: 0;
+  &:first-of-type {
+    border-top: 0;
   }
 
   .card {

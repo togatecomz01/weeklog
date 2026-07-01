@@ -4,6 +4,8 @@ import { useAuth } from '@/contexts/AuthContext'
 import AppHeader from '@/components/AppHeader'
 import BottomNav from '@/components/BottomNav'
 import Badge from '@/components/Badge'
+import Button from '@/components/Button'
+import ButtonContainer from '@/components/ButtonContainer'
 import ScrollTop from '@/components/ScrollTop'
 import './Admin.scss'
 import logo from '@/assets/images/logo.png'
@@ -53,6 +55,7 @@ function Admin() {
   const [activeTab, setActiveTab] = useState<TabType>('all')
   const [weeks, setWeeks] = useState<WeekSummary[]>([])
   const [loading, setLoading] = useState(true)
+  const [visibleCount, setVisibleCount] = useState(4)
 
   const fetchWeeks = useCallback(async () => {
     setLoading(true)
@@ -80,6 +83,14 @@ function Admin() {
 
   const filteredWeeks =
     activeTab === 'all' ? weeks : weeks.filter((w) => w.status === activeTab)
+
+  function handleTabChange(tab: TabType) {
+    setActiveTab(tab)
+    setVisibleCount(4)
+  }
+
+  const visibleWeeks = filteredWeeks.slice(0, visibleCount)
+  const hasMore = filteredWeeks.length > visibleCount
 
   const confirmedCount = weeks.filter((w) => w.status === 'confirmed').length
   const unconfirmedCount = weeks.filter((w) => w.status === 'unconfirmed').length
@@ -122,7 +133,7 @@ function Admin() {
                 key={tab.value}
                 type="button"
                 className={`admin-tabs-item${activeTab === tab.value ? ' active' : ''}`}
-                onClick={() => setActiveTab(tab.value)}
+                onClick={() => handleTabChange(tab.value)}
               >
                 {tab.label}
               </button>
@@ -134,7 +145,7 @@ function Admin() {
             {!loading && filteredWeeks.length === 0 && (
               <p style={{ padding: '20px', textAlign: 'center', color: '#aaa' }}>데이터가 없습니다.</p>
             )}
-            {filteredWeeks.map((w) => (
+            {visibleWeeks.map((w) => (
               <div
                 key={`${w.week_year}-${w.week_month}-${w.week_number}`}
                 className="admin-card"
@@ -164,6 +175,13 @@ function Admin() {
                 </div>
               </div>
             ))}
+            {hasMore && (
+              <ButtonContainer>
+                <Button variant="more" fullWidth onClick={() => setVisibleCount((c) => c + 4)}>
+                  더보기
+                </Button>
+              </ButtonContainer>
+            )}
           </div>
         </section>
       </div>

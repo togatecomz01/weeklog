@@ -83,6 +83,13 @@
   }
 }
 
+.mypage.is-admin {
+  .bottom-nav {
+    justify-content: center;
+    gap: 120px;
+  }
+}
+
 .swit-connect-box {
   display: flex;
   align-items: center;
