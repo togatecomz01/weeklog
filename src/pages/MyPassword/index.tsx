@@ -32,7 +32,7 @@ function MyPasswordPage() {
     }
   }
 
-  const isValid = Boolean(form.newPassword.trim() && form.confirmPassword.trim())
+  const isValid = Boolean(form.currentPassword.trim() && form.newPassword.trim() && form.confirmPassword.trim())
 
   async function handleSubmit() {
     if (!isValid || !form.currentPassword || !form.newPassword || !form.confirmPassword) {
@@ -74,6 +74,7 @@ function MyPasswordPage() {
       <DetailHeader title="비밀번호 변경" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
       <div ref={contentRef} className="my-password-content">
         <div className="my-password-section">
+          <p className="my-password-title">비밀번호 설정</p>
           <div className="acc-info-box">
             <p className="info-id"><span>아이디 : </span>{user?.email ?? ''}</p>
           </div>
