@@ -14,7 +14,7 @@
     padding: 0 20px 75px;
     display: flex;
     flex-direction: column;
-    gap: 26px;
+    gap: 40px;
     overflow-y: auto;
   }
 
@@ -70,13 +70,18 @@
     }
 
     &-tag {
-      background: $color-primary;
-      color: $color-white;
+      background: #E6F0FD;
+      color: #3571FF;
       font-size: $font12;
       font-weight: $font-w-m;
-      padding: 2px 6px;
+      padding: 4px 6px;
       border-radius: 100px;
       line-height: 1.4;
+
+      &.is-registered {
+        background: $color-primary;
+        color: $color-white;
+      }
     }
 
     &-desc {
@@ -91,6 +96,7 @@
       width: 14px;
       height: 14px;
       flex-shrink: 0;
+      transform: rotate(180deg);
     }
   }
 
@@ -110,6 +116,7 @@
   .user-info {
     display: flex;
     justify-content: space-between;
+    align-items: center;
   }
 
   .username {
