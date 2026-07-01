@@ -238,6 +238,19 @@ router.post('/send', requireAuth, async (req, res) => {
 
   const eid = Number(entry_id)
   if (eid) {
+    const taskIds = results
+      .filter((r) => r.status === 'fulfilled')
+      .map((r) => (r as PromiseFulfilledResult<any>).value?.data?.task?.id)
+      .filter(Boolean) as string[]
+
+    if (taskIds.length > 0) {
+      await Promise.all(
+        taskIds.map((taskId) => sql`INSERT INTO swit_tasks (entry_id, task_id) VALUES (${eid}, ${taskId})`)
+      )
+    }
+  }
+
+  if (eid) {
     let result
     if (status === 'done') {
       result = await sql`UPDATE entries SET sent_done = TRUE WHERE id = ${eid} AND user_id = ${req.user!.id}`
