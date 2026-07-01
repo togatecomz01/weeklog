@@ -33,7 +33,7 @@
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    gap: 8px;
+    gap: 6px;
 
     &-text {
       font-size: $font14;
@@ -91,6 +91,7 @@
       border-radius: 0 12px 12px 0;
       align-items: center;
       gap: 5px;
+
       &:first-child {
         border-right: 1px solid $color-border;
         border-radius: 12px 0 0 12px;
@@ -107,9 +108,11 @@
       font-size: $font14;
       font-weight: $font-w-b;
       color: $color-text-black;
+
       span {
         font-size: $font34;
         font-weight: $font-w-b;
+
         &.completed {
           color: #CCCCCC;
         }
@@ -120,10 +123,12 @@
   &-section {
     padding-top: 13px;
     background-color: $color-white;
+
     .button-container {
       padding-bottom: 30px;
     }
   }
+
   &-tabs {
     display: flex;
 
@@ -167,9 +172,11 @@
   flex-direction: column;
   gap: 10px;
   padding: 20px;
-  border-bottom: 8px solid $color-background;
-  &:last-of-type {
-    border-bottom: 0;
+  border-top: 8px solid $color-background;
+  cursor: pointer;
+
+  &:first-of-type {
+    border-top: 0;
   }
 
   .card {
@@ -178,26 +185,26 @@
       align-items: center;
       gap: 14px;
     }
-  
+
     &-icon {
       display: block;
-  
+
       width: 48px;
       height: 48px;
     }
-  
+
     &-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
     }
-  
+
     &-week {
       font-size: $font16;
       font-weight: $font-w-sb;
       color: $color-text-black;
     }
-  
+
     &-badge {
       display: inline-flex;
       align-items: center;
@@ -205,18 +212,18 @@
       border-radius: 20px;
       font-size: $font12;
       font-weight: $font-w-sb;
-  
+
       &--confirmed {
         background: #DCFCE7;
         color: #15803D;
       }
-  
+
       &--unconfirmed {
         background: #FEE2E2;
         color: #B91C1C;
       }
     }
-  
+
     &-summary {
       display: flex;
       align-items: center;
@@ -224,19 +231,19 @@
       padding-top: 20px;
       border-top: 1px solid rgba(238, 238, 238, 0.93);
     }
-  
+
     &-rate-info {
       flex-shrink: 0;
       width: 70px;
     }
-  
+
     &-rate-value {
       display: block;
       font-size: $font20;
       font-weight: $font-w-m;
       color: $color-text-black;
     }
-  
+
     &-label {
       display: inline-block;
       margin-top: 4px;
@@ -244,7 +251,7 @@
       font-weight: $font-w-m;
       color: $color-text-gray;
     }
-  
+
     &-rate-bar {
       flex: 1;
       height: 6px;
@@ -252,25 +259,25 @@
       background: #DADDE5;
       overflow: hidden;
     }
-  
+
     &-rate-fill {
       height: 100%;
       border-radius: inherit;
       background: $color-primary;
     }
-  
+
     &-confirmer {
       flex-shrink: 0;
       width: 77px;
       text-align: right;
     }
-  
+
     &-confirmer-value {
       display: block;
       font-size: $font20;
       font-weight: $font-w-m;
       color: $color-text-black;
-  
+
       span {
         color: $color-text-gray-light;
       }
