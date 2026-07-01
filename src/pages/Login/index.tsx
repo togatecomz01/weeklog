@@ -6,39 +6,78 @@ import Checkbox from '@/components/Checkbox'
 import AuthLayout from '@/components/AuthLayout'
 import { useAuth } from '@/contexts/AuthContext'
 
+type LoginField = 'email' | 'password'
+type LoginErrors = Partial<Record<LoginField, string>>
+
 function Login() {
   const navigate = useNavigate()
   const { user, login } = useAuth()
 
+  const [form, setForm] = useState({ email: '', password: '' })
+  const [autoLogin, setAutoLogin] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<LoginErrors>({})
+  const [formError, setFormError] = useState('')
+  const [loading, setLoading] = useState(false)
+
   if (user) {
     return <Navigate to={user.role === 'admin' ? '/admin' : '/main'} replace />
   }
-  const [form, setForm] = useState({ email: '', password: '' })
-  const [autoLogin, setAutoLogin] = useState(false)
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
 
   function handleChange(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }))
+      setFormError('')
+      setFieldErrors((prev) => {
+        if (!prev[field]) return prev
+
+        const next = { ...prev }
+        delete next[field]
+        return next
+      })
     }
+  }
+
+  function validateForm() {
+    const nextErrors: LoginErrors = {}
+
+    if (!form.email.trim()) {
+      nextErrors.email = '이메일을 입력해주세요.'
+    }
+
+    if (!form.password) {
+      nextErrors.password = '비밀번호를 입력해주세요.'
+    }
+
+    setFieldErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
   }
 
   async function handleLogin(e?: React.BaseSyntheticEvent) {
     e?.preventDefault()
-    setError('')
+    setFieldErrors({})
+    setFormError('')
+
+    if (!validateForm()) return
+
     setLoading(true)
     try {
       const res = await fetch('/api/auth/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: form.email, password: form.password }),
+        body: JSON.stringify({ email: form.email.trim(), password: form.password }),
       })
 
       const data = await res.json()
 
       if (!res.ok) {
-        setError(data.message ?? '로그인에 실패했습니다.')
+        const message = data.message ?? '로그인에 실패했습니다.'
+
+        if (data.field === 'email' || data.field === 'password') {
+          setFieldErrors({ [data.field]: message })
+        } else {
+          setFormError(message)
+        }
+
         return
       }
 
@@ -47,7 +86,7 @@ function Login() {
       if (data.user.role === 'admin') navigate('/admin')
       else navigate('/main')
     } catch {
-      setError('서버에 연결할 수 없습니다.')
+      setFormError('서버에 연결할 수 없습니다.')
     } finally {
       setLoading(false)
     }
@@ -68,6 +107,8 @@ function Login() {
           placeholder="예) Id_123@togate.kr"
           value={form.email}
           onChange={handleChange('email')}
+          error={!!fieldErrors.email}
+          errorMessage={fieldErrors.email}
         />
         <Input
           label="비밀번호"
@@ -76,9 +117,10 @@ function Login() {
           placeholder="비밀번호를 입력하세요"
           value={form.password}
           onChange={handleChange('password')}
-          error={!!error}
-          errorMessage={error}
+          error={!!fieldErrors.password}
+          errorMessage={fieldErrors.password}
         />
+        {formError && <p className="input-error">{formError}</p>}
       </div>
 
       <div className="auth-options">

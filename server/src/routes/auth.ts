@@ -9,8 +9,13 @@ const router = Router()
 router.post('/login', async (req, res) => {
   const { email, password } = req.body
 
-  if (!email || !password) {
-    res.status(400).json({ message: '이메일과 비밀번호를 입력해주세요.' })
+  if (!email) {
+    res.status(400).json({ message: '이메일을 입력해주세요.', field: 'email' })
+    return
+  }
+
+  if (!password) {
+    res.status(400).json({ message: '비밀번호를 입력해주세요.', field: 'password' })
     return
   }
 
@@ -21,13 +26,13 @@ router.post('/login', async (req, res) => {
   `
 
   if (!user) {
-    res.status(401).json({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' })
+    res.status(401).json({ message: '존재하지 않는 이메일입니다.', field: 'email' })
     return
   }
 
   const valid = await bcrypt.compare(password, user.password_hash)
   if (!valid) {
-    res.status(401).json({ message: '이메일 또는 비밀번호가 올바르지 않습니다.' })
+    res.status(401).json({ message: '비밀번호가 올바르지 않습니다.', field: 'password' })
     return
   }
 
