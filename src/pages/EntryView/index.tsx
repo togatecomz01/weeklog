@@ -308,7 +308,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
                 status={status}
                 sent={status ? sentStatuses.has(status) : false}
                 items={items}
-                onSend={!isAdmin && status && !sentStatuses.has(status)
+                onSend={!isAdmin && status && items.length > 0 && !sentStatuses.has(status)
                   ? () => handleSend(status, items)
                   : undefined}
               />
