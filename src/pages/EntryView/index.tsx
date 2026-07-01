@@ -70,6 +70,9 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [confirmed, setConfirmed] = useState<boolean>(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [switAlertOpen, setSwitAlertOpen] = useState(false)
+  const [sendConfirmOpen, setSendConfirmOpen] = useState(false)
+  const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[] } | null>(null)
+  const [allSentAlertOpen, setAllSentAlertOpen] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -128,7 +131,14 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   function handleSend(status: string, items: string[]) {
-    openProjectPicker(status, items)
+    setPendingConfirm({ status, items })
+    setSendConfirmOpen(true)
+  }
+
+  function handleSendConfirm() {
+    setSendConfirmOpen(false)
+    if (pendingConfirm) openProjectPicker(pendingConfirm.status, pendingConfirm.items)
+    setPendingConfirm(null)
   }
 
   async function handleProjectConfirm() {
@@ -329,7 +339,13 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           ) : (
             <>
               <Button variant="secondary" onClick={() => setDeleteOpen(true)}>삭제</Button>
-              <Button onClick={() => setEditOpen(true)}>수정</Button>
+              <Button onClick={() => {
+                if (sentStatuses.has('done') && sentStatuses.has('doing') && sentStatuses.has('todo')) {
+                  setAllSentAlertOpen(true)
+                } else {
+                  setEditOpen(true)
+                }
+              }}>수정</Button>
             </>
           )}
         </ButtonContainer>
@@ -341,16 +357,33 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
         <EntryEditPopup
           open={editOpen}
           initialData={initialEditData}
+          sentStatuses={sentStatuses}
           onClose={handleEditClose}
           onConfirm={handleConfirm}
         />
       )}
 
       <AlertPopup
+        open={sendConfirmOpen}
+        message={`스윗 전송 이후에는 수정할 수 없습니다.\n전송하시겠습니까?`}
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={handleSendConfirm}
+        onCancel={() => { setSendConfirmOpen(false); setPendingConfirm(null) }}
+      />
+
+      <AlertPopup
         open={switAlertOpen}
         message="스윗 연동을 먼저 진행해주세요."
         cancelText="닫기"
         onCancel={() => setSwitAlertOpen(false)}
+      />
+
+      <AlertPopup
+        open={allSentAlertOpen}
+        message="수정할 수 없습니다."
+        cancelText="닫기"
+        onCancel={() => setAllSentAlertOpen(false)}
       />
 
       <AlertPopup

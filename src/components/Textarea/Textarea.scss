@@ -24,7 +24,8 @@ textarea.textarea {
         border-color: $color-hover;
     }
 
-    &:disabled {
+    &:disabled,
+    &:read-only {
         background: $color-disabled;
         color: $color-input-placeholder;
         cursor: not-allowed;

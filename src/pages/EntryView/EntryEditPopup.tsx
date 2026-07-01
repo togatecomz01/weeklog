@@ -23,6 +23,7 @@ export interface EntryEditForm {
 interface EntryEditPopupProps {
   open: boolean
   initialData: EntryEditForm
+  sentStatuses?: Set<string>
   onClose: () => void
   onConfirm: (form: EntryEditForm) => void
 }
@@ -33,7 +34,7 @@ const PRIORITY_OPTIONS = [
   { value: 'high', label: '높음' },
 ]
 
-function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopupProps) {
+function EntryEditPopup({ open, initialData, sentStatuses = new Set(), onClose, onConfirm }: EntryEditPopupProps) {
   const [form, setForm] = useState<EntryEditForm>(initialData)
 
   useEffect(() => {
@@ -114,6 +115,7 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
             placeholder="이번 주에 완료한 업무를 줄바꿈으로 구분하여 입력하세요."
             value={form.completedWork}
             onChange={handleChange('completedWork')}
+            readOnly={sentStatuses.has('done')}
           />
           <Textarea
             id="edit-progress-work"
@@ -121,6 +123,7 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
             placeholder="현재 진행 중인 업무를 줄바꿈으로 구분하여 입력하세요."
             value={form.progressWork}
             onChange={handleChange('progressWork')}
+            readOnly={sentStatuses.has('doing')}
           />
           <Textarea
             id="edit-next-work"
@@ -128,6 +131,7 @@ function EntryEditPopup({ open, initialData, onClose, onConfirm }: EntryEditPopu
             placeholder="다음 주 예정 업무를 줄바꿈으로 구분하여 입력하세요."
             value={form.nextWork}
             onChange={handleChange('nextWork')}
+            readOnly={sentStatuses.has('todo')}
           />
           <Textarea
             id="edit-note"
