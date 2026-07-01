@@ -203,6 +203,43 @@ router.delete('/:id', requireAuth, requireRole('user'), async (req, res) => {
     return
   }
 
+  // Swit 태스크 삭제 (실패해도 업무일지 삭제는 진행)
+  try {
+    const tasks = await sql<{ task_id: string }[]>`
+      SELECT task_id FROM swit_tasks WHERE entry_id = ${req.params.id}
+    `
+    if (tasks.length > 0) {
+      const [tokenRow] = await sql<{ access_token: string }[]>`
+        SELECT access_token FROM swit_tokens WHERE user_id = ${req.user!.id}
+      `
+      if (tokenRow) {
+        for (const t of tasks) {
+          const r = await fetch(`https://openapi.swit.io/v1/api/task.remove`, {
+            method: 'POST',
+            headers: {
+              Authorization: `Bearer ${tokenRow.access_token}`,
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ id: t.task_id }),
+          })
+          if (r.status === 429) {
+            await new Promise((resolve) => setTimeout(resolve, 500))
+            await fetch(`https://openapi.swit.io/v1/api/task.remove`, {
+              method: 'POST',
+              headers: {
+                Authorization: `Bearer ${tokenRow.access_token}`,
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ id: t.task_id }),
+            })
+          }
+        }
+      }
+    }
+  } catch (e) {
+    console.error('[entries/delete] Swit 태스크 삭제 실패:', e)
+  }
+
   await sql`DELETE FROM entries WHERE id = ${req.params.id}`
   res.json({ message: '삭제되었습니다.' })
 })

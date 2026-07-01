@@ -1,0 +1,6 @@
+CREATE TABLE IF NOT EXISTS swit_tasks (
+  id         SERIAL PRIMARY KEY,
+  entry_id   INTEGER NOT NULL REFERENCES entries(id) ON DELETE CASCADE,
+  task_id    TEXT NOT NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
