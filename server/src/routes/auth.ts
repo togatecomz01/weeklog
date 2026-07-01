@@ -82,7 +82,7 @@ router.put('/password', requireAuth, async (req, res) => {
 
   const valid = await bcrypt.compare(currentPassword, user.password_hash)
   if (!valid) {
-    res.status(401).json({ message: '현재 비밀번호가 올바르지 않습니다.' })
+    res.status(400).json({ message: '현재 비밀번호가 올바르지 않습니다.' })
     return
   }
 
