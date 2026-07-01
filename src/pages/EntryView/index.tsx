@@ -72,6 +72,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [switAlertOpen, setSwitAlertOpen] = useState(false)
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false)
   const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[] } | null>(null)
+  const [allSentAlertOpen, setAllSentAlertOpen] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -338,7 +339,13 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           ) : (
             <>
               <Button variant="secondary" onClick={() => setDeleteOpen(true)}>삭제</Button>
-              <Button onClick={() => setEditOpen(true)}>수정</Button>
+              <Button onClick={() => {
+                if (sentStatuses.has('done') && sentStatuses.has('doing') && sentStatuses.has('todo')) {
+                  setAllSentAlertOpen(true)
+                } else {
+                  setEditOpen(true)
+                }
+              }}>수정</Button>
             </>
           )}
         </ButtonContainer>
@@ -370,6 +377,13 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
         message="스윗 연동을 먼저 진행해주세요."
         cancelText="닫기"
         onCancel={() => setSwitAlertOpen(false)}
+      />
+
+      <AlertPopup
+        open={allSentAlertOpen}
+        message="수정할 수 없습니다."
+        cancelText="닫기"
+        onCancel={() => setAllSentAlertOpen(false)}
       />
 
       <AlertPopup
