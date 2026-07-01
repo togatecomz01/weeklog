@@ -5,6 +5,8 @@ import ProtectedRoute from './components/ProtectedRoute'
 import Login from './pages/Login'
 import Main from './pages/Main'
 import MyPage from './pages/MyPage'
+import MyPasswordPage from './pages/MyPassword'
+import MySwitPage from './pages/MySwit'
 import ResetPassword from './pages/ResetPassword'
 import Entry from './pages/Entry'
 import Admin from './pages/Admin'
@@ -31,6 +33,8 @@ function App() {
           {/* 일반 유저 전용 */}
           <Route path="/main" element={<ProtectedRoute allowedRoles={['user']}><Main /></ProtectedRoute>} />
           <Route path="/my" element={<ProtectedRoute allowedRoles={['user', 'admin']}><MyPage /></ProtectedRoute>} />
+          <Route path="/my/password" element={<ProtectedRoute allowedRoles={['user', 'admin']}><MyPasswordPage /></ProtectedRoute>} />
+          <Route path="/my/swit" element={<ProtectedRoute allowedRoles={['user', 'admin']}><MySwitPage /></ProtectedRoute>} />
           <Route path="/entry" element={<ProtectedRoute allowedRoles={['user']}><Entry /></ProtectedRoute>} />
           <Route path="/entry-view" element={<ProtectedRoute allowedRoles={['user']}><EntryView /></ProtectedRoute>} />
 

@@ -8,26 +8,10 @@
   margin: 0 auto;
   overflow: hidden;
 
-  &-header {
-    position: fixed;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 480px;
-    height: auto;
-    background: $color-white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 10px 20px;
-    z-index: 100;
-  }
-
   &-content {
     flex: 1;
     min-height: 0;
-    padding: 0 20px 175px;
+    padding: 0 20px 75px;
     display: flex;
     flex-direction: column;
     gap: 26px;
@@ -41,67 +25,79 @@
   }
 
   &-section-title {
-    font-size: $font18;
-    font-weight: $font-w-sb;
-    color: $color-text-gray;
-  }
-
-  &-form {
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-  }
-
-  > .button-container {
-    position: fixed;
-    left: 50%;
-    bottom: 75px;
-    transform: translateX(-50%);
-    width: 100%;
-    max-width: 480px;
-    padding: 0 20px 28px;
-    background: $color-white;
-    z-index: 90;
-  }
-
-  .scroll-top {
-    bottom: 167px;
-  }
-
-  .acc-info-box {
-    position: relative;
-    padding: 12px 8px;
-    border-radius: 4px;
-    background-color: $color-background;
-    @include info-icon();
-    .info-id {
-      padding-left: 28px;
-      font-size: $font14;
-      font-weight: $font-w-m;
-      color: $color-text-black;
-    }
-  }
-}
-
-.mypage.is-admin {
-  .bottom-nav {
-    justify-content: center;
-    gap: 120px;
-  }
-}
-
-.swit-connect-box {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-
-  .swit-status {
-    font-size: $font14;
+    font-size: $font16;
     font-weight: $font-w-m;
     color: $color-text-gray-light;
+    line-height: 1.4;
+  }
 
-    &.connected {
-      color: $color-primary;
+  &-menu-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  &-menu-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+    font-family: inherit;
+
+    &-info {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    &-title-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    &-title {
+      display: block;
+      font-size: $font18;
+      font-weight: $font-w-m;
+      color: $color-text-black;
+      line-height: 1.5;
+    }
+
+    &-tag {
+      background: $color-primary;
+      color: $color-white;
+      font-size: $font12;
+      font-weight: $font-w-m;
+      padding: 2px 6px;
+      border-radius: 100px;
+      line-height: 1.4;
+    }
+
+    &-desc {
+      display: block;
+      font-size: $font14;
+      font-weight: $font-w-r;
+      color: $color-text-gray-light;
+      line-height: 1.5;
+    }
+
+    &-arrow {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+    }
+  }
+
+  &.is-admin {
+    .bottom-nav {
+      justify-content: center;
+      gap: 120px;
     }
   }
 }
@@ -110,19 +106,23 @@
   padding: 16px 0;
   border-bottom: 1px solid $color-border;
   color: $color-text-black;
+
   .user-info {
     display: flex;
     justify-content: space-between;
   }
+
   .username {
     padding-right: 3px;
     font-size: $font24;
     font-weight: $font-w-b;
   }
+
   .user-position {
     font-size: $font22;
     font-weight: $font-w-m;
   }
+
   .user-desc {
     margin-top: 8px;
     font-size: $font14;
