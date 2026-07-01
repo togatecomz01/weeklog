@@ -68,6 +68,7 @@ function Entry() {
   const [hasDraft, setHasDraft] = useState(false)
   const [submitOpen, setSubmitOpen] = useState(false)
   const [draftOpen, setDraftOpen] = useState(false)
+  const [duplicateAlertOpen, setDuplicateAlertOpen] = useState(false)
 
   const draftId = searchParams.get('draftId')
 
@@ -177,7 +178,11 @@ function Entry() {
 
       const data = await res.json()
       if (!res.ok) {
-        setError(data.message ?? '등록에 실패했습니다.')
+        if (res.status === 409) {
+          setDuplicateAlertOpen(true)
+        } else {
+          setError(data.message ?? '등록에 실패했습니다.')
+        }
         return
       }
 
@@ -313,6 +318,13 @@ function Entry() {
         cancelText="취소"
         onConfirm={() => { setSubmitOpen(false); handleSubmit() }}
         onCancel={() => setSubmitOpen(false)}
+      />
+      <AlertPopup
+        open={duplicateAlertOpen}
+        message="이미 등록한 업무일지가 있습니다."
+        description="동일 주차에는 업무를 1건만 등록할 수 있습니다."
+        cancelText="닫기"
+        onCancel={() => setDuplicateAlertOpen(false)}
       />
     </div>
   )
