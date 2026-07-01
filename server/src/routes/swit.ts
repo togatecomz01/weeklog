@@ -81,7 +81,8 @@ router.get('/callback', async (req, res) => {
           connected_at = NOW()
   `
 
-  res.redirect('/mypage?swit=connected')
+  const clientBase = process.env.CLIENT_ORIGIN ?? ''
+  res.redirect(`${clientBase}/my/swit?swit=connected`)
 })
 
 // 현재 유저의 Swit 연결 상태 확인

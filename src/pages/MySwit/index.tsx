@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '@/components/Button'
 import DetailHeader from '@/components/DetailHeader'
 import AlertPopup from '@/components/AlertPopup'
@@ -11,7 +11,9 @@ function MySwitPage() {
   const contentRef = useRef<HTMLDivElement | null>(null)
   const { token, apiFetch } = useAuth()
   const navigate = useNavigate()
+  const [searchParams, setSearchParams] = useSearchParams()
   const [switConnected, setSwitConnected] = useState<boolean | null>(null)
+  const [switConnectedAlert, setSwitConnectedAlert] = useState(false)
   const [switDisconnectAlert, setSwitDisconnectAlert] = useState(false)
 
   useEffect(() => {
@@ -20,6 +22,16 @@ function MySwitPage() {
       .then((d) => setSwitConnected(d.connected))
       .catch(() => setSwitConnected(false))
   }, [apiFetch])
+
+  useEffect(() => {
+    if (searchParams.get('swit') === 'connected') {
+      setSwitConnected(true)
+      setSwitConnectedAlert(true)
+      const next = new URLSearchParams(searchParams)
+      next.delete('swit')
+      setSearchParams(next, { replace: true })
+    }
+  }, [searchParams, setSearchParams])
 
   async function handleSwitDisconnect() {
     await apiFetch('/api/swit/disconnect', { method: 'DELETE' })
@@ -64,6 +76,12 @@ function MySwitPage() {
         </div>
       </div>
 
+      <AlertPopup
+        open={switConnectedAlert}
+        message="Swit 계정이 연결되었습니다."
+        onCancel={() => setSwitConnectedAlert(false)}
+        cancelText="닫기"
+      />
       <AlertPopup
         open={switDisconnectAlert}
         message="Swit 연결이 해제되었습니다."
