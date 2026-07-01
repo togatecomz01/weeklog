@@ -350,6 +350,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
         <EntryEditPopup
           open={editOpen}
           initialData={initialEditData}
+          sentStatuses={sentStatuses}
           onClose={handleEditClose}
           onConfirm={handleConfirm}
         />
