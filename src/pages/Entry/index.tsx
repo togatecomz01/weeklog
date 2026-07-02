@@ -69,6 +69,15 @@ function Entry() {
   const [submitOpen, setSubmitOpen] = useState(false)
   const [draftOpen, setDraftOpen] = useState(false)
   const [duplicateAlertOpen, setDuplicateAlertOpen] = useState(false)
+  const [backConfirmOpen, setBackConfirmOpen] = useState(false)
+
+  const hasInput = Boolean(
+    form.title.trim() ||
+    form.completedWork.trim() ||
+    form.progressWork.trim() ||
+    form.nextWork.trim() ||
+    form.note.trim()
+  )
 
   const draftId = searchParams.get('draftId')
 
@@ -199,7 +208,7 @@ function Entry() {
   if (draftLoading) {
     return (
       <div className="entry">
-        <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
+        <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => hasInput ? setBackConfirmOpen(true) : navigate(-1)} />
         <main ref={contentRef} className="entry-content" />
       </div>
     )
@@ -207,7 +216,7 @@ function Entry() {
 
   return (
     <div className="entry">
-      <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
+      <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => hasInput ? setBackConfirmOpen(true) : navigate(-1)} />
       <main ref={contentRef} className="entry-content">
         <section className="entry-section">
           <h2 className="entry-title">작성정보</h2>
@@ -325,6 +334,16 @@ function Entry() {
         description="동일 주차에는 업무를 1건만 등록할 수 있습니다."
         cancelText="닫기"
         onCancel={() => setDuplicateAlertOpen(false)}
+      />
+      <AlertPopup
+        open={backConfirmOpen}
+        message="작성 중인 내용이 있습니다."
+        description={`뒤로가기 시 작성 중인 내용이 저장되지 않고 삭제됩니다.\n뒤로 가시겠습니까?`}
+        descriptionSize="sm"
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={() => { setBackConfirmOpen(false); navigate(-1) }}
+        onCancel={() => setBackConfirmOpen(false)}
       />
     </div>
   )
