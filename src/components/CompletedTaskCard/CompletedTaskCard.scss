@@ -34,14 +34,26 @@
     gap: 6px;
     padding: 20px;
     background: $color-background;
-    list-style: decimal;
 
-    li {
-      font-size: $font14;
-      font-weight: $font-w-r;
-      color: $color-text-gray;
-      line-height: 1.4;
-      margin-left: 20px;
+    ol {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      list-style: decimal;
+
+      li {
+        font-size: $font14;
+        font-weight: $font-w-r;
+        color: $color-text-gray;
+        line-height: 1.4;
+        margin-left: 20px;
+      }
     }
+  }
+
+  &-empty {
+    font-size: $font14;
+    font-weight: $font-w-r;
+    color: $color-text-gray-9;
   }
 }

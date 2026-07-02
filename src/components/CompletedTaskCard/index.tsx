@@ -40,11 +40,17 @@ function CompletedTaskCard({ title, status, sent = false, items, onSend, classNa
           )
         )}
       </div>
-      <ol className="completed-task-card-items">
-        {items.map((item, index) => (
-          <li key={index}>{item}</li>
-        ))}
-      </ol>
+      <div className="completed-task-card-items">
+        {items.length === 0 ? (
+          <p className="completed-task-card-empty">작성된 내용이 없습니다.</p>
+        ) : (
+          <ol>
+            {items.map((item, index) => (
+              <li key={index}>{item}</li>
+            ))}
+          </ol>
+        )}
+      </div>
     </div>
   )
 }
