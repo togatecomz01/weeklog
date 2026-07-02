@@ -94,8 +94,12 @@ router.get('/callback', async (req, res) => {
 
 // 현재 유저의 Swit 연결 상태 확인
 router.get('/status', requireAuth, async (req, res) => {
-  const rows = await sql`SELECT 1 FROM swit_tokens WHERE user_id = ${req.user!.id}`
-  res.json({ connected: rows.length > 0 })
+  try {
+    const rows = await sql`SELECT 1 FROM swit_tokens WHERE user_id = ${req.user!.id}`
+    res.json({ connected: rows.length > 0 })
+  } catch {
+    res.json({ connected: false })
+  }
 })
 
 // 연결 해제
