@@ -20,7 +20,6 @@ function MyPasswordPage() {
   })
   const [alertOpen, setAlertOpen] = useState(false)
   const [errorAlertOpen, setErrorAlertOpen] = useState(false)
-  const [samePwAlertOpen, setSamePwAlertOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
   function isValidPassword(pw: string) {
@@ -33,6 +32,7 @@ function MyPasswordPage() {
     return types >= 2
   }
 
+  const samePasswordError = form.newPassword.length > 0 && form.currentPassword.length > 0 && form.newPassword === form.currentPassword
   const newPasswordError = form.newPassword.length > 0 && !isValidPassword(form.newPassword)
   const passwordMismatch = form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword
 
@@ -46,7 +46,8 @@ function MyPasswordPage() {
     form.currentPassword.trim() &&
     form.newPassword.trim() &&
     form.confirmPassword.trim() &&
-    isValidPassword(form.newPassword)
+    isValidPassword(form.newPassword) &&
+    !samePasswordError
   )
 
   async function handleSubmit() {
@@ -56,10 +57,6 @@ function MyPasswordPage() {
     }
     if (form.newPassword !== form.confirmPassword) return
 
-    if (form.currentPassword.trim() === form.newPassword.trim()) {
-      setSamePwAlertOpen(true)
-      return
-    }
 
     setSubmitting(true)
     try {
@@ -106,10 +103,11 @@ function MyPasswordPage() {
             label="새 비밀번호"
             type="password"
             placeholder=""
+            tooltip="영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10자~16자"
             value={form.newPassword}
             onChange={handleChange('newPassword')}
-            error={newPasswordError}
-            errorMessage="영문 대소문자, 숫자, 특수문자 중 2가지 이상을 조합하여 10~16자로 입력해 주세요."
+            error={samePasswordError || newPasswordError}
+            errorMessage={samePasswordError ? '현재 비밀번호와 다른 비밀번호를 입력해 주세요.' : '영문 대소문자, 숫자, 특수문자 중 2가지 이상을 조합하여 10~16자로 입력해 주세요.'}
           />
           <Input
             id="confirm-password"
@@ -141,12 +139,7 @@ function MyPasswordPage() {
         onCancel={() => setErrorAlertOpen(false)}
         cancelText="닫기"
       />
-      <AlertPopup
-        open={samePwAlertOpen}
-        message="현재 비밀번호와 동일한 비밀번호로는 변경할 수 없습니다."
-        onCancel={() => setSamePwAlertOpen(false)}
-        cancelText="닫기"
-      />
+
       <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
     </div>
   )
