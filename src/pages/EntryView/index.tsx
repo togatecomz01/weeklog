@@ -71,7 +71,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [switAlertOpen, setSwitAlertOpen] = useState(false)
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false)
-  const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[] } | null>(null)
+  const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[]; project_id: string } | null>(null)
   const [allSentAlertOpen, setAllSentAlertOpen] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
@@ -131,26 +131,27 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   function handleSend(status: string, items: string[]) {
-    setPendingConfirm({ status, items })
+    openProjectPicker(status, items)
+  }
+
+  function handleProjectConfirm() {
+    if (!pendingSend || !selectedProject) return
+    setProjectOpen(false)
+    setPendingConfirm({ ...pendingSend, project_id: selectedProject })
+    setPendingSend(null)
     setSendConfirmOpen(true)
   }
 
-  function handleSendConfirm() {
+  async function handleSendConfirm() {
     setSendConfirmOpen(false)
-    if (pendingConfirm) openProjectPicker(pendingConfirm.status, pendingConfirm.items)
+    if (!pendingConfirm) return
+    const { status, items, project_id } = pendingConfirm
     setPendingConfirm(null)
-  }
-
-  async function handleProjectConfirm() {
-    if (!pendingSend || !selectedProject) return
-    setProjectOpen(false)
-    const { status, items } = pendingSend
-    setPendingSend(null)
     try {
       const res = await apiFetch('/api/swit/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status, items, entry_id: entry!.id, project_id: selectedProject }),
+        body: JSON.stringify({ status, items, entry_id: entry!.id, project_id }),
       })
       if (!res.ok) {
         const data = await res.json()
