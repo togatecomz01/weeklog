@@ -27,41 +27,21 @@
       position: absolute;
       top: 50%;
       left: 0;
-      width: 24px;
-      height: 24px;
-      border: 1px solid #CCCCCC;
+      width: 18px;
+      height: 18px;
+      border: 3px solid #CCCCCC;
       border-radius: 50%;
-      background: #CCCCCC;
+      background: $color-white;
       transform: translateY(-50%);
-    }
-
-    &::after {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: 3px;
-      width: 20px;
-      height: 20px;
-      border-radius: 50%;
-      background-color: $color-white;
-      transform: translateY(-50%) scale(1);
-      transition: transform 0.15s;
     }
   }
 
   &-input:checked + &-label {
     font-weight: $font-w-b;
     &::before {
-      border-color: $color-primary;
-      background-color: $color-primary;
-    }
-
-    &::after {
-      left: 7px;
       width: 12px;
       height: 12px;
-      background-color: $color-white;
-      transform: translateY(-50%) scale(1);
+      border:6px solid $color-primary;
     }
   }
 
@@ -69,8 +49,7 @@
     color: $color-input-placeholder;
     cursor: not-allowed;
 
-    &::before,
-    &::after {
+    &::before {
       opacity: 0.4;
     }
   }
