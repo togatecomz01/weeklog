@@ -67,6 +67,31 @@ input.input {
         border-color: $color-hover;
     }
 
+    &[type="date"] {
+        position: relative;
+        padding-right: 48px;
+        background: $color-white url("../../assets/svg/ico_date.svg") no-repeat right 14px center;
+        background-size: 24px 24px;
+        -webkit-appearance: none;
+        appearance: none;
+
+        &::-webkit-calendar-picker-indicator {
+            width: 48px;
+            height: 100%;
+            margin: 0 -14px 0 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        &::-webkit-inner-spin-button {
+            display: none;
+        }
+
+        &::-webkit-date-and-time-value {
+            text-align: left;
+        }
+    }
+
     &:disabled {
         background: $color-disabled;
         color: $color-text-gray-9;
