@@ -23,8 +23,18 @@ function MyPasswordPage() {
   const [samePwAlertOpen, setSamePwAlertOpen] = useState(false)
   const [submitting, setSubmitting] = useState(false)
 
-  const passwordMismatch =
-    form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword
+  function isValidPassword(pw: string) {
+    if (pw.length < 10 || pw.length > 16) return false
+    let types = 0
+    if (/[A-Z]/.test(pw)) types++
+    if (/[a-z]/.test(pw)) types++
+    if (/[0-9]/.test(pw)) types++
+    if (/[^A-Za-z0-9]/.test(pw)) types++
+    return types >= 2
+  }
+
+  const newPasswordError = form.newPassword.length > 0 && !isValidPassword(form.newPassword)
+  const passwordMismatch = form.confirmPassword.length > 0 && form.newPassword !== form.confirmPassword
 
   function handleChange(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -32,7 +42,12 @@ function MyPasswordPage() {
     }
   }
 
-  const isValid = Boolean(form.currentPassword.trim() && form.newPassword.trim() && form.confirmPassword.trim())
+  const isValid = Boolean(
+    form.currentPassword.trim() &&
+    form.newPassword.trim() &&
+    form.confirmPassword.trim() &&
+    isValidPassword(form.newPassword)
+  )
 
   async function handleSubmit() {
     if (!isValid || !form.currentPassword || !form.newPassword || !form.confirmPassword) {
@@ -91,9 +106,10 @@ function MyPasswordPage() {
             label="새 비밀번호"
             type="password"
             placeholder=""
-            hint="영문 대소문자/숫자/특수문자 중 2가지 이상 조합, 10자~16자"
             value={form.newPassword}
             onChange={handleChange('newPassword')}
+            error={newPasswordError}
+            errorMessage="영문 대소문자, 숫자, 특수문자 중 2가지 이상을 조합하여 10~16자로 입력해 주세요."
           />
           <Input
             id="confirm-password"
