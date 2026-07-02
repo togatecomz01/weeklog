@@ -66,7 +66,7 @@ function MySwitPage() {
               <Button variant="primary" onClick={handleSwitConnect}>Swit 계정 연결하기</Button>
             )}
             {switConnected === true && (
-              <Button onClick={handleSwitDisconnect}>연결 해제</Button>
+              <Button onClick={handleSwitDisconnect}>Swit 계정 연결 해제</Button>
             )}
           </div>
           <div className="swit-info-box">
@@ -84,7 +84,8 @@ function MySwitPage() {
       />
       <AlertPopup
         open={switDisconnectAlert}
-        message="Swit 연결이 해제되었습니다."
+        message="Swit 계정 연결이 해제되었습니다."
+        description={`업무일지를 전송하려면\n다시 계정을 연결해 주세요.`}
         onCancel={() => setSwitDisconnectAlert(false)}
         cancelText="닫기"
       />
