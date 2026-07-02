@@ -12,7 +12,7 @@ html,body { overflow: hidden; }
 *::-webkit-scrollbar-thumb:hover { background: $color-text-gray-light; }
 *::-webkit-scrollbar-corner { background: transparent; }
 
-button, input, textarea, select { border: 0; background: transparent; font: inherit; color: inherit; }
+button, input, textarea, select { border: 0; background: transparent; font: inherit; color: inherit; -webkit-appearance: none; -moz-appearance: none; appearance: none; border-radius: 0; }
 
 button { cursor: pointer; }
 
