@@ -31,7 +31,7 @@ interface EntryEditPopupProps {
 const PRIORITY_OPTIONS = [
   { value: 'normal', label: '보통' },
   { value: 'important', label: '중요' },
-  { value: 'high', label: '높음' },
+  { value: 'high', label: '긴급' },
 ]
 
 function EntryEditPopup({ open, initialData, sentStatuses = new Set(), onClose, onConfirm }: EntryEditPopupProps) {
