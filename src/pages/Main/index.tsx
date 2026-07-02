@@ -62,15 +62,12 @@ function Main() {
           <div className="banner">
             <p className="banner-date">안녕하세요! {user?.name ?? '사용자'}님.</p>
             <p className="banner-text">업무일지를 작성하고 진행 현황을 확인하세요.</p>
-            <Button className="banner-btn" fullWidth type="button" onClick={() => navigate('/entry')}>업무일지 쓰러가기</Button>
+            <Button className="banner-btn" fullWidth type="button" onClick={() => navigate(draft ? `/entry?draftId=${draft.id}` : '/entry')}>
+              {draft ? '업무일지 이어쓰기' : '업무일지 쓰러가기'}
+            </Button>
           </div>
 
-          {draft && (
-            <DraftCard
-              savedAt={draft.savedAt}
-              onClick={() => navigate(`/entry?draftId=${draft.id}`)}
-            />
-          )}
+          {draft && <DraftCard savedAt={draft.savedAt} />}
         </div>
 
         <div className="main-section">

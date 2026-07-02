@@ -1,9 +1,7 @@
 .draft-card {
     width: 100%;
-    padding: 20px;
-    margin: 16px 0 0;
     border-radius: 16px;
-    background: url("../../assets/images/draft.png") no-repeat right center / contain;
+    padding: 16px 20px;
 
     &-btn {
         display: inline-flex;
@@ -16,7 +14,7 @@
 
     &-date {
         font-size: $font14;
-        font-weight: $font-w-r;
+        font-weight: $font-w-l;
         color: $color-text-gray;
     }
 }
