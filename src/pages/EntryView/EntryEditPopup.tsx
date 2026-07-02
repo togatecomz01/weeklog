@@ -6,6 +6,7 @@ import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
 import Textarea from '@/components/Textarea'
 import AccInfoBox from '@/components/AccInfoBox'
+import AlertPopup from '@/components/AlertPopup'
 import '../Entry/Entry.scss'
 
 export interface EntryEditForm {
@@ -31,11 +32,13 @@ interface EntryEditPopupProps {
 const PRIORITY_OPTIONS = [
   { value: 'normal', label: '보통' },
   { value: 'important', label: '중요' },
-  { value: 'high', label: '높음' },
+  { value: 'high', label: '긴급' },
 ]
 
 function EntryEditPopup({ open, initialData, sentStatuses = new Set(), onClose, onConfirm }: EntryEditPopupProps) {
   const [form, setForm] = useState<EntryEditForm>(initialData)
+  const [closeConfirmOpen, setCloseConfirmOpen] = useState(false)
+  const [saveConfirmOpen, setSaveConfirmOpen] = useState(false)
 
   useEffect(() => {
     if (open) {
@@ -49,14 +52,21 @@ function EntryEditPopup({ open, initialData, sentStatuses = new Set(), onClose, 
     }
   }
 
-  function handleClose() {
+  function handleCloseConfirmed() {
+    setCloseConfirmOpen(false)
     setForm(initialData)
     onClose()
+  }
+
+  function handleSaveConfirmed() {
+    setSaveConfirmOpen(false)
+    onConfirm(form)
   }
 
   const isValid = Boolean(form.title.trim())
 
   return (
+    <>
     <FullPopup
       open={open}
       title="업무일지 수정"
@@ -64,9 +74,9 @@ function EntryEditPopup({ open, initialData, sentStatuses = new Set(), onClose, 
       cancelText="취소"
       confirmText="저장"
       confirmDisabled={!isValid}
-      onClose={handleClose}
-      onCancel={handleClose}
-      onConfirm={() => isValid && onConfirm(form)}
+      onClose={() => setCloseConfirmOpen(true)}
+      onCancel={() => setCloseConfirmOpen(true)}
+      onConfirm={() => isValid && setSaveConfirmOpen(true)}
     >
       <section className="entry-section">
       <h2 className="entry-title">작성정보</h2>
@@ -143,6 +153,23 @@ function EntryEditPopup({ open, initialData, sentStatuses = new Set(), onClose, 
         </div>
       </section>
     </FullPopup>
+    <AlertPopup
+      open={closeConfirmOpen}
+      message="수정하신 내용이 저장되지 않습니다."
+      confirmText="확인"
+      cancelText="취소"
+      onConfirm={handleCloseConfirmed}
+      onCancel={() => setCloseConfirmOpen(false)}
+    />
+    <AlertPopup
+      open={saveConfirmOpen}
+      message="수정하신 내용을 저장하시겠습니까?"
+      confirmText="확인"
+      cancelText="취소"
+      onConfirm={handleSaveConfirmed}
+      onCancel={() => setSaveConfirmOpen(false)}
+    />
+    </>
   )
 }
 
