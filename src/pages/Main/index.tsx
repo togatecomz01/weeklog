@@ -35,7 +35,7 @@ function Main() {
   const { user, apiFetch } = useAuth()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
-  const { entries, loading, loadingMore, error, hasMore, loadMore } = useEntries()
+  const { entries: filteredEntries, loading, loadingMore, error, hasMore, loadMore } = useEntries(filter)
   const [draft, setDraft] = useState<{ id: number; savedAt: string } | null>(null)
 
   useEffect(() => {
@@ -49,9 +49,6 @@ function Main() {
         setDraft({ id: data.id, savedAt })
       })
   }, [apiFetch])
-
-  const filteredEntries =
-    filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
 
   return (
     <div className="main">
