@@ -56,7 +56,13 @@ function mapEntry(raw: any): Entry {
   }
 }
 
-export function useEntries() {
+const PRIORITY_TO_KO: Record<string, string> = {
+  urgent: '긴급',
+  important: '중요',
+  normal: '보통',
+}
+
+export function useEntries(filter: string = 'all') {
   const { apiFetch } = useAuth()
   const [entries, setEntries] = useState<Entry[]>([])
   const [total, setTotal] = useState(0)
@@ -64,10 +70,12 @@ export function useEntries() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
+  const priorityParam = filter !== 'all' ? `&priority=${encodeURIComponent(PRIORITY_TO_KO[filter] ?? filter)}` : ''
+
   const fetchEntries = useCallback(async (offset: number, append: boolean) => {
     append ? setLoadingMore(true) : setLoading(true)
     try {
-      const res = await apiFetch(`/api/entries/me?limit=${PAGE_SIZE}&offset=${offset}`)
+      const res = await apiFetch(`/api/entries/me?limit=${PAGE_SIZE}&offset=${offset}${priorityParam}`)
       if (!res.ok) throw new Error('불러오기 실패')
       const { entries: raw, total } = await res.json()
       const mapped = raw.map(mapEntry)
@@ -78,7 +86,7 @@ export function useEntries() {
     } finally {
       append ? setLoadingMore(false) : setLoading(false)
     }
-  }, [apiFetch])
+  }, [apiFetch, priorityParam])
 
   useEffect(() => {
     fetchEntries(0, false)

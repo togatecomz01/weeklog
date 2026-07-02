@@ -7,11 +7,14 @@ const router = Router()
 
 // 내 업무일지 목록 조회 (user)
 router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
-  const limit  = Math.min(Number(req.query.limit)  || 3, 50)
-  const offset = Number(req.query.offset) || 0
+  const limit    = Math.min(Number(req.query.limit) || 3, 50)
+  const offset   = Number(req.query.offset) || 0
+  const priority = typeof req.query.priority === 'string' && req.query.priority ? req.query.priority : null
+
+  const priorityFilter = priority ? sql`AND priority = ${priority}` : sql``
 
   const [{ count }] = await sql`
-    SELECT COUNT(*)::int AS count FROM entries WHERE user_id = ${req.user!.id}
+    SELECT COUNT(*)::int AS count FROM entries WHERE user_id = ${req.user!.id} ${priorityFilter}
   `
   const entries = await sql`
     SELECT id, week_year, week_month, week_number, priority,
@@ -19,7 +22,7 @@ router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
            next_week_plan, notes, sent_done, sent_doing, sent_todo,
            created_at, updated_at
     FROM entries
-    WHERE user_id = ${req.user!.id}
+    WHERE user_id = ${req.user!.id} ${priorityFilter}
     ORDER BY week_year DESC, week_month DESC, week_number DESC
     LIMIT ${limit} OFFSET ${offset}
   `
