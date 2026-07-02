@@ -375,7 +375,8 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
 
       <AlertPopup
         open={switAlertOpen}
-        message="스윗 연동을 먼저 진행해주세요."
+        message="Swit 계정이 연결되어 있지 않습니다."
+        description={`프로젝트를 선택하려면 먼저\nSwit 계정을 연동해 주세요.`}
         cancelText="닫기"
         onCancel={() => setSwitAlertOpen(false)}
       />
