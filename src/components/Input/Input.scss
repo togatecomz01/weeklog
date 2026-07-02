@@ -9,12 +9,50 @@
         width: 100%;
     }
 
+    &-label-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin-bottom: 8px;
+    }
+
     &-label {
-        display: block;
+        display: flex;
+        align-items: center;
+        gap: 2px;
         font-size: $font14;
         font-weight: $font-w-sb;
         color: $color-text-gray-light;
-        margin-bottom: 8px;
+    }
+
+    &-tooltip {
+        position: relative;
+        display: inline-flex;
+        align-items: center;
+
+        &-icon {
+            display: block;
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+
+        &-text {
+            position: absolute;
+            left: 0;
+            bottom: 22px;
+            z-index: 20;
+            width: 220px;
+            padding: 10px 14px;
+            background: $color-white;
+            border: 1px solid #eee;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            font-size: $font12;
+            color: $color-text-gray;
+            line-height: 1.6;
+            white-space: pre-line;
+            pointer-events: none;
+        }
     }
 
     &-required {
