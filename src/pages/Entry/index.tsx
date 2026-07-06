@@ -70,6 +70,9 @@ function Entry() {
   const [draftOpen, setDraftOpen] = useState(false)
   const [duplicateAlertOpen, setDuplicateAlertOpen] = useState(false)
   const [backConfirmOpen, setBackConfirmOpen] = useState(false)
+  const [titleError, setTitleError] = useState('')
+
+  const TITLE_MAX_LENGTH = 50
 
   const hasInput = Boolean(
     form.title.trim() ||
@@ -122,6 +125,17 @@ function Entry() {
     return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }))
     }
+  }
+
+  function handleTitleChange(e: ChangeEvent<HTMLInputElement>) {
+    const value = e.target.value
+    if (value.length > TITLE_MAX_LENGTH) {
+      setTitleError(`제목은 ${TITLE_MAX_LENGTH}자 이하로 입력해 주세요.`)
+      setForm((prev) => ({ ...prev, title: value.slice(0, TITLE_MAX_LENGTH) }))
+      return
+    }
+    setTitleError('')
+    setForm((prev) => ({ ...prev, title: value }))
   }
 
   const isValid = Boolean(form.writeDate.trim() && form.title.trim())
@@ -182,6 +196,7 @@ function Entry() {
           ongoing_work: form.progressWork,
           next_week_plan: form.nextWork,
           notes: form.note,
+          write_date: form.writeDate,
         }),
       })
 
@@ -240,9 +255,10 @@ function Entry() {
               id="entry-title"
               label="제목"
               value={form.title}
-              onChange={handleChange('title')}
-              error={!!error}
-              errorMessage={error}
+              placeholder='제목을 입력해 주세요.'
+              onChange={handleTitleChange}
+              error={!!titleError || !!error}
+              errorMessage={titleError || error}
               required
             />
             <RadioGroup label="중요도" required className="entry-priority">
