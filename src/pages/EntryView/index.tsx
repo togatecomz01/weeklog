@@ -38,6 +38,7 @@ interface ApiEntry {
   sent_doing: boolean
   sent_todo: boolean
   confirmed_at: string | null
+  write_date: string
   created_at: string
   user_name?: string
 }
@@ -230,7 +231,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   const priority = PRIORITY_MAP[entry.priority] ?? 'normal'
-  const createdDate = entry.created_at.slice(0, 10).replace(/-/g, '.')
+  const createdDate = entry.write_date.slice(0, 10).replace(/-/g, '.')
 
   const detailInfo = [
     { label: '작성일자', value: createdDate },
@@ -247,7 +248,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   ]
 
   const initialEditData: EntryEditForm = {
-    writeDate: entry.created_at.slice(0, 10),
+    writeDate: entry.write_date.slice(0, 10),
     writer: entry.user_name ?? '',
     department: entry.department,
     title: entry.title,
