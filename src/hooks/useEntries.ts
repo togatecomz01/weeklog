@@ -22,6 +22,7 @@ export interface Entry {
   sent_done: boolean
   sent_doing: boolean
   sent_todo: boolean
+  write_date: string
   created_at: string
 }
 
