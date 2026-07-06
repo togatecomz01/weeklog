@@ -187,6 +187,8 @@ router.put('/:id', requireAuth, requireRole('user'), async (req, res) => {
       ongoing_work   = COALESCE(${ongoing_work ?? null}, ongoing_work),
       next_week_plan = COALESCE(${next_week_plan ?? null}, next_week_plan),
       notes          = COALESCE(${notes ?? null}, notes),
+      confirmed_at   = NULL,
+      confirmed_by   = NULL,
       updated_at     = NOW()
     WHERE id = ${req.params.id}
   `
