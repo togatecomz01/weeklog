@@ -1,57 +1,62 @@
 .alert-pop {
-    position: fixed;
-    inset: 0;
-    z-index: 1000;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    // max-width: 480px;
-    margin: 0 auto;
-    padding: 0 20px;
-    background: rgba(0, 0, 0, .4);
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  // max-width: 480px;
+  margin: 0 auto;
+  padding: 0 20px;
+  background: rgba(0, 0, 0, .4);
 
-    &-box {
-      width: 335px;
-      padding: 40px 20px 0;
-      border-radius: 12px;
-      background: $color-white;
-    }
+  &-box {
+    width: 335px;
+    padding: 40px 20px 0;
+    border-radius: 12px;
+    background: $color-white;
+  }
 
-    &-msg {
-      margin: 0;
-      font-size: $font16;
-      font-weight: $font-w-m;
+  &-msg {
+    margin: 0;
+    font-size: $font16;
+    font-weight: $font-w-m;
+    color: $color-text-black;
+    text-align: center;
+    white-space: pre-line;
+  }
+
+  &-desc {
+    margin: 16px 0 0;
+    font-size: $font16;
+    font-weight: $font-w-r;
+    color: $color-text-gray;
+    text-align: center;
+    white-space: pre-line;
+
+    .r-pwd {
       color: $color-text-black;
-      text-align: center;
-      white-space: pre-line;
     }
 
-    &-desc {
-      margin: 16px 0 0;
-      font-size: $font16;
-      font-weight: $font-w-r;
-      color: $color-text-gray;
-      text-align: center;
-      white-space: pre-line;
-      .r-pwd {
-        color: $color-text-black;
-      }
-
-      &--sm {
-        font-size: $font12;
-      }
+    &--sm {
+      font-size: $font12;
     }
+  }
 
-    &-btns {
-      display: flex;
-      gap: 8px;
-      margin-top: 16px;
-      padding: 20px 0;
-      .btn {
-        width: 100%;
-        padding: 15px 10px;
-        font-weight: $font-w-m;
-      }
+  &-btns {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 20px 0;
+
+    .btn {
+      width: 100%;
+      padding: 15px 10px;
+      font-weight: $font-w-m;
     }
+  }
 
+  .button-container {
+    padding: 0;
+  }
 }

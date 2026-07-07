@@ -121,11 +121,11 @@ function MyPasswordPage() {
           />
         </div>
       </div>
-      <ButtonContainer>
+      <div className='my-password-button-container'>
         <Button onClick={handleSubmit} disabled={!isValid || submitting || passwordMismatch}>
           {submitting ? '변경 중...' : '비밀번호 변경하기'}
         </Button>
-      </ButtonContainer>
+      </div>
 
       <AlertPopup
         open={alertOpen}
