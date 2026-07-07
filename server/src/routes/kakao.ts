@@ -32,15 +32,20 @@ router.get('/callback', async (req, res) => {
     return
   }
 
+  const tokenParams: Record<string, string> = {
+    grant_type: 'authorization_code',
+    client_id: process.env.KAKAO_REST_API_KEY!,
+    redirect_uri: process.env.KAKAO_REDIRECT_URI!,
+    code: String(code),
+  }
+  if (process.env.KAKAO_CLIENT_SECRET) {
+    tokenParams.client_secret = process.env.KAKAO_CLIENT_SECRET
+  }
+
   const resp = await fetch(KAKAO_TOKEN_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-    body: new URLSearchParams({
-      grant_type: 'authorization_code',
-      client_id: process.env.KAKAO_REST_API_KEY!,
-      redirect_uri: process.env.KAKAO_REDIRECT_URI!,
-      code: String(code),
-    }),
+    body: new URLSearchParams(tokenParams),
   })
 
   const data = await resp.json()
