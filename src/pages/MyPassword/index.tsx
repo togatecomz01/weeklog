@@ -1,7 +1,6 @@
 import { useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Button from '@/components/Button'
-import ButtonContainer from '@/components/ButtonContainer'
 import Input from '@/components/Input'
 import DetailHeader from '@/components/DetailHeader'
 import AlertPopup from '@/components/AlertPopup'
