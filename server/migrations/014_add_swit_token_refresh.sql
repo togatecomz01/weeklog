@@ -1,0 +1,2 @@
+ALTER TABLE swit_tokens ADD COLUMN IF NOT EXISTS refresh_token TEXT;
+ALTER TABLE swit_tokens ADD COLUMN IF NOT EXISTS expires_at TIMESTAMPTZ;

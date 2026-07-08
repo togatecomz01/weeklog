@@ -8,6 +8,54 @@ const router = Router()
 const SWIT_API = 'https://openapi.swit.io/v1/api'
 const SWIT_TOKEN_URL = 'https://openapi.swit.io/oauth/token'
 
+// 만료 이 시간 전부터는 미리 갱신한다
+const REFRESH_MARGIN_MS = 5 * 60 * 1000
+
+// 동시 요청이 동시에 갱신을 시도하지 않도록 유저별 진행 중인 갱신을 공유
+const refreshInFlight = new Map<number, Promise<string>>()
+
+async function saveToken(
+  userId: number,
+  accessToken: string,
+  refreshToken: string | null,
+  expiresInSec: number | null,
+  switUserId: string | null = null,
+) {
+  const expiresAt = expiresInSec ? new Date(Date.now() + expiresInSec * 1000) : null
+  await sql`
+    INSERT INTO swit_tokens (user_id, access_token, refresh_token, expires_at, swit_user_id)
+    VALUES (${userId}, ${accessToken}, ${refreshToken}, ${expiresAt}, ${switUserId})
+    ON CONFLICT (user_id) DO UPDATE
+      SET access_token = EXCLUDED.access_token,
+          refresh_token = EXCLUDED.refresh_token,
+          expires_at = EXCLUDED.expires_at,
+          swit_user_id = COALESCE(EXCLUDED.swit_user_id, swit_tokens.swit_user_id),
+          connected_at = NOW()
+  `
+}
+
+async function refreshAccessToken(userId: number, refreshToken: string): Promise<string> {
+  const resp = await fetch(SWIT_TOKEN_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+      client_id: process.env.SWIT_CLIENT_ID!,
+      client_secret: process.env.SWIT_CLIENT_SECRET!,
+    }),
+  })
+
+  const data = await resp.json()
+  if (!resp.ok) {
+    throw new Error(data.message ?? 'Swit 토큰 갱신 실패')
+  }
+
+  // Swit이 refresh_token을 새로 안 내려주면 기존 것을 계속 사용
+  await saveToken(userId, data.access_token, data.refresh_token ?? refreshToken, data.expires_in ?? null)
+  return data.access_token
+}
+
 // OAuth 인가 URL로 리다이렉트 — JWT를 query param으로 받아 user_id를 state에 담음
 router.get('/connect', (req, res) => {
   const { token } = req.query
@@ -79,14 +127,7 @@ router.get('/callback', async (req, res) => {
   const userData = await userResp.json()
   const switUserId: string | null = userData?.data?.user?.id ?? null
 
-  await sql`
-    INSERT INTO swit_tokens (user_id, access_token, swit_user_id)
-    VALUES (${userId}, ${data.access_token}, ${switUserId})
-    ON CONFLICT (user_id) DO UPDATE
-      SET access_token = EXCLUDED.access_token,
-          swit_user_id = EXCLUDED.swit_user_id,
-          connected_at = NOW()
-  `
+  await saveToken(userId, data.access_token, data.refresh_token ?? null, data.expires_in ?? null, switUserId)
 
   const clientBase = process.env.CLIENT_ORIGIN ?? ''
   res.redirect(`${clientBase}/my/swit?swit=connected`)
@@ -108,13 +149,33 @@ router.delete('/disconnect', requireAuth, async (req, res) => {
   res.json({ message: '연결이 해제되었습니다.' })
 })
 
-// 현재 유저의 swit_token을 DB에서 가져오는 헬퍼
+// 현재 유저의 swit_token을 DB에서 가져오는 헬퍼 — 만료가 임박했으면 미리 갱신한다
 async function getUserToken(userId: number): Promise<{ accessToken: string; switUserId: string | null } | null> {
-  const rows = await sql<{ access_token: string; swit_user_id: string | null }[]>`
-    SELECT access_token, swit_user_id FROM swit_tokens WHERE user_id = ${userId}
+  const rows = await sql<{ access_token: string; refresh_token: string | null; expires_at: Date | null; swit_user_id: string | null }[]>`
+    SELECT access_token, refresh_token, expires_at, swit_user_id FROM swit_tokens WHERE user_id = ${userId}
   `
-  if (!rows[0]) return null
-  return { accessToken: rows[0].access_token, switUserId: rows[0].swit_user_id }
+  const row = rows[0]
+  if (!row) return null
+
+  const expiresSoon = row.expires_at ? row.expires_at.getTime() - Date.now() < REFRESH_MARGIN_MS : false
+  if (!expiresSoon || !row.refresh_token) {
+    return { accessToken: row.access_token, switUserId: row.swit_user_id }
+  }
+
+  let pending = refreshInFlight.get(userId)
+  if (!pending) {
+    pending = refreshAccessToken(userId, row.refresh_token).finally(() => {
+      refreshInFlight.delete(userId)
+    })
+    refreshInFlight.set(userId, pending)
+  }
+  try {
+    const accessToken = await pending
+    return { accessToken, switUserId: row.swit_user_id }
+  } catch (err) {
+    console.error('[swit] 토큰 갱신 실패:', err)
+    return null
+  }
 }
 
 // 프로젝트 내 태스크에서 status_id 목록 추출
