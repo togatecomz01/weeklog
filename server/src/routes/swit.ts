@@ -373,4 +373,52 @@ router.post('/send', requireAuth, async (req, res) => {
   res.json({ message: '전송 완료', count: items.length })
 })
 
+// 특정 유저(senderUserId)의 Swit 계정으로 targetSwitUserId에게 DM 전송
+export async function sendSwitDirectMessage(
+  senderUserId: number,
+  targetSwitUserId: string,
+  body: string
+): Promise<{ ok: boolean; error?: string }> {
+  const token = await getUserToken(senderUserId)
+  if (!token.ok) {
+    return { ok: false, error: SWIT_AUTH_MESSAGE[token.reason] }
+  }
+
+  const roomResp = await fetch(`${SWIT_API}/room.create`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token.accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ invite_users: [targetSwitUserId] }),
+  })
+  const roomText = await roomResp.text()
+  console.log('[swit/dm] room.create:', roomText.slice(0, 500))
+  const roomData = JSON.parse(roomText)
+  if (!roomResp.ok || (roomData.code && roomData.code !== 200)) {
+    return { ok: false, error: roomData.message ?? 'Swit room 생성 실패' }
+  }
+  const roomId: string | undefined = roomData.data?.room?.id ?? roomData.data?.room_id ?? roomData.data?.id
+  if (!roomId) {
+    return { ok: false, error: 'Swit room_id를 확인할 수 없습니다.' }
+  }
+
+  const msgResp = await fetch(`${SWIT_API}/contents.create`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token.accessToken}`,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ room_id: roomId, body, body_type: 'plain' }),
+  })
+  const msgText = await msgResp.text()
+  console.log('[swit/dm] contents.create:', msgText.slice(0, 500))
+  const msgData = JSON.parse(msgText)
+  if (!msgResp.ok || (msgData.code && msgData.code !== 200)) {
+    return { ok: false, error: msgData.message ?? 'Swit 메시지 전송 실패' }
+  }
+
+  return { ok: true }
+}
+
 export default router

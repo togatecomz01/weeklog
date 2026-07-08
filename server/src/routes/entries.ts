@@ -2,6 +2,7 @@ import { Router } from 'express'
 import sql from '../db.js'
 import { requireAuth, requireRole } from '../middleware/auth.js'
 import { sendKakaoUrgentMessage } from './kakao.js'
+import { sendSwitDirectMessage } from './swit.js'
 
 const router = Router()
 const VALID_PRIORITIES = ['보통', '높음', '매우 높음'] as const
@@ -112,7 +113,7 @@ router.get('/:id', requireAuth, async (req, res) => {
 
 // 업무일지 확인 (admin only)
 router.post('/:id/confirm', requireAuth, requireRole('admin'), async (req, res) => {
-  const [entry] = await sql`SELECT id, confirmed_at FROM entries WHERE id = ${req.params.id}`
+  const [entry] = await sql`SELECT id, user_id, title, confirmed_at FROM entries WHERE id = ${req.params.id}`
   if (!entry) {
     res.status(404).json({ message: '업무일지를 찾을 수 없습니다.' })
     return
@@ -126,6 +127,20 @@ router.post('/:id/confirm', requireAuth, requireRole('admin'), async (req, res) 
     SET confirmed_at = NOW(), confirmed_by = ${req.user!.id}
     WHERE id = ${req.params.id}
   `
+
+  const [authorSwit] = await sql<{ swit_user_id: string | null }[]>`
+    SELECT swit_user_id FROM swit_tokens WHERE user_id = ${entry.user_id}
+  `
+  if (authorSwit?.swit_user_id) {
+    sendSwitDirectMessage(
+      req.user!.id,
+      authorSwit.swit_user_id,
+      `[확인 완료] 관리자가 업무일지를 확인했습니다.\n제목: ${entry.title}`
+    ).then((result) => {
+      if (!result.ok) console.error('[swit] 확인 완료 DM 전송 실패:', result.error)
+    }).catch((err) => console.error('[swit] 확인 완료 DM 전송 오류:', err))
+  }
+
   res.json({ message: '확인 완료' })
 })
 
