@@ -121,7 +121,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
       if (!res.ok) throw new Error('프로젝트 목록을 가져올 수 없습니다.')
       const data: { id: string; name: string }[] = await res.json()
       setProjects(data)
-      setSelectedProject(data[0]?.id ?? '')
+      setSelectedProject('')
     } catch (err: any) {
       alert(err.message)
       setProjectOpen(false)
@@ -410,6 +410,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
               <Select
                 className="entry-select"
                 label="프로젝트명"
+                placeholder="선택해 주세요."
                 options={projects.map((p) => ({ value: p.id, label: p.name }))}
                 value={selectedProject}
                 onChange={setSelectedProject}
