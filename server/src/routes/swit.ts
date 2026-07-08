@@ -220,6 +220,21 @@ router.post('/send', requireAuth, async (req, res) => {
     todo: 'ToDo',
   }
 
+  const switPriority: Record<string, string> = {
+    '보통': 'Normal',
+    '높음': 'High',
+    '매우 높음': 'Highest',
+  }
+
+  const eid = Number(entry_id)
+  let priority: string | undefined
+  if (eid) {
+    const [row] = await sql<{ priority: string }[]>`
+      SELECT priority FROM entries WHERE id = ${eid} AND user_id = ${req.user!.id}
+    `
+    priority = row ? switPriority[row.priority] : undefined
+  }
+
   const { accessToken, switUserId } = token
   const assignFollow = switUserId
     ? { assign: switUserId, follow: switUserId }
@@ -238,6 +253,7 @@ router.post('/send', requireAuth, async (req, res) => {
           title: item,
           content: `[${statusLabel[status] ?? title ?? status}] ${item}`,
           step: switStatus[status] ?? null,
+          ...(priority ? { priority } : {}),
           ...assignFollow,
         }),
       }).then(async (r) => {
@@ -255,7 +271,6 @@ router.post('/send', requireAuth, async (req, res) => {
     return
   }
 
-  const eid = Number(entry_id)
   if (eid) {
     const taskIds = results
       .filter((r) => r.status === 'fulfilled')
