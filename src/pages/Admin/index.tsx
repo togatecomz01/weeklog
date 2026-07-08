@@ -170,7 +170,7 @@ function Admin() {
                     <strong className="card-confirmer-value">
                       {w.entry_count}<span> / {w.total_users}명</span>
                     </strong>
-                    <span className="card-label">확인자 수</span>
+                    <span className="card-label">작성 인원</span>
                   </div>
                 </div>
               </div>
