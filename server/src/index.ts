@@ -1,5 +1,6 @@
 import 'dotenv/config'
 import express from 'express'
+import 'express-async-errors'
 import cors from 'cors'
 import path from 'path'
 import { fileURLToPath } from 'url'
@@ -43,6 +44,13 @@ if (!isDev) {
     res.sendFile(path.join(DIST_DIR, 'index.html'))
   })
 }
+
+// 라우트 핸들러에서 처리되지 않은 에러를 여기서 잡아 요청 하나만 500으로 응답하고, 서버 프로세스는 죽지 않게 한다
+app.use((err: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
+  console.error('[unhandled]', err)
+  if (res.headersSent) return
+  res.status(500).json({ message: '서버 오류가 발생했습니다.' })
+})
 
 app.listen(PORT, '0.0.0.0', () => {
   console.log(`Server running on http://localhost:${PORT}`)
