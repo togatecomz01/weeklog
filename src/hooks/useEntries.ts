@@ -30,8 +30,8 @@ const PAGE_SIZE = 3
 
 const PRIORITY_MAP: Record<string, BadgeType> = {
   '보통': 'normal',
-  '중요': 'important',
-  '긴급': 'urgent',
+  '높음': 'important',
+  '매우 높음': 'urgent',
 }
 
 function toPreview(completed_work: string, ongoing_work: string) {
@@ -58,8 +58,8 @@ function mapEntry(raw: any): Entry {
 }
 
 const PRIORITY_TO_KO: Record<string, string> = {
-  urgent: '긴급',
-  important: '중요',
+  urgent: '매우 높음',
+  important: '높음',
   normal: '보통',
 }
 
