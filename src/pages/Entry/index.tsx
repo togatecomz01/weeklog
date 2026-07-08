@@ -31,19 +31,21 @@ function getWeekInfo(dateStr: string) {
   const dow = weekStart.getDay()
   weekStart.setDate(weekStart.getDate() + (dow === 0 ? -6 : 1 - dow))
 
-  const firstDay = new Date(weekStart.getFullYear(), weekStart.getMonth(), 1)
-  const firstMonday = new Date(firstDay)
+  const weekEnd = new Date(weekStart)
+  weekEnd.setDate(weekEnd.getDate() + 6)
+
+  // 월~일 사이에 달이 바뀌면 그 주 전체를 다음 달 1주차로 귀속시킨다 (한 주에 한 달만 걸치도록)
+  const owning = weekStart.getMonth() === weekEnd.getMonth() ? weekStart : weekEnd
+
+  const firstMonday = new Date(owning.getFullYear(), owning.getMonth(), 1)
   const firstDow = firstMonday.getDay()
   firstMonday.setDate(firstMonday.getDate() + (firstDow === 0 ? -6 : 1 - firstDow))
-  if (firstMonday.getMonth() !== weekStart.getMonth()) {
-    firstMonday.setDate(firstMonday.getDate() + 7)
-  }
 
-  const weekNumber = Math.floor((weekStart.getTime() - firstMonday.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
+  const weekNumber = Math.round((weekStart.getTime() - firstMonday.getTime()) / (7 * 24 * 60 * 60 * 1000)) + 1
 
   return {
-    week_year: weekStart.getFullYear(),
-    week_month: weekStart.getMonth() + 1,
+    week_year: owning.getFullYear(),
+    week_month: owning.getMonth() + 1,
     week_number: Math.max(1, weekNumber),
   }
 }
