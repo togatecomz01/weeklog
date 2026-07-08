@@ -1,4 +1,4 @@
-import { Router } from 'express'
+import { Router, type Response } from 'express'
 import jwt from 'jsonwebtoken'
 import { requireAuth } from '../middleware/auth.js'
 import sql from '../db.js'
@@ -149,17 +149,30 @@ router.delete('/disconnect', requireAuth, async (req, res) => {
   res.json({ message: '연결이 해제되었습니다.' })
 })
 
+type SwitTokenResult =
+  | { ok: true; accessToken: string; switUserId: string | null }
+  | { ok: false; reason: 'not_connected' | 'expired' }
+
+const SWIT_AUTH_MESSAGE: Record<'not_connected' | 'expired', string> = {
+  not_connected: 'Swit 계정이 연결되어 있지 않습니다.',
+  expired: 'Swit 연결이 만료되었습니다. 다시 연결해 주세요.',
+}
+
+function sendSwitAuthError(res: Response, reason: 'not_connected' | 'expired') {
+  res.status(403).json({ message: SWIT_AUTH_MESSAGE[reason], reason })
+}
+
 // 현재 유저의 swit_token을 DB에서 가져오는 헬퍼 — 만료가 임박했으면 미리 갱신한다
-async function getUserToken(userId: number): Promise<{ accessToken: string; switUserId: string | null } | null> {
+async function getUserToken(userId: number): Promise<SwitTokenResult> {
   const rows = await sql<{ access_token: string; refresh_token: string | null; expires_at: Date | null; swit_user_id: string | null }[]>`
     SELECT access_token, refresh_token, expires_at, swit_user_id FROM swit_tokens WHERE user_id = ${userId}
   `
   const row = rows[0]
-  if (!row) return null
+  if (!row) return { ok: false, reason: 'not_connected' }
 
   const expiresSoon = row.expires_at ? row.expires_at.getTime() - Date.now() < REFRESH_MARGIN_MS : false
   if (!expiresSoon || !row.refresh_token) {
-    return { accessToken: row.access_token, switUserId: row.swit_user_id }
+    return { ok: true, accessToken: row.access_token, switUserId: row.swit_user_id }
   }
 
   let pending = refreshInFlight.get(userId)
@@ -171,10 +184,10 @@ async function getUserToken(userId: number): Promise<{ accessToken: string; swit
   }
   try {
     const accessToken = await pending
-    return { accessToken, switUserId: row.swit_user_id }
+    return { ok: true, accessToken, switUserId: row.swit_user_id }
   } catch (err) {
     console.error('[swit] 토큰 갱신 실패:', err)
-    return null
+    return { ok: false, reason: 'expired' }
   }
 }
 
@@ -182,8 +195,8 @@ async function getUserToken(userId: number): Promise<{ accessToken: string; swit
 router.get('/status-ids', requireAuth, async (req, res) => {
   const token = await getUserToken(req.user!.id)
   const projectId = String(req.query.project_id ?? '')
-  if (!token) {
-    res.status(403).json({ message: 'Swit 계정이 연결되지 않았습니다.' })
+  if (!token.ok) {
+    sendSwitAuthError(res, token.reason)
     return
   }
   if (!projectId) {
@@ -213,8 +226,8 @@ router.get('/status-ids', requireAuth, async (req, res) => {
 // 스윗 프로젝트 목록 조회
 router.get('/projects', requireAuth, async (req, res) => {
   const token = await getUserToken(req.user!.id)
-  if (!token) {
-    res.status(403).json({ message: 'Swit 계정이 연결되지 않았습니다.' })
+  if (!token.ok) {
+    sendSwitAuthError(res, token.reason)
     return
   }
 
@@ -257,8 +270,8 @@ router.post('/send', requireAuth, async (req, res) => {
   }
 
   const token = await getUserToken(req.user!.id)
-  if (!token) {
-    res.status(403).json({ message: 'Swit 계정이 연결되지 않았습니다.' })
+  if (!token.ok) {
+    sendSwitAuthError(res, token.reason)
     return
   }
 

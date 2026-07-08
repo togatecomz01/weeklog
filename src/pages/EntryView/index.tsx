@@ -71,6 +71,8 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [confirmed, setConfirmed] = useState<boolean>(false)
   const [deleteOpen, setDeleteOpen] = useState(false)
   const [switAlertOpen, setSwitAlertOpen] = useState(false)
+  const [switAlertMessage, setSwitAlertMessage] = useState('Swit 계정이 연결되어 있지 않습니다.')
+  const [switAlertDescription, setSwitAlertDescription] = useState('프로젝트를 선택하려면 먼저\nSwit 계정을 연동해 주세요.')
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false)
   const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[]; project_id: string } | null>(null)
   const [allSentAlertOpen, setAllSentAlertOpen] = useState(false)
@@ -113,6 +115,10 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     try {
       const res = await apiFetch('/api/swit/projects')
       if (res.status === 403) {
+        const data = await res.json().catch(() => null)
+        const expired = data?.reason === 'expired'
+        setSwitAlertMessage(data?.message ?? (expired ? 'Swit 연결이 만료되었습니다. 다시 연결해 주세요.' : 'Swit 계정이 연결되어 있지 않습니다.'))
+        setSwitAlertDescription(expired ? '' : `프로젝트를 선택하려면 먼저\nSwit 계정을 연동해 주세요.`)
         setSwitAlertOpen(true)
         setProjectOpen(false)
         setPendingSend(null)
@@ -376,8 +382,8 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
 
       <AlertPopup
         open={switAlertOpen}
-        message="Swit 계정이 연결되어 있지 않습니다."
-        description={`프로젝트를 선택하려면 먼저\nSwit 계정을 연동해 주세요.`}
+        message={switAlertMessage}
+        description={switAlertDescription}
         cancelText="닫기"
         onCancel={() => setSwitAlertOpen(false)}
       />
