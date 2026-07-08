@@ -29,14 +29,21 @@ interface AdminEntry {
 const FILTER_OPTIONS = [
   { value: 'all', label: '전체' },
   { value: '보통', label: '보통' },
-  { value: '중요', label: '높음' },
-  { value: '긴급', label: '매우 높음' },
+  { value: '높음', label: '높음' },
+  { value: '매우 높음', label: '매우 높음' },
 ]
 
 const PRIORITY_MAP: Record<string, BadgeType> = {
   '보통': 'normal',
+  '높음': 'important',
+  '매우 높음': 'urgent',
   '중요': 'important',
   '긴급': 'urgent',
+}
+
+const LEGACY_PRIORITY_MAP: Record<string, string> = {
+  '중요': '높음',
+  '긴급': '매우 높음',
 }
 
 function toPreview(completed_work: string, ongoing_work: string) {
@@ -78,7 +85,7 @@ function AdminList() {
   useEffect(() => { fetchEntries() }, [fetchEntries])
 
   const filteredEntries =
-    filter === 'all' ? entries : entries.filter((e) => e.priority === filter)
+    filter === 'all' ? entries : entries.filter((e) => (LEGACY_PRIORITY_MAP[e.priority] ?? e.priority) === filter)
 
   function handleFilterChange(val: string) {
     setFilter(val)

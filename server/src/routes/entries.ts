@@ -4,6 +4,11 @@ import { requireAuth, requireRole } from '../middleware/auth.js'
 import { sendKakaoUrgentMessage } from './kakao.js'
 
 const router = Router()
+const VALID_PRIORITIES = ['보통', '높음', '매우 높음'] as const
+
+function isValidPriority(priority: unknown): priority is typeof VALID_PRIORITIES[number] {
+  return typeof priority === 'string' && VALID_PRIORITIES.includes(priority as typeof VALID_PRIORITIES[number])
+}
 
 // 내 업무일지 목록 조회 (user)
 router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
@@ -133,6 +138,10 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
     res.status(400).json({ message: '필수 항목을 모두 입력해주세요.' })
     return
   }
+  if (!isValidPriority(priority)) {
+    res.status(400).json({ message: '중요도 값이 올바르지 않습니다.' })
+    return
+  }
 
   try {
     const [entry] = await sql`
@@ -178,21 +187,31 @@ router.put('/:id', requireAuth, requireRole('user'), async (req, res) => {
 
   const { priority, department, title, completed_work, ongoing_work, next_week_plan, notes } = req.body
 
-  await sql`
-    UPDATE entries SET
-      priority       = COALESCE(${priority ?? null}, priority),
-      department     = COALESCE(${department ?? null}, department),
-      title          = COALESCE(${title ?? null}, title),
-      completed_work = COALESCE(${completed_work ?? null}, completed_work),
-      ongoing_work   = COALESCE(${ongoing_work ?? null}, ongoing_work),
-      next_week_plan = COALESCE(${next_week_plan ?? null}, next_week_plan),
-      notes          = COALESCE(${notes ?? null}, notes),
-      confirmed_at   = NULL,
-      confirmed_by   = NULL,
-      updated_at     = NOW()
-    WHERE id = ${req.params.id}
-  `
-  res.json({ message: '수정되었습니다.' })
+  if (priority !== undefined && !isValidPriority(priority)) {
+    res.status(400).json({ message: '중요도 값이 올바르지 않습니다.' })
+    return
+  }
+
+  try {
+    await sql`
+      UPDATE entries SET
+        priority       = COALESCE(${priority ?? null}, priority),
+        department     = COALESCE(${department ?? null}, department),
+        title          = COALESCE(${title ?? null}, title),
+        completed_work = COALESCE(${completed_work ?? null}, completed_work),
+        ongoing_work   = COALESCE(${ongoing_work ?? null}, ongoing_work),
+        next_week_plan = COALESCE(${next_week_plan ?? null}, next_week_plan),
+        notes          = COALESCE(${notes ?? null}, notes),
+        confirmed_at   = NULL,
+        confirmed_by   = NULL,
+        updated_at     = NOW()
+      WHERE id = ${req.params.id}
+    `
+    res.json({ message: '수정되었습니다.' })
+  } catch (err) {
+    console.error('[entries/update] 업무일지 수정 실패:', err)
+    res.status(500).json({ message: '수정 중 오류가 발생했습니다.' })
+  }
 })
 
 // 업무일지 삭제 (본인 것만)

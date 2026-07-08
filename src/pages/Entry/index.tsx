@@ -15,13 +15,20 @@ import AlertPopup from '@/components/AlertPopup'
 import { useAuth } from '@/contexts/AuthContext'
 import './Entry.scss'
 
-type Priority = '보통' | '중요' | '긴급'
+type Priority = '보통' | '높음' | '매우 높음'
 
 const PRIORITY_OPTIONS: { value: Priority; label: string }[] = [
   { value: '보통', label: '보통' },
-  { value: '중요', label: '높음' },
-  { value: '긴급', label: '매우 높음' },
+  { value: '높음', label: '높음' },
+  { value: '매우 높음', label: '매우 높음' },
 ]
+
+function normalizePriority(priority?: string): Priority {
+  if (priority === '중요') return '높음'
+  if (priority === '긴급') return '매우 높음'
+  if (priority === '높음' || priority === '매우 높음') return priority
+  return '보통'
+}
 
 function getWeekInfo(dateStr: string) {
   const [year, month, day] = dateStr.split('-').map(Number)
@@ -90,7 +97,7 @@ function Entry() {
     setForm({
       writeDate: draft.write_date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
       title: draft.title ?? '',
-      priority: (draft.priority as Priority) ?? '보통',
+      priority: normalizePriority(draft.priority),
       completedWork: draft.completed_work ?? '',
       progressWork: draft.ongoing_work ?? '',
       nextWork: draft.next_week_plan ?? '',
