@@ -16,8 +16,8 @@ import logo from '@/assets/images/logo.png'
 
 const FILTER_OPTIONS = [
   { value: 'all', label: '전체' },
-  { value: 'urgent', label: '긴급' },
-  { value: 'important', label: '중요' },
+  { value: 'urgent', label: '매우 높음' },
+  { value: 'important', label: '높음' },
   { value: 'normal', label: '보통' },
 ]
 

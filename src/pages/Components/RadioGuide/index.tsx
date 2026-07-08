@@ -20,13 +20,13 @@ function RadioGuide() {
                             onChange={() => setSelected('a')}
                         />
                         <Radio
-                            label="중요"
+                            label="높음"
                             value="b"
                             checked={selected === 'b'}
                             onChange={() => setSelected('b')}
                         />
                         <Radio
-                            label="높음"
+                            label="매우 높음"
                             value="c"
                             checked={selected === 'c'}
                             onChange={() => setSelected('c')}

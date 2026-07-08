@@ -15,12 +15,12 @@ import AlertPopup from '@/components/AlertPopup'
 import { useAuth } from '@/contexts/AuthContext'
 import './Entry.scss'
 
-type Priority = '보통' | '중요' | '긴급'
+type Priority = '보통' | '높음' | '매우 높음'
 
 const PRIORITY_OPTIONS: { value: Priority; label: string }[] = [
   { value: '보통', label: '보통' },
-  { value: '중요', label: '중요' },
-  { value: '긴급', label: '긴급' },
+  { value: '높음', label: '높음' },
+  { value: '매우 높음', label: '매우 높음' },
 ]
 
 function getWeekInfo(dateStr: string) {

@@ -45,8 +45,8 @@ interface ApiEntry {
 
 const PRIORITY_MAP: Record<string, BadgeType> = {
   '보통': 'normal',
-  '중요': 'important',
-  '긴급': 'urgent',
+  '높음': 'important',
+  '매우 높음': 'urgent',
 }
 
 function toLines(text: string) {
@@ -176,8 +176,8 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
 
   const PRIORITY_TO_KO: Record<string, string> = {
     normal: '보통',
-    important: '중요',
-    high: '긴급',
+    important: '높음',
+    high: '매우 높음',
   }
 
   async function handleConfirm(form: EntryEditForm) {
