@@ -8,8 +8,8 @@ export type BadgeType = PriorityBadgeType | StatusBadgeType | ConfirmBadgeType
 
 const BADGE_LABEL: Record<BadgeType, string> = {
   normal: '보통',
-  important: '중요',
-  urgent: '긴급',
+  important: '높음',
+  urgent: '매우 높음',
   unsent: '미전송',
   partial: '일부 전송',
   sent: '전송완료',

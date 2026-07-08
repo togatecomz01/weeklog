@@ -29,14 +29,14 @@ interface AdminEntry {
 const FILTER_OPTIONS = [
   { value: 'all', label: '전체' },
   { value: '보통', label: '보통' },
-  { value: '높음', label: '높음' },
-  { value: '매우 높음', label: '매우 높음' },
+  { value: '중요', label: '높음' },
+  { value: '긴급', label: '매우 높음' },
 ]
 
 const PRIORITY_MAP: Record<string, BadgeType> = {
   '보통': 'normal',
-  '높음': 'important',
-  '매우 높음': 'urgent',
+  '중요': 'important',
+  '긴급': 'urgent',
 }
 
 function toPreview(completed_work: string, ongoing_work: string) {
