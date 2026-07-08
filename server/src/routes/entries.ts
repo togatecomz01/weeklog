@@ -146,10 +146,10 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
       RETURNING id
     `
 
-    if (priority === '긴급') {
+    if (priority === '매우 높음') {
       const userName = req.user!.name ?? '직원'
       sendKakaoUrgentMessage(
-        `[긴급] ${userName}님이 긴급 업무일지를 등록했습니다.\n제목: ${title}`
+        `[매우 높음] ${userName}님이 긴급 업무일지를 등록했습니다.\n제목: ${title}`
       ).catch((err) => console.error('[kakao] 긴급 알림 전송 오류:', err))
     }
 
