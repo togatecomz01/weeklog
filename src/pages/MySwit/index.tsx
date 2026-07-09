@@ -45,7 +45,7 @@ function MySwitPage() {
 
   return (
     <div className="my-swit">
-      <DetailHeader title="Swit 연결 확인" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
+      <DetailHeader title="Swit 연결 확인" scrollTargetRef={contentRef} onClick={() => navigate('/my')} />
       <div ref={contentRef} className="my-swit-content">
         <div className="my-swit-section">
           <h2 className="my-swit-section-title">Swit 연동</h2>
