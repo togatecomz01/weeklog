@@ -52,7 +52,7 @@ function MyKakaoPage() {
 
   return (
     <div className="my-kakao">
-      <DetailHeader title="카카오톡 연결 확인" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
+      <DetailHeader title="카카오톡 연결 확인" scrollTargetRef={contentRef} onClick={() => navigate('/my')} />
       <div ref={contentRef} className="my-kakao-content">
         <div className="my-kakao-section">
           <h2 className="my-kakao-section-title">카카오톡 연동</h2>
