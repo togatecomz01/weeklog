@@ -82,7 +82,7 @@ router.get('/connect', (req, res) => {
     client_id: process.env.SWIT_CLIENT_ID,
     redirect_uri: process.env.SWIT_REDIRECT_URI,
     response_type: 'code',
-    scope: 'task:write task:read project:read user:read',
+    scope: 'task:write task:read project:read user:read channel:write channel:read message:write message:read',
     state: String(userId),
   })
   res.redirect(`https://openapi.swit.io/oauth/authorize?${params}`)
@@ -398,7 +398,7 @@ export async function sendSwitDirectMessage(
   if (!roomResp.ok || (roomData.code && roomData.code !== 200)) {
     return { ok: false, error: roomData.message ?? 'Swit room 생성 실패' }
   }
-  const roomId: string | undefined = roomData.data?.room?.id ?? roomData.data?.room_id ?? roomData.data?.id
+  const roomId: string | undefined = roomData.data?.room?.room_id ?? roomData.data?.room?.id ?? roomData.data?.room_id ?? roomData.data?.id
   if (!roomId) {
     return { ok: false, error: 'Swit room_id를 확인할 수 없습니다.' }
   }
