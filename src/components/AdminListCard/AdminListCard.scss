@@ -34,8 +34,17 @@
     padding: 16px 0 15px;
     border-top: 1px solid $color-border;
     p {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        padding-left: 16px;
         text-align: left;
         line-height: 1.5;
+        &:not(.tit) {
+            width: calc(100% - 12px - 70px - 16px);
+        }
     }
     .tit {
         width: 70px;
