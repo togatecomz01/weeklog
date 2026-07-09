@@ -1,0 +1,90 @@
+@use '@/styles/mixin' as *;
+
+.my-kakao {
+  height: 100svh;
+  display: flex;
+  flex-direction: column;
+  max-width: 480px;
+  margin: 0 auto;
+  overflow: hidden;
+
+  &-content {
+    flex: 1;
+    min-height: 0;
+    padding: 0 20px;
+    overflow-y: auto;
+  }
+
+  &-section {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    padding: 20px 0;
+  }
+
+  &-section-title {
+    font-size: $font18;
+    font-weight: $font-w-sb;
+    color: $color-text-gray;
+    line-height: 1.5;
+  }
+}
+
+.kakao-card {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding: 20px;
+  border: 1px solid $color-border;
+  border-radius: 12px;
+
+  &-status {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: $font14;
+    line-height: 1.4;
+
+    &-label {
+      font-weight: $font-w-sb;
+      color: $color-text-gray-light;
+    }
+
+    &-value {
+      font-weight: $font-w-r;
+      color: $color-text-gray-light;
+
+      &.is-disconnected {
+        color: $color-error;
+      }
+
+      &.is-connected {
+        color: $color-primary;
+      }
+    }
+  }
+}
+
+.kakao-info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 8px;
+  background: $color-background;
+  border-radius: 4px;
+  opacity: 0.8;
+
+  .kakao-info-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+  }
+
+  .kakao-info-text {
+    flex: 1;
+    font-size: $font14;
+    font-weight: $font-w-m;
+    color: $color-text-gray;
+    line-height: 1.5;
+  }
+}

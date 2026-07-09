@@ -1,5 +1,6 @@
 import { Router } from 'express'
-import { requireAuth } from '../middleware/auth.js'
+import jwt from 'jsonwebtoken'
+import { requireAuth, requireRole } from '../middleware/auth.js'
 import sql from '../db.js'
 
 const router = Router()
@@ -72,12 +73,30 @@ async function getAccessToken(): Promise<string | null> {
   return refreshInFlight
 }
 
-// OAuth 인가 URL로 리다이렉트
-router.get('/connect', (_req, res) => {
+const CLIENT_BASE = process.env.CLIENT_ORIGIN ?? ''
+
+// OAuth 인가 URL로 리다이렉트 (관리자 전용) — JWT를 query param으로 받아 검증
+router.get('/connect', (req, res) => {
+  const { token } = req.query
+  if (!token) {
+    res.redirect(`${CLIENT_BASE}/my/kakao?kakao=error`)
+    return
+  }
+  try {
+    const payload = jwt.verify(String(token), process.env.JWT_SECRET!) as { role: string }
+    if (payload.role !== 'admin') {
+      res.redirect(`${CLIENT_BASE}/my/kakao?kakao=error`)
+      return
+    }
+  } catch {
+    res.redirect(`${CLIENT_BASE}/my/kakao?kakao=error`)
+    return
+  }
+
   const clientId = process.env.KAKAO_REST_API_KEY
   const redirectUri = process.env.KAKAO_REDIRECT_URI
   if (!clientId || !redirectUri) {
-    res.status(503).send('KAKAO_REST_API_KEY 또는 KAKAO_REDIRECT_URI가 .env에 없습니다.')
+    res.redirect(`${CLIENT_BASE}/my/kakao?kakao=error`)
     return
   }
   const params = new URLSearchParams({
@@ -93,7 +112,7 @@ router.get('/connect', (_req, res) => {
 router.get('/callback', async (req, res) => {
   const { code } = req.query
   if (!code) {
-    res.status(400).send('code가 없습니다.')
+    res.redirect(`${CLIENT_BASE}/my/kakao?kakao=error`)
     return
   }
 
@@ -115,13 +134,26 @@ router.get('/callback', async (req, res) => {
 
   const data = await resp.json()
   if (!resp.ok) {
-    res.status(500).json({ message: '토큰 교환 실패', detail: data })
+    console.error('[kakao] 토큰 교환 실패:', data)
+    res.redirect(`${CLIENT_BASE}/my/kakao?kakao=error`)
     return
   }
 
   await saveToken(data.access_token, data.refresh_token, data.expires_in)
 
-  res.send('<p>카카오 계정 연결 완료. 이후 토큰은 자동으로 갱신됩니다.</p>')
+  res.redirect(`${CLIENT_BASE}/my/kakao?kakao=connected`)
+})
+
+// 연결 상태 확인 (관리자 전용)
+router.get('/status', requireAuth, requireRole('admin'), async (_req, res) => {
+  const rows = await sql`SELECT 1 FROM kakao_token WHERE id = 1`
+  res.json({ connected: rows.length > 0 })
+})
+
+// 연결 해제 (관리자 전용)
+router.delete('/disconnect', requireAuth, requireRole('admin'), async (_req, res) => {
+  await sql`DELETE FROM kakao_token WHERE id = 1`
+  res.json({ message: '연결이 해제되었습니다.' })
 })
 
 // 나에게 보내기 테스트 (수동 확인용)

@@ -7,6 +7,7 @@ import Main from './pages/Main'
 import MyPage from './pages/MyPage'
 import MyPasswordPage from './pages/MyPassword'
 import MySwitPage from './pages/MySwit'
+import MyKakaoPage from './pages/MyKakao'
 import ResetPassword from './pages/ResetPassword'
 import Entry from './pages/Entry'
 import Admin from './pages/Admin'
@@ -35,6 +36,7 @@ function App() {
           <Route path="/my" element={<ProtectedRoute allowedRoles={['user', 'admin']}><MyPage /></ProtectedRoute>} />
           <Route path="/my/password" element={<ProtectedRoute allowedRoles={['user', 'admin']}><MyPasswordPage /></ProtectedRoute>} />
           <Route path="/my/swit" element={<ProtectedRoute allowedRoles={['user', 'admin']}><MySwitPage /></ProtectedRoute>} />
+          <Route path="/my/kakao" element={<ProtectedRoute allowedRoles={['admin']}><MyKakaoPage /></ProtectedRoute>} />
           <Route path="/entry" element={<ProtectedRoute allowedRoles={['user']}><Entry /></ProtectedRoute>} />
           <Route path="/entry-view" element={<ProtectedRoute allowedRoles={['user']}><EntryView /></ProtectedRoute>} />
 
