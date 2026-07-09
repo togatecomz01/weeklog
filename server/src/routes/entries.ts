@@ -67,7 +67,7 @@ router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
       WHERE e.week_year  = ${Number(week_year)}
         AND e.week_month  = ${Number(week_month)}
         AND e.week_number = ${Number(week_number)}
-      ORDER BY u.name
+      ORDER BY e.created_at DESC
     `
     res.json(entries)
   } else {
