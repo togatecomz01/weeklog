@@ -40,6 +40,9 @@
       font-weight: $font-w-r;
       line-height: 1.5;
       color: $color-text-gray;
+      &:not(.tit) {
+        width: calc(100% - 12px - 70px);
+      }
     }
   }
 }
