@@ -7,8 +7,6 @@ const SEED_USERS = [
   { email: 'user@weeklog.com', password: 'user1234', name: '홍길동', role: 'user', department: '개발팀', position: '대리' },
   { email: 'leesoli0122@gmail.com', password: 'user1234', name: '이솔', role: 'user', department: '퍼블팀', position: '대리' },
   { email: 'togatecomz.mj@gmail.com', password: 'user1234', name: '강민정', role: 'user', department: '퍼블팀', position: '주임' },
-  { email: 'goun2gate@gmail.com', password: 'user1234', name: '박고운', role: 'user', department: '디자인팀', position: '주임' },
-  { email: 'gksqls2979@gmail.com', password: 'user1234', name: '김한빈', role: 'user', department: '운영팀', position: '주임' },
 ]
 
 const SEED_ENTRIES = [
@@ -30,6 +28,12 @@ async function seed() {
     const hash = await bcrypt.hash(u.password, 10)
     await sql`INSERT INTO users (email, name, role, department, position, password_hash) VALUES (${u.email}, ${u.name}, ${u.role}, ${u.department}, ${u.position}, ${hash})`
     console.log(`done  ${u.email}`)
+  }
+
+  const seedEmails = SEED_USERS.map((u) => u.email)
+  const removed = await sql`DELETE FROM users WHERE email NOT IN ${sql(seedEmails)} RETURNING email`
+  for (const r of removed) {
+    console.log(`removed  ${r.email} (not in SEED_USERS)`)
   }
 
   const [user] = await sql`SELECT id FROM users WHERE email = 'user@weeklog.com'`
