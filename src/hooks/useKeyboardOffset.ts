@@ -9,6 +9,7 @@ export function useKeyboardOffset() {
     const root = document.documentElement
     const viewport = window.visualViewport
     let frameId = 0
+    let lastKeyboardOffset = 0
 
     function setKeyboardOffset() {
       if (!viewport) {
@@ -17,12 +18,25 @@ export function useKeyboardOffset() {
         return
       }
 
-      const viewportBottom = viewport.height + viewport.offsetTop
-      const nextOffset = Math.max(0, window.innerHeight - viewportBottom)
-      const keyboardOffset = nextOffset > KEYBOARD_THRESHOLD ? Math.round(nextOffset) : 0
+      const heightDiff = Math.max(0, window.innerHeight - viewport.height)
+      const bottomDiff = Math.max(0, heightDiff - viewport.offsetTop)
+      const isKeyboardOpen = heightDiff > KEYBOARD_THRESHOLD
+
+      if (!isKeyboardOpen) {
+        lastKeyboardOffset = 0
+        root.style.setProperty(KEYBOARD_OFFSET_PROPERTY, '0px')
+        root.classList.remove(KEYBOARD_OPEN_CLASS)
+        return
+      }
+
+      if (bottomDiff > KEYBOARD_THRESHOLD) {
+        lastKeyboardOffset = Math.round(bottomDiff)
+      }
+
+      const keyboardOffset = lastKeyboardOffset || Math.round(heightDiff)
 
       root.style.setProperty(KEYBOARD_OFFSET_PROPERTY, `${keyboardOffset}px`)
-      root.classList.toggle(KEYBOARD_OPEN_CLASS, keyboardOffset > 0)
+      root.classList.add(KEYBOARD_OPEN_CLASS)
     }
 
     function requestUpdate() {
