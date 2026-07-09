@@ -40,7 +40,8 @@
   }
 
   &-footer {
-    padding: 30px 20px;
+    padding: 30px 20px calc(30px + var(--keyboard-offset-bottom, 0px));
+    transition: padding-bottom .2s ease;
   }
 }
 

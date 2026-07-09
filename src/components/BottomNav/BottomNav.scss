@@ -33,3 +33,9 @@
     }
   }
 }
+
+:root.is-keyboard-open {
+  .bottom-nav {
+    display: none;
+  }
+}

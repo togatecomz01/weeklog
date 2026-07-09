@@ -53,5 +53,19 @@
         padding: 0 20px 30px;
         background: $color-white;
         transform: translateX(-50%);
+        transition: bottom .2s ease;
+    }
+}
+
+:root.is-keyboard-open {
+    .entry {
+        &-content {
+            padding-bottom: max(96px, calc(var(--keyboard-offset-bottom, 0px) - 140px));
+        }
+
+        > .button-container {
+            bottom: var(--keyboard-offset-bottom, 0px);
+            padding-top: 10px;
+        }
     }
 }

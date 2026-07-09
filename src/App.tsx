@@ -15,6 +15,7 @@ import EntryView from './pages/EntryView'
 import AdminEntryView from './pages/AdminEntryView'
 import Components from './pages/Components'
 import AdminList from './pages/AdminList'
+import { useKeyboardOffset } from './hooks/useKeyboardOffset'
 
 function RootRedirect() {
   const { user } = useAuth()
@@ -23,6 +24,8 @@ function RootRedirect() {
 }
 
 function App() {
+  useKeyboardOffset()
+
   return (
     <AuthProvider>
       <BrowserRouter>
