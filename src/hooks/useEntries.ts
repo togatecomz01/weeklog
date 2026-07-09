@@ -41,9 +41,20 @@ function toPreview(completed_work: string, ongoing_work: string) {
   return lines.slice(0, 3).map((line, i) => `${i + 1}. ${line}`).join('\n')
 }
 
-function getSendStatus(done: boolean, doing: boolean, todo: boolean): SendStatus {
-  if (done && doing && todo) return 'sent'
-  if (done || doing || todo) return 'partial'
+function hasContent(text: string) {
+  return text.split('\n').map((s) => s.trim()).filter(Boolean).length > 0
+}
+
+function getSendStatus(raw: any): SendStatus {
+  const sections = [
+    { has: hasContent(raw.completed_work), sent: raw.sent_done },
+    { has: hasContent(raw.ongoing_work), sent: raw.sent_doing },
+    { has: hasContent(raw.next_week_plan), sent: raw.sent_todo },
+  ].filter((s) => s.has)
+
+  if (sections.length === 0) return 'unsent'
+  if (sections.every((s) => s.sent)) return 'sent'
+  if (sections.some((s) => s.sent)) return 'partial'
   return 'unsent'
 }
 
@@ -52,7 +63,7 @@ function mapEntry(raw: any): Entry {
     ...raw,
     week: `${raw.week_month}월 ${raw.week_number}주`,
     priority: PRIORITY_MAP[raw.priority] ?? 'normal',
-    status: getSendStatus(raw.sent_done, raw.sent_doing, raw.sent_todo),
+    status: getSendStatus(raw),
     content: toPreview(raw.completed_work, raw.ongoing_work),
   }
 }
