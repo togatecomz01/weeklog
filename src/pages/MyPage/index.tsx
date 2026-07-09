@@ -21,12 +21,12 @@ function MyPage() {
   const [kakaoConnectedAlert, setKakaoConnectedAlert] = useState(false)
 
   useEffect(() => {
-    if (isAdmin) return
+    // if (isAdmin) return
     apiFetch('/api/swit/status')
       .then((r) => r.json())
       .then((d) => setSwitConnected(d.connected))
       .catch(() => setSwitConnected(false))
-  }, [apiFetch, isAdmin])
+  }, [apiFetch])
 
   useEffect(() => {
     if (!isAdmin) return
@@ -79,7 +79,22 @@ function MyPage() {
               </div>
               <img src={icoRArr} alt="" className="mypage-menu-item-arrow" />
             </button>
-            {isAdmin ? (
+            <button type="button" className="mypage-menu-item" onClick={() => navigate('/my/swit')}>
+              <div className="mypage-menu-item-info">
+                <div className="mypage-menu-item-title-row">
+                  <span className="mypage-menu-item-title">Swit 연결 확인</span>
+                  {switConnected === false && (
+                    <span className="mypage-menu-item-tag">미등록</span>
+                  )}
+                  {switConnected === true && (
+                    <span className="mypage-menu-item-tag is-registered">등록</span>
+                  )}
+                </div>
+                <span className="mypage-menu-item-desc">Swit 에 연동된 계정을 관리 할 수 있습니다.</span>
+              </div>
+              <img src={icoRArr} alt="" className="mypage-menu-item-arrow" />
+            </button>
+            {isAdmin && (
               <button type="button" className="mypage-menu-item" onClick={() => navigate('/my/kakao')}>
                 <div className="mypage-menu-item-info">
                   <div className="mypage-menu-item-title-row">
@@ -92,22 +107,6 @@ function MyPage() {
                     )}
                   </div>
                   <span className="mypage-menu-item-desc">카카오톡 에 연동된 계정을 관리할 수 있습니다.</span>
-                </div>
-                <img src={icoRArr} alt="" className="mypage-menu-item-arrow" />
-              </button>
-            ) : (
-              <button type="button" className="mypage-menu-item" onClick={() => navigate('/my/swit')}>
-                <div className="mypage-menu-item-info">
-                  <div className="mypage-menu-item-title-row">
-                    <span className="mypage-menu-item-title">Swit 연결 확인</span>
-                    {switConnected === false && (
-                      <span className="mypage-menu-item-tag">미등록</span>
-                    )}
-                    {switConnected === true && (
-                      <span className="mypage-menu-item-tag is-registered">등록</span>
-                    )}
-                  </div>
-                  <span className="mypage-menu-item-desc">Swit 에 연동된 계정을 관리 할 수 있습니다.</span>
                 </div>
                 <img src={icoRArr} alt="" className="mypage-menu-item-arrow" />
               </button>
