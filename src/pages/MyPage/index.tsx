@@ -21,7 +21,6 @@ function MyPage() {
   const [kakaoConnectedAlert, setKakaoConnectedAlert] = useState(false)
 
   useEffect(() => {
-    // if (isAdmin) return
     apiFetch('/api/swit/status')
       .then((r) => r.json())
       .then((d) => setSwitConnected(d.connected))
