@@ -189,7 +189,7 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
 
 // 업무일지 수정 (본인 것만)
 router.put('/:id', requireAuth, requireRole('user'), async (req, res) => {
-  const [entry] = await sql`SELECT user_id FROM entries WHERE id = ${req.params.id}`
+  const [entry] = await sql`SELECT user_id, priority, title FROM entries WHERE id = ${req.params.id}`
 
   if (!entry) {
     res.status(404).json({ message: '업무일지를 찾을 수 없습니다.' })
@@ -222,6 +222,15 @@ router.put('/:id', requireAuth, requireRole('user'), async (req, res) => {
         updated_at     = NOW()
       WHERE id = ${req.params.id}
     `
+
+    if (priority === '매우 높음' && entry.priority !== '매우 높음') {
+      const userName = req.user!.name ?? '직원'
+      const finalTitle = title ?? entry.title
+      sendKakaoUrgentMessage(
+        `[매우 높음] ${userName}님이 업무일지를 긴급으로 수정했습니다.\n제목: ${finalTitle}`
+      ).catch((err) => console.error('[kakao] 긴급 알림 전송 오류:', err))
+    }
+
     res.json({ message: '수정되었습니다.' })
   } catch (err) {
     console.error('[entries/update] 업무일지 수정 실패:', err)
