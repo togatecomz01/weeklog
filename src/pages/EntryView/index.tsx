@@ -78,6 +78,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [sendConfirmOpen, setSendConfirmOpen] = useState(false)
   const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[]; project_id: string } | null>(null)
   const [allSentAlertOpen, setAllSentAlertOpen] = useState(false)
+  const [projectRequiredAlertOpen, setProjectRequiredAlertOpen] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -144,7 +145,11 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   }
 
   function handleProjectConfirm() {
-    if (!pendingSend || !selectedProject) return
+    if (!pendingSend) return
+    if (!selectedProject) {
+      setProjectRequiredAlertOpen(true)
+      return
+    }
     setProjectOpen(false)
     setPendingConfirm({ ...pendingSend, project_id: selectedProject })
     setPendingSend(null)
@@ -429,6 +434,13 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
         cancelText="취소"
         onConfirm={handleProjectConfirm}
         onCancel={() => { setProjectOpen(false); setPendingSend(null) }}
+      />
+
+      <AlertPopup
+        open={projectRequiredAlertOpen}
+        message="프로젝트를 선택해 주세요."
+        cancelText="닫기"
+        onCancel={() => setProjectRequiredAlertOpen(false)}
       />
     </div>
   )
