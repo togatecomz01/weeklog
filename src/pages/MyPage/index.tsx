@@ -54,7 +54,7 @@ function MyPage() {
 
   return (
     <div className={`mypage${user?.role === 'admin' ? ' is-admin' : ''}`}>
-      <DetailHeader title="마이" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
+      <DetailHeader title="마이" scrollTargetRef={contentRef} onClick={() => navigate(isAdmin ? '/admin' : '/main')} />
       <div ref={contentRef} className="mypage-content">
         <div className="user-info-section">
           <div className="user-info">
