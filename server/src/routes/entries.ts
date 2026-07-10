@@ -170,14 +170,19 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
       RETURNING id
     `
 
+    let kakaoNotified: boolean | undefined
     if (priority === '매우 높음') {
       const userName = req.user!.name ?? '직원'
-      sendKakaoUrgentMessage(
+      const result = await sendKakaoUrgentMessage(
         `[매우 높음] ${userName}님이 긴급 업무일지를 등록했습니다.\n제목: ${title}`
-      ).catch((err) => console.error('[kakao] 긴급 알림 전송 오류:', err))
+      ).catch((err) => {
+        console.error('[kakao] 긴급 알림 전송 오류:', err)
+        return { ok: false }
+      })
+      kakaoNotified = result.ok
     }
 
-    res.status(201).json({ id: entry.id })
+    res.status(201).json({ id: entry.id, kakaoNotified })
   } catch (err: any) {
     if (err.code === '23505') {
       res.status(409).json({ message: '해당 주차 업무일지가 이미 존재합니다.' })
@@ -223,15 +228,20 @@ router.put('/:id', requireAuth, requireRole('user'), async (req, res) => {
       WHERE id = ${req.params.id}
     `
 
+    let kakaoNotified: boolean | undefined
     if (priority === '매우 높음' && entry.priority !== '매우 높음') {
       const userName = req.user!.name ?? '직원'
       const finalTitle = title ?? entry.title
-      sendKakaoUrgentMessage(
+      const result = await sendKakaoUrgentMessage(
         `[매우 높음] ${userName}님이 업무일지를 긴급으로 수정했습니다.\n제목: ${finalTitle}`
-      ).catch((err) => console.error('[kakao] 긴급 알림 전송 오류:', err))
+      ).catch((err) => {
+        console.error('[kakao] 긴급 알림 전송 오류:', err)
+        return { ok: false }
+      })
+      kakaoNotified = result.ok
     }
 
-    res.json({ message: '수정되었습니다.' })
+    res.json({ message: '수정되었습니다.', kakaoNotified })
   } catch (err) {
     console.error('[entries/update] 업무일지 수정 실패:', err)
     res.status(500).json({ message: '수정 중 오류가 발생했습니다.' })

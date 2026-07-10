@@ -208,10 +208,17 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
           notes: form.note,
         }),
       })
+      const data = await res.json()
       if (!res.ok) {
-        const data = await res.json()
         alert(data.message ?? '수정 실패')
         return
+      }
+      if (data.kakaoNotified !== undefined) {
+        alert(
+          data.kakaoNotified
+            ? '관리자에게 긴급 알림이 전송되었습니다.'
+            : '관리자에게 긴급 알림 전송에 실패했습니다.\n카카오톡 연동 상태를 확인해 주세요.'
+        )
       }
       const updated = await apiFetch(`/api/entries/${id}`)
       if (updated.ok) setEntry(await updated.json())
