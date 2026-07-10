@@ -4,10 +4,13 @@ import Button from '@/components/Button'
 import Input from '@/components/Input'
 import Checkbox from '@/components/Checkbox'
 import AuthLayout from '@/components/AuthLayout'
+import AlertPopup from '@/components/AlertPopup'
 import { useAuth } from '@/contexts/AuthContext'
 
 type LoginField = 'email' | 'password'
 type LoginErrors = Partial<Record<LoginField, string>>
+
+const LOGIN_FAILED_MESSAGE = `로그인에 실패했습니다.\n잠시 후 다시 시도해 주세요.`
 
 function Login() {
   const navigate = useNavigate()
@@ -16,7 +19,7 @@ function Login() {
   const [form, setForm] = useState({ email: '', password: '' })
   const [autoLogin, setAutoLogin] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<LoginErrors>({})
-  const [formError, setFormError] = useState('')
+  const [loginFailedOpen, setLoginFailedOpen] = useState(false)
   const [loading, setLoading] = useState(false)
 
   if (user) {
@@ -26,7 +29,6 @@ function Login() {
   function handleChange(field: keyof typeof form) {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }))
-      setFormError('')
       setFieldErrors((prev) => {
         if (!prev[field]) return prev
 
@@ -55,7 +57,6 @@ function Login() {
   async function handleLogin(e?: React.BaseSyntheticEvent) {
     e?.preventDefault()
     setFieldErrors({})
-    setFormError('')
 
     if (!validateForm()) return
 
@@ -70,14 +71,11 @@ function Login() {
       const data = await res.json()
 
       if (!res.ok) {
-        const message = data.message ?? '로그인에 실패했습니다.'
-
         if (data.field === 'email' || data.field === 'password') {
-          setFieldErrors({ [data.field]: message })
+          setFieldErrors({ [data.field]: data.message ?? LOGIN_FAILED_MESSAGE })
         } else {
-          setFormError(message)
+          setLoginFailedOpen(true)
         }
-
         return
       }
 
@@ -86,13 +84,14 @@ function Login() {
       if (data.user.role === 'admin') navigate('/admin')
       else navigate('/main')
     } catch {
-      setFormError('서버에 연결할 수 없습니다.')
+      setLoginFailedOpen(true)
     } finally {
       setLoading(false)
     }
   }
 
   return (
+    <>
     <form onSubmit={handleLogin}>
     <AuthLayout
       title="로그인 정보를 입력해주세요."
@@ -120,7 +119,6 @@ function Login() {
           error={!!fieldErrors.password}
           errorMessage={fieldErrors.password}
         />
-        {formError && <p className="input-error">{formError}</p>}
       </div>
 
       <div className="auth-options">
@@ -135,6 +133,13 @@ function Login() {
       </div>
     </AuthLayout>
     </form>
+    <AlertPopup
+      open={loginFailedOpen}
+      message={LOGIN_FAILED_MESSAGE}
+      cancelText="확인"
+      onCancel={() => setLoginFailedOpen(false)}
+    />
+    </>
   )
 }
 
