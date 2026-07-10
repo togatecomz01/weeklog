@@ -161,6 +161,18 @@ function Entry() {
     if (!isDraftValid) return
     setLoading(true)
     try {
+      const { week_year, week_month, week_number } = getWeekInfo(form.writeDate)
+      const checkRes = await apiFetch(
+        `/api/entries/check-week?week_year=${week_year}&week_month=${week_month}&week_number=${week_number}`
+      )
+      if (checkRes.ok) {
+        const { exists } = await checkRes.json()
+        if (exists) {
+          setDuplicateAlertOpen(true)
+          return
+        }
+      }
+
       const res = await apiFetch('/api/drafts', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
