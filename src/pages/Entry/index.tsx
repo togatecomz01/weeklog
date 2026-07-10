@@ -79,6 +79,7 @@ function Entry() {
   const [draftOpen, setDraftOpen] = useState(false)
   const [duplicateAlertOpen, setDuplicateAlertOpen] = useState(false)
   const [backConfirmOpen, setBackConfirmOpen] = useState(false)
+  const [kakaoAlertMessage, setKakaoAlertMessage] = useState('')
   const [titleError, setTitleError] = useState('')
 
   const TITLE_MAX_LENGTH = 50
@@ -221,6 +222,15 @@ function Entry() {
 
       await apiFetch('/api/drafts', { method: 'DELETE' })
 
+      if (form.priority === '매우 높음') {
+        setKakaoAlertMessage(
+          data.kakaoNotified
+            ? '관리자에게 긴급 알림이 전송되었습니다.'
+            : '관리자에게 긴급 알림 전송에 실패했습니다.\n카카오톡 연동 상태를 확인해 주세요.'
+        )
+        return
+      }
+
       navigate('/main', { replace: true })
     } catch {
       setError('서버에 연결할 수 없습니다.')
@@ -359,6 +369,13 @@ function Entry() {
         description="동일 주차에는 업무를 1건만 등록할 수 있습니다."
         cancelText="닫기"
         onCancel={() => setDuplicateAlertOpen(false)}
+      />
+      <AlertPopup
+        open={!!kakaoAlertMessage}
+        message="업무일지가 등록되었습니다."
+        description={kakaoAlertMessage}
+        cancelText="확인"
+        onCancel={() => { setKakaoAlertMessage(''); navigate('/main', { replace: true }) }}
       />
       <AlertPopup
         open={backConfirmOpen}
