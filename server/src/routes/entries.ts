@@ -83,6 +83,27 @@ router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
   }
 })
 
+// 특정 주차에 이미 등록된 업무일지가 있는지 확인 (user only, 임시저장 전 검증용)
+router.get('/check-week', requireAuth, requireRole('user'), async (req, res) => {
+  const week_year = Number(req.query.week_year)
+  const week_month = Number(req.query.week_month)
+  const week_number = Number(req.query.week_number)
+
+  if (!week_year || !week_month || !week_number) {
+    res.status(400).json({ message: '주차 정보가 올바르지 않습니다.' })
+    return
+  }
+
+  const [entry] = await sql`
+    SELECT id FROM entries
+    WHERE user_id = ${req.user!.id}
+      AND week_year = ${week_year}
+      AND week_month = ${week_month}
+      AND week_number = ${week_number}
+  `
+  res.json({ exists: Boolean(entry) })
+})
+
 // 특정 업무일지 조회
 router.get('/:id', requireAuth, async (req, res) => {
   const [entry] = await sql`
