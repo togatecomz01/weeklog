@@ -21,6 +21,7 @@ cd ..
 echo [6/7] Run migrations...
 cd server
 call npm run migrate
+call npm run seed
 cd ..
 
 echo [7/7] Restart server...
