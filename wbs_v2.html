@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<!-- saved from url=(0114)file:///Users/isol/Documents/Codex/2026-06-18/files-mentioned-by-the-user-doctype/outputs/weeklog_wbs_2026-06.html -->
+<html lang="ko">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Swit API 연동형 업무일지 + UI 고도화 WBS</title>
+        <style>
+            *{box-sizing:border-box;}
+            body{min-width:1200px;min-height:100vh;padding:42px 48px 52px;margin:0;background:#f3f6fa;font-family:"Noto Sans KR","S-Core Dream",Arial,sans-serif;color:#232b35;line-height:1.45;}
+            .wrap{max-width:1200px;margin:0 auto;}
+            .top{display:grid;padding:0 0 24px;grid-template-columns:1fr 360px;gap:24px;}
+            h1{margin:0 0 8px; font-weight: 800; font-size: 32px; line-height: 1.5;color:#17212b;}
+            .sub{margin:0; font-weight: 400; font-size: 14px; line-height: 1.6;color:#65717f;}
+            .meta{display:grid;padding:16px;border:1px solid #d8e0ea;border-radius:8px;background:#ffffff; font-weight: 500; font-size: 13px; line-height: 1.7; color:#354252;grid-template-columns:96px 1fr;gap:4px 10px;}
+            .meta b{ font-weight: 700; font-size: 13px; line-height: 1.7;color:#17212b;}
+            .legend{display:grid;padding:14px 16px;margin:0 0 18px;border:1px solid #d8e0ea;border-radius:8px;background:#ffffff;grid-template-columns:repeat(6,auto) 1fr;gap:12px 18px;align-items:center;}
+            .leg{display:grid; font-weight: 700; font-size: 12px; line-height: 1.2;color:#4a5665;grid-template-columns:10px auto;gap:7px;align-items:center;}
+            .dot{display:block;width:10px;height:10px;border-radius:50%;}
+            .c-done,.b-done{background:#62748a;}
+            .c-common,.b-common{background:#247d7a;}
+            .c-react,.b-react{background:#2f855a;}
+            .c-dev,.b-dev{background:#b7791f;}
+            .c-qa,.b-qa{background:#8b5cf6;}
+            .c-release,.b-release{background:#dc2626;}
+            .c-off{background:#cbd5e1;}
+            .phase-board{display:grid;margin:0 0 20px;grid-template-columns:repeat(4,1fr);gap:10px;}
+            .phase-card{min-height:92px;padding:14px 16px;border:1px solid #d8e0ea;border-left:5px solid #62748a;border-radius:8px;background:#ffffff;}
+            .phase-card b{display:block;margin:0 0 7px;font-weight:800;font-size:15px;line-height:1.2;color:#17212b;}
+            .phase-card span{display:block;font-weight:500;font-size:12px;line-height:1.45;color:#475569;word-break:keep-all;}
+            .phase-card.common{border-left-color:#247d7a;}
+            .phase-card.react{border-left-color:#2f855a;}
+            .phase-card.qa{border-left-color:#8b5cf6;}
+            .section-title{margin:24px 0 10px;font-weight: 800; font-size: 18px; line-height: 1.35; color:#17212b;}
+            .calendar{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;padding: 20px;border-radius: 11px;background-color: #888d94;}
+            .dow{padding:8px 0;border-radius:6px;background:#dce5ef; font-weight: 800; font-size: 12px; line-height: 1.2; color:#415065;text-align:center;}
+            .dow.sun{color:#b42318;}
+            .dow.sat{color:#5542a3;}
+            .cell{min-height:104px;padding:12px;border:1px solid #d8e0ea;border-radius:8px;overflow:hidden;}
+            .cell.before{background:#edf1f6;}
+            .cell.off{background:#eef2f6;}
+            .cell.done{background:#f4f7fb;}
+            .cell.common{background:#edfafa;}
+            .cell.react{background:#eefaf2;}
+            .cell.dev{background:#fff7e8;}
+            .cell.qa{background:#f5f1ff;}
+            .cell.release{background:#fff1f2;}
+            .cell.today{border:2px solid #17212b;}
+            .date{display:block;margin:0 0 10px; font-weight: 800; font-size: 18px; line-height: 1;color:#17212b;}
+            .badge{display:inline-block;padding:3px 8px;margin:0 4px 8px 0;border-radius:4px; font-weight: 800; font-size: 10px; line-height: 1.2;color:#ffffff;vertical-align:top;}
+            .day{display:block;margin:0 0 4px; font-weight: 800; font-size: 13px; line-height: 1.25;color:#17212b;}
+            .desc{display:block; font-weight: 500; font-size: 12px; line-height: 1.45;color:#475569;word-break:keep-all;}
+            .table-wrap{border:1px solid #d8e0ea;border-radius:8px;background:#ffffff;overflow-x:auto;overflow-y:hidden;}
+            table{width:100%;border-collapse:collapse;background:#ffffff; font-weight: 500; font-size: 13px; line-height: 1.45;color:#27313d;table-layout:fixed;}
+            th{padding:10px 8px;border:1px solid #40536b;background:#26384c;font-weight: 800; font-size: 12px; line-height: 1.3;color:#ffffff;text-align:center;vertical-align:middle;}
+            td{padding:10px 8px;border:1px solid #d8e0ea;background:#ffffff;font-weight: 500; font-size: 12px; line-height: 1.45;color:#27313d;vertical-align:middle;word-break:keep-all;}
+            .center{text-align:center;}
+            .status-done{background:#e7eef7;color:#34465c;font-weight:800;text-align:center;}
+            .status-ing{background:#e5f7f6;color:#136966;font-weight:800;text-align:center;}
+            .status-plan{background:#fff4df;color:#8a5a10;font-weight:800;text-align:center;}
+            .group-row td{background:#e7eef7;color:#27313d;font-weight:800;}
+            .w-id{width:20px;}
+            .w-phase{width:40px;}
+            .w-date{width:20px;}
+            .w-task{width:80px;}
+            .w-owner{width:30px;}
+            .w-status{width:50px;}
+            .w-note{width:100px;}
+            @media print{
+                body{padding:18px;background:#ffffff;}
+                .cell{min-height:124px;}
+                .top{grid-template-columns:1fr 320px;}
+            }
+        </style>
+    </head>
+    <body>
+        <div class="wrap">
+            <div class="top">
+                <div class="title-box">
+                    <h1>Swit API 연동형 업무일지 + UI 고도화 WBS (Version 1)</h1>
+                    <p class="sub">총 일정: 19일 (약 4주, 1인 개발 기준) · 기획 정리 후 백엔드 구축과 디자인을 병행하고, 확정 디자인 기준으로 퍼블리싱/연동 진행</p>
+                </div>
+                <div class="meta">
+                    <b>프로젝트</b>
+                    <span>Swit API 연동형 업무일지 + UI 고도화</span>
+                    <b>총 일정</b>
+                    <span>19일 (약 4주, 1인 개발 기준)</span>
+                    <b>진행 기준</b>
+                    <span>Day 1~3 기획 정리 완료 후 백엔드/디자인 병행</span>
+                    <b>반영 범위</b>
+                    <span>댓글, 첨부파일, 월간조회필터, 햄버거메뉴</span>
+                </div>
+            </div>
+            <div class="legend">
+                <span class="leg"><i class="dot c-done"></i>기획/기술</span>
+                <span class="leg"><i class="dot c-common"></i>백엔드/디자인</span>
+                <span class="leg"><i class="dot c-react"></i>퍼블리싱</span>
+                <span class="leg"><i class="dot c-dev"></i>개발/연동</span>
+                <span class="leg"><i class="dot c-qa"></i>테스트/배포</span>
+                <span class="leg"><i class="dot c-off"></i>휴무/제외</span>
+            </div>
+            <div class="phase-board">
+                <div class="phase-card">
+                    <b>Day 1~3 기획 정리</b>
+                    <span>WBS 수정, 레이아웃 설계, 스토리보드 추가, Swit 데이터 수집 방식 회의</span>
+                </div>
+                <div class="phase-card common">
+                    <b>Day 4~8 백엔드/디자인</b>
+                    <span>API 수신·DB·배치 구조를 잡으면서 주요 화면 디자인을 같이 진행</span>
+                </div>
+                <div class="phase-card react">
+                    <b>Day 9~14 퍼블리싱</b>
+                    <span>확정 디자인 기준으로 메뉴, 필터, 업무일지, 댓글, 첨부파일 UI 마크업</span>
+                </div>
+                <div class="phase-card qa">
+                    <b>Day 15~19 연동/검수</b>
+                    <span>필터 조회, 댓글/첨부파일 API 연동, 통합 테스트, 최종 배포</span>
+                </div>
+            </div>
+            <h2 class="section-title">일정표</h2>
+            <div class="calendar">
+                <div class="dow">월</div>
+                <div class="dow">화</div>
+                <div class="dow">수</div>
+                <div class="dow">목</div>
+                <div class="dow">금</div>
+                <div class="cell done">
+                    <span class="date">Day 1</span>
+                    <span class="badge b-done">기획/기술</span>
+                    <span class="day">WBS 수정</span>
+                </div>
+                <div class="cell done">
+                    <span class="date">Day 2</span>
+                    <span class="badge b-done">기획/기술</span>
+                    <span class="day">레이아웃 설계·스토리보드 추가</span>
+                </div>
+                <div class="cell done">
+                    <span class="date">Day 3</span>
+                    <span class="badge b-done">기획/기술</span>
+                    <span class="day">Swit 수집 방식 회의</span>
+                </div>
+                <div class="cell common">
+                    <span class="date">Day 4</span>
+                    <span class="badge b-common">백엔드/디자인</span>
+                    <span class="day">백엔드 구조 설계 + 디자인 착수</span>
+                </div>
+                <div class="cell common">
+                    <span class="date">Day 5</span>
+                    <span class="badge b-common">백엔드/디자인</span>
+                    <span class="day">DB 테이블 설계 + 화면 시안</span>
+                </div>
+                <div class="cell common">
+                    <span class="date">Day 6</span>
+                    <span class="badge b-common">백엔드/디자인</span>
+                    <span class="day">배치 스케줄러 구축 + 디자인 보완</span>
+                </div>
+                <div class="cell common">
+                    <span class="date">Day 7</span>
+                    <span class="badge b-common">백엔드/디자인</span>
+                    <span class="day">댓글·첨부파일 구조 + 상세 UI</span>
+                </div>
+                <div class="cell common">
+                    <span class="date">Day 8</span>
+                    <span class="badge b-common">백엔드/디자인</span>
+                    <span class="day">저장 흐름 점검 + 디자인 확정</span>
+                </div>
+                <div class="cell react">
+                    <span class="date">Day 9</span>
+                    <span class="badge b-react">퍼블리싱</span>
+                    <span class="day">3.1 햄버거 메뉴·필터 UI</span>
+                </div>
+                <div class="cell react">
+                    <span class="date">Day 10</span>
+                    <span class="badge b-react">퍼블리싱</span>
+                    <span class="day">필터/메뉴 마크업 보완</span>
+                </div>
+                <div class="cell react">
+                    <span class="date">Day 11</span>
+                    <span class="badge b-react">퍼블리싱</span>
+                    <span class="day">3.2 업무일지 출력화면</span>
+                </div>
+                <div class="cell react">
+                    <span class="date">Day 12</span>
+                    <span class="badge b-react">퍼블리싱</span>
+                    <span class="day">3.2 데이터 바인딩 대비</span>
+                </div>
+                <div class="cell react">
+                    <span class="date">Day 13</span>
+                    <span class="badge b-react">퍼블리싱</span>
+                    <span class="day">3.3 댓글 UI 영역</span>
+                </div>
+                <div class="cell react">
+                    <span class="date">Day 14</span>
+                    <span class="badge b-react">퍼블리싱</span>
+                    <span class="day">3.3 첨부파일 업로드</span>
+                </div>
+                <div class="cell dev">
+                    <span class="date">Day 15</span>
+                    <span class="badge b-dev">개발/연동</span>
+                    <span class="day">4.1 필터 조건별 API 호출</span>
+                </div>
+                <div class="cell dev">
+                    <span class="date">Day 16</span>
+                    <span class="badge b-dev">개발/연동</span>
+                    <span class="day">4.2 댓글 등록/삭제 API</span>
+                </div>
+                <div class="cell dev">
+                    <span class="date">Day 17</span>
+                    <span class="badge b-dev">개발/연동</span>
+                    <span class="day">4.2 첨부파일 서버 연동</span>
+                </div>
+                <div class="cell qa">
+                    <span class="date">Day 18</span>
+                    <span class="badge b-qa">테스트/배포</span>
+                    <span class="day">5.1 통합 테스트</span>
+                </div>
+                <div class="cell qa">
+                    <span class="date">Day 19</span>
+                    <span class="badge b-qa">테스트/배포</span>
+                    <span class="day">5.1 최종 배포</span>
+                </div>
+                <div class="cell off"></div>
+            </div>
+            <h2 class="section-title">WBS 상세</h2>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="w-id">구분</th>
+                            <th class="w-phase">대분류</th>
+                            <th class="w-task">상세 작업 내용</th>
+                            <th class="w-date">기간</th>
+                            <th class="w-owner">담당자</th>
+                            <th class="w-note">비고</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="group-row">
+                            <td class="center">Group</td>
+                            <td>1. 기획 정리 및 화면 설계</td>
+                            <td class="center">소계</td>
+                            <td class="center">3일</td>
+                            <td class="center">기획/퍼블/개발</td>
+                            <td>WBS 수정, 레이아웃 설계, 스토리보드 추가, Swit 수집 방식 회의</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>1.1 WBS 수정 및 업무 범위 재정리</td>
+                            <td class="center">1일</td>
+                            <td class="center">기획/퍼블</td>
+                            <td>Day 1: 전체 공수와 작업 범위를 다시 정리하고, Swit 연동형 업무일지 기준으로 WBS 항목 수정</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>1.2 화면 레이아웃 설계 및 스토리보드 추가</td>
+                            <td class="center">1일</td>
+                            <td class="center">기획/퍼블</td>
+                            <td>Day 2: 햄버거 메뉴, 월간 필터, 업무일지 출력 영역 기준으로 화면 레이아웃 설계 및 스토리보드 추가</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>1.3 Swit 데이터 수집 방식 회의 및 연동 방향 정리</td>
+                            <td class="center">1일</td>
+                            <td class="center">기획/개발</td>
+                            <td>Day 3: 스윗에서 어떤 데이터를 어떤 방식으로 가져올지 회의하고 API, 배치, 저장 흐름 방향 정리</td>
+                        </tr>
+                        <tr class="group-row">
+                            <td class="center">Group</td>
+                            <td>2. 백엔드 및 디자인 병행</td>
+                            <td class="center">소계</td>
+                            <td class="center">5일</td>
+                            <td class="center">개발/디자인</td>
+                            <td>데이터 파이프라인 구축과 화면 디자인을 같은 기간에 진행</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>2.1 Swit 데이터 수신 구조, 배치 스케줄러 및 DB 구축</td>
+                            <td class="center">3일</td>
+                            <td class="center">개발</td>
+                            <td>Day 4: API 수신, 저장 구조를 잡으면서 주요 화면 디자인 방향과 화면 톤 동시 진행<br>Day 6: 자동 수집 배치 흐름을 구성하고, 필터/업무일지 출력 화면 디자인 보완</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>2.2 댓글(Comment) 저장 및 첨부파일 메타데이터 테이블 구축</td>
+                            <td class="center">2일</td>
+                            <td class="center">개발</td>
+                            <td>Day 7: 댓글 저장, 첨부파일 메타데이터 구조를 잡고 상세 화면의 댓글/파일 영역 디자인 정리</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>2.3 주요 화면 디자인 시안 및 확정</td>
+                            <td class="center">병행</td>
+                            <td class="center">디자인/퍼블</td>
+                            <td>Day 5: 업무일지, 댓글, 첨부파일 저장 구조를 설계하고 리스트/상세 화면 시안 정리<br>Day 8: 수집/저장 흐름을 점검하고 퍼블리싱에 넘길 화면 디자인 기준 확정</td>
+                        </tr>
+                        <tr class="group-row">
+                            <td class="center">Group</td>
+                            <td>3. 프론트엔드 퍼블리싱</td>
+                            <td class="center">소계</td>
+                            <td class="center">6일</td>
+                            <td class="center">퍼블리셔</td>
+                            <td>UI 구현 및 컴포넌트 마크업</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>3.1 햄버거 메뉴 네비게이션 및 연도·월 선택 필터 UI 퍼블리싱</td>
+                            <td class="center">2일</td>
+                            <td class="center">퍼블리셔</td>
+                            <td>Day 9: 햄버거 메뉴 네비게이션 및 연도·월 선택 필터 UI 퍼블리싱<br>Day 10: PC 기준 관리자 화면에서 메뉴와 필터 영역이 안정적으로 보이도록 마크업 보완</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>3.2 날짜별/프로젝트별 업무일지 출력화면 퍼블리싱</td>
+                            <td class="center">2일</td>
+                            <td class="center">퍼블리셔</td>
+                            <td>Day 11: 날짜별/프로젝트별 업무일지 출력화면 구조 퍼블리싱<br>Day 12: 데이터 바인딩을 고려한 반복 영역, 빈값 상태 마크업 구조화</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>3.3 댓글 UI 영역 및 첨부파일 업로드 컴포넌트 마크업</td>
+                            <td class="center">2일</td>
+                            <td class="center">퍼블리셔</td>
+                            <td>Day 13: 댓글 목록, 입력, 삭제 액션 영역 마크업<br>Day 14: 첨부파일 업로드 컴포넌트 및 드래그앤드롭 영역 시각화</td>
+                        </tr>
+                        <tr class="group-row">
+                            <td class="center">Group</td>
+                            <td>4. 핵심 기능 개발 및 연동</td>
+                            <td class="center">소계</td>
+                            <td class="center">3일</td>
+                            <td class="center">개발</td>
+                            <td>비즈니스 로직 및 API 연동</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>4.1 연도·월 필터링 조건별 API 데이터 호출 및 실시간 렌더링</td>
+                            <td class="center">1일</td>
+                            <td class="center">개발</td>
+                            <td>Day 15: 선택된 연도·월 조건에 따른 데이터 동적 조회 및 실시간 렌더링</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>4.2 댓글 등록/삭제 API 구현 및 첨부파일 서버 연동</td>
+                            <td class="center">2일</td>
+                            <td class="center">개발</td>
+                            <td>Day 16: 댓글 등록, 삭제 API 구현 및 업무일지 상세 화면 연동<br>Day 17: 업로드/다운로드 로직 구현, 파일 용량 제한 적용</td>
+                        </tr>
+                        <tr class="group-row">
+                            <td class="center">Group</td>
+                            <td>5. 테스트 및 배포</td>
+                            <td class="center">소계</td>
+                            <td class="center">2일</td>
+                            <td class="center">기획/개발</td>
+                            <td>품질 검증 및 최종 오픈</td>
+                        </tr>
+                        <tr>
+                            <td class="center">Task</td>
+                            <td class="center">-</td>
+                            <td>5.1 데이터 누락 검증, 예외 처리, 통합 테스트 및 최종 배포</td>
+                            <td class="center">2일</td>
+                            <td class="center">공통</td>
+                            <td>Day 18: 데이터 누락 검증, 예외 처리, 회귀 테스트 진행<br>Day 19: 최종 배포 및 완료 보고</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </body>
+</html>
