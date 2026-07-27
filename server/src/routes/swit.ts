@@ -260,6 +260,64 @@ router.get('/projects', requireAuth, async (req, res) => {
   res.json(projects)
 })
 
+// 스윗 프로젝트의 업무 목록을 상태별로 가져오기 (업무일지 "스윗에서 가져오기"용)
+router.get('/tasks', requireAuth, async (req, res) => {
+  const token = await getUserToken(req.user!.id)
+  const projectId = String(req.query.project_id ?? '')
+  if (!token.ok) {
+    sendSwitAuthError(res, token.reason)
+    return
+  }
+  if (!projectId) {
+    res.status(400).json({ message: 'project_id가 없습니다.' })
+    return
+  }
+
+  const resp = await fetch(`${SWIT_API}/task.list?project_id=${projectId}&limit=100`, {
+    headers: { Authorization: `Bearer ${token.accessToken}` },
+  })
+  const text = await resp.text()
+  console.log('[swit/tasks] task.list:', text.slice(0, 800))
+
+  if (!resp.ok) {
+    res.status(502).json({ message: `업무 목록 조회 오류 (${resp.status})` })
+    return
+  }
+
+  let data: any
+  try {
+    data = JSON.parse(text)
+  } catch {
+    res.status(502).json({ message: 'task.list 파싱 실패' })
+    return
+  }
+  if (data.code && data.code !== 200) {
+    res.status(502).json({ message: data.message ?? '업무 목록을 가져올 수 없습니다.' })
+    return
+  }
+
+  // Swit 커스텀 상태명(status_custom.status_name)을 완료/진행/예정 업무로 매핑한다. Backlog는 제외한다.
+  const STEP_BUCKET: Record<string, 'done' | 'doing' | 'todo'> = {
+    todo: 'todo',
+    doing: 'doing',
+    done: 'done',
+  }
+
+  const tasks = data?.data?.tasks ?? data?.data?.task ?? []
+  const buckets: { done: string[]; doing: string[]; todo: string[] } = { done: [], doing: [], todo: [] }
+
+  for (const t of tasks) {
+    const title: string | undefined = t.title
+    if (!title) continue
+    const rawStep = String(t.status_custom?.status_name ?? '').toLowerCase().replace(/\s/g, '')
+    const bucket = STEP_BUCKET[rawStep]
+    if (!bucket) continue
+    buckets[bucket].push(title)
+  }
+
+  res.json(buckets)
+})
+
 // 스윗 태스크 전송
 router.post('/send', requireAuth, async (req, res) => {
   const { title, items, status, entry_id, project_id } = req.body
