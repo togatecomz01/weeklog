@@ -5,10 +5,13 @@ import BottomNav from '@/components/BottomNav'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
 import DetailHeader from '@/components/DetailHeader'
+import FullPopup from '@/components/FullPopup'
+import closeIcon from '@/assets/svg/ico_close.svg'
 import Input from '@/components/Input'
 import Radio from '@/components/Radio'
 import RadioGroup from '@/components/Radio/RadioGroup'
 import ScrollTop from '@/components/ScrollTop'
+import Select from '@/components/Select'
 import Textarea from '@/components/Textarea'
 import AccInfoBox from '@/components/AccInfoBox'
 import AlertPopup from '@/components/AlertPopup'
@@ -81,6 +84,21 @@ function Entry() {
   const [backConfirmOpen, setBackConfirmOpen] = useState(false)
   const [kakaoAlertMessage, setKakaoAlertMessage] = useState('')
   const [titleError, setTitleError] = useState('')
+  const [switProjectOpen, setSwitProjectOpen] = useState(false)
+  const [switProjects, setSwitProjects] = useState<{ id: string; name: string }[]>([])
+  const [selectedSwitProject, setSelectedSwitProject] = useState('')
+  const [switProjectsLoading, setSwitProjectsLoading] = useState(false)
+  const [switProjectRequiredAlertOpen, setSwitProjectRequiredAlertOpen] = useState(false)
+  const [switAlertMessage, setSwitAlertMessage] = useState('')
+  const [switAlertDescription, setSwitAlertDescription] = useState('')
+  const [switEmptyAlertOpen, setSwitEmptyAlertOpen] = useState(false)
+  const [switTaskRequiredAlertOpen, setSwitTaskRequiredAlertOpen] = useState(false)
+  const [switTaskBuckets, setSwitTaskBuckets] = useState<{ done: string[]; doing: string[]; todo: string[] }>({ done: [], doing: [], todo: [] })
+  const [switTasksLoading, setSwitTasksLoading] = useState(false)
+  const [selectedDoneTasks, setSelectedDoneTasks] = useState<string[]>([])
+  const [selectedDoingTasks, setSelectedDoingTasks] = useState<string[]>([])
+  const [selectedTodoTasks, setSelectedTodoTasks] = useState<string[]>([])
+  const [attachments, setAttachments] = useState<File[]>([])
 
   const TITLE_MAX_LENGTH = 50
 
@@ -131,6 +149,103 @@ function Entry() {
     }
   }
 
+  async function handleSwitImportClick() {
+    setSwitProjectOpen(true)
+    setSwitProjectsLoading(true)
+    try {
+      const res = await apiFetch('/api/swit/projects')
+      if (res.status === 403) {
+        const data = await res.json().catch(() => null)
+        const expired = data?.reason === 'expired'
+        setSwitAlertMessage(data?.message ?? (expired ? 'Swit 연결이 만료되었습니다. 다시 연결해 주세요.' : 'Swit 계정이 연결되어 있지 않습니다.'))
+        setSwitAlertDescription(expired ? '' : `업무를 가져오려면 먼저\nSwit 계정을 연동해 주세요.`)
+        setSwitProjectOpen(false)
+        return
+      }
+      if (!res.ok) throw new Error('프로젝트 목록을 가져올 수 없습니다.')
+      const data: { id: string; name: string }[] = await res.json()
+      setSwitProjects(data)
+      setSelectedSwitProject('')
+      setSwitTaskBuckets({ done: [], doing: [], todo: [] })
+      setSelectedDoneTasks([])
+      setSelectedDoingTasks([])
+      setSelectedTodoTasks([])
+    } catch (err: any) {
+      setSwitAlertMessage(err.message ?? '프로젝트 목록을 가져올 수 없습니다.')
+      setSwitAlertDescription('')
+      setSwitProjectOpen(false)
+    } finally {
+      setSwitProjectsLoading(false)
+    }
+  }
+
+  async function handleSwitProjectSelect(projectId: string) {
+    setSelectedSwitProject(projectId)
+    setSwitTaskBuckets({ done: [], doing: [], todo: [] })
+    setSelectedDoneTasks([])
+    setSelectedDoingTasks([])
+    setSelectedTodoTasks([])
+    if (!projectId) return
+
+    setSwitTasksLoading(true)
+    try {
+      const res = await apiFetch(`/api/swit/tasks?project_id=${projectId}`)
+      if (!res.ok) {
+        const data = await res.json().catch(() => null)
+        setSwitAlertMessage(data?.message ?? '업무 목록을 가져올 수 없습니다.')
+        setSwitAlertDescription('')
+        return
+      }
+      const data: { done: string[]; doing: string[]; todo: string[] } = await res.json()
+      if (!data.done.length && !data.doing.length && !data.todo.length) {
+        setSwitEmptyAlertOpen(true)
+        return
+      }
+      setSwitTaskBuckets(data)
+    } catch {
+      setSwitAlertMessage('서버에 연결할 수 없습니다.')
+      setSwitAlertDescription('')
+    } finally {
+      setSwitTasksLoading(false)
+    }
+  }
+
+  function handleAddSwitTask(bucket: 'done' | 'doing' | 'todo', task: string) {
+    if (!task) return
+    const setter = bucket === 'done' ? setSelectedDoneTasks : bucket === 'doing' ? setSelectedDoingTasks : setSelectedTodoTasks
+    setter((prev) => (prev.includes(task) ? prev : [...prev, task]))
+  }
+
+  function handleRemoveSwitTask(bucket: 'done' | 'doing' | 'todo', task: string) {
+    const setter = bucket === 'done' ? setSelectedDoneTasks : bucket === 'doing' ? setSelectedDoingTasks : setSelectedTodoTasks
+    setter((prev) => prev.filter((t) => t !== task))
+  }
+
+  function handleSwitProjectConfirm() {
+    if (!selectedSwitProject) {
+      setSwitProjectRequiredAlertOpen(true)
+      return
+    }
+    if (!selectedDoneTasks.length && !selectedDoingTasks.length && !selectedTodoTasks.length) {
+      setSwitTaskRequiredAlertOpen(true)
+      return
+    }
+
+    const merge = (existing: string, incoming: string[]) => {
+      if (!incoming.length) return existing
+      const incomingText = incoming.join('\n')
+      return existing.trim() ? `${existing.trim()}\n${incomingText}` : incomingText
+    }
+
+    setForm((prev) => ({
+      ...prev,
+      completedWork: merge(prev.completedWork, selectedDoneTasks),
+      progressWork: merge(prev.progressWork, selectedDoingTasks),
+      nextWork: merge(prev.nextWork, selectedTodoTasks),
+    }))
+    setSwitProjectOpen(false)
+  }
+
   function handleChange(field: keyof typeof form) {
     return (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       setForm((prev) => ({ ...prev, [field]: e.target.value }))
@@ -146,6 +261,21 @@ function Entry() {
     }
     setTitleError('')
     setForm((prev) => ({ ...prev, title: value }))
+  }
+
+  function handleAttachmentSelect(e: ChangeEvent<HTMLInputElement>) {
+    const files = Array.from(e.target.files ?? [])
+    e.target.value = ''
+    if (!files.length) return
+    setAttachments((prev) => {
+      const existingKeys = new Set(prev.map((f) => `${f.name}-${f.size}`))
+      const newFiles = files.filter((f) => !existingKeys.has(`${f.name}-${f.size}`))
+      return [...prev, ...newFiles]
+    })
+  }
+
+  function handleRemoveAttachment(index: number) {
+    setAttachments((prev) => prev.filter((_, i) => i !== index))
   }
 
   const isValid = Boolean(form.writeDate.trim() && form.title.trim())
@@ -264,6 +394,11 @@ function Entry() {
     <div className="entry">
       <DetailHeader title="업무일지 등록" scrollTargetRef={contentRef} onClick={() => hasInput ? setBackConfirmOpen(true) : navigate(-1)} />
       <main ref={contentRef} className="entry-content">
+        <div className="entry-import">
+          <Button type="button" variant="secondary" fullWidth disabled={switProjectsLoading} onClick={handleSwitImportClick}>
+            Swit에서 불러오기
+          </Button>
+        </div>
         <section className="entry-section">
           <h2 className="entry-title">작성정보</h2>
           <div className="entry-form">
@@ -339,6 +474,32 @@ function Entry() {
               value={form.note}
               onChange={handleChange('note')}
             />
+            <div className="entry-file">
+              <Input
+                id="entry-attachment"
+                type="file"
+                multiple
+                label="첨부파일"
+                onChange={handleAttachmentSelect}
+              />
+              {attachments.length > 0 && (
+                <ul className="entry-select-tags">
+                  {attachments.map((file, index) => (
+                    <li key={`${file.name}-${file.size}-${index}`} className="entry-select-tag">
+                      <span className="entry-select-tag-text">{file.name}</span>
+                      <button
+                        type="button"
+                        className="entry-select-tag-remove"
+                        onClick={() => handleRemoveAttachment(index)}
+                        aria-label="삭제"
+                      >
+                        <img src={closeIcon} alt="" />
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
           </div>
         </section>
 
@@ -398,6 +559,158 @@ function Entry() {
         cancelText="취소"
         onConfirm={() => { setBackConfirmOpen(false); navigate(-1) }}
         onCancel={() => setBackConfirmOpen(false)}
+      />
+      <FullPopup
+        open={switProjectOpen}
+        title="스윗에서 가져오기"
+        headerType="close"
+        cancelText="취소"
+        confirmText="확인"
+        onClose={() => setSwitProjectOpen(false)}
+        onCancel={() => setSwitProjectOpen(false)}
+        onConfirm={handleSwitProjectConfirm}
+      >
+        <section className="entry-section">
+          <h2 className="entry-title">프로젝트를 선택해주세요.</h2>
+          <div className="entry-form">
+            {switProjectsLoading ? (
+              <p className="entry-select-loading">불러오는 중...</p>
+            ) : (
+              <Select
+                className="entry-select"
+                label="프로젝트명"
+                placeholder="선택해 주세요."
+                options={switProjects.map((p) => ({ value: p.id, label: p.name }))}
+                value={selectedSwitProject}
+                onChange={handleSwitProjectSelect}
+              />
+            )}
+            {selectedSwitProject && (
+              switTasksLoading ? (
+                <p className="entry-select-loading">불러오는 중...</p>
+              ) : (
+                <>
+                  <div>
+                    <Select
+                      className="entry-select"
+                      label="완료 업무"
+                      placeholder={switTaskBuckets.done.length ? '선택해 주세요.' : '가져올 업무가 없습니다.'}
+                      disabled={!switTaskBuckets.done.length}
+                      options={switTaskBuckets.done
+                        .filter((task) => !selectedDoneTasks.includes(task))
+                        .map((task) => ({ value: task, label: task }))}
+                      value=""
+                      onChange={(task) => handleAddSwitTask('done', task)}
+                    />
+                    {selectedDoneTasks.length > 0 && (
+                      <ul className="entry-select-tags">
+                        {selectedDoneTasks.map((task) => (
+                          <li key={task} className="entry-select-tag">
+                            <span className="entry-select-tag-text">{task}</span>
+                            <button
+                              type="button"
+                              className="entry-select-tag-remove"
+                              onClick={() => handleRemoveSwitTask('done', task)}
+                              aria-label="삭제"
+                            >
+                              <img src={closeIcon} alt="" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div>
+                    <Select
+                      className="entry-select"
+                      label="진행 업무"
+                      placeholder={switTaskBuckets.doing.length ? '선택해 주세요.' : '가져올 업무가 없습니다.'}
+                      disabled={!switTaskBuckets.doing.length}
+                      options={switTaskBuckets.doing
+                        .filter((task) => !selectedDoingTasks.includes(task))
+                        .map((task) => ({ value: task, label: task }))}
+                      value=""
+                      onChange={(task) => handleAddSwitTask('doing', task)}
+                    />
+                    {selectedDoingTasks.length > 0 && (
+                      <ul className="entry-select-tags">
+                        {selectedDoingTasks.map((task) => (
+                          <li key={task} className="entry-select-tag">
+                            <span className="entry-select-tag-text">{task}</span>
+                            <button
+                              type="button"
+                              className="entry-select-tag-remove"
+                              onClick={() => handleRemoveSwitTask('doing', task)}
+                              aria-label="삭제"
+                            >
+                              <img src={closeIcon} alt="" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div>
+                    <Select
+                      className="entry-select"
+                      label="차주 예정 업무"
+                      placeholder={switTaskBuckets.todo.length ? '선택해 주세요.' : '가져올 업무가 없습니다.'}
+                      disabled={!switTaskBuckets.todo.length}
+                      options={switTaskBuckets.todo
+                        .filter((task) => !selectedTodoTasks.includes(task))
+                        .map((task) => ({ value: task, label: task }))}
+                      value=""
+                      onChange={(task) => handleAddSwitTask('todo', task)}
+                    />
+                    {selectedTodoTasks.length > 0 && (
+                      <ul className="entry-select-tags">
+                        {selectedTodoTasks.map((task) => (
+                          <li key={task} className="entry-select-tag">
+                            <span className="entry-select-tag-text">{task}</span>
+                            <button
+                              type="button"
+                              className="entry-select-tag-remove"
+                              onClick={() => handleRemoveSwitTask('todo', task)}
+                              aria-label="삭제"
+                            >
+                              <img src={closeIcon} alt="" />
+                            </button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </>
+              )
+            )}
+          </div>
+        </section>
+      </FullPopup>
+      <AlertPopup
+        open={switProjectRequiredAlertOpen}
+        message="프로젝트를 선택해 주세요."
+        cancelText="닫기"
+        onCancel={() => setSwitProjectRequiredAlertOpen(false)}
+      />
+      <AlertPopup
+        open={!!switAlertMessage}
+        message={switAlertMessage}
+        description={switAlertDescription}
+        cancelText="닫기"
+        onCancel={() => { setSwitAlertMessage(''); setSwitAlertDescription('') }}
+      />
+      <AlertPopup
+        open={switEmptyAlertOpen}
+        message="가져올 업무가 없습니다."
+        description="선택한 프로젝트에 업무가 없습니다."
+        cancelText="닫기"
+        onCancel={() => setSwitEmptyAlertOpen(false)}
+      />
+      <AlertPopup
+        open={switTaskRequiredAlertOpen}
+        message="가져올 업무를 선택해 주세요."
+        cancelText="닫기"
+        onCancel={() => setSwitTaskRequiredAlertOpen(false)}
       />
     </div>
   )
