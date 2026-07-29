@@ -20,13 +20,18 @@ router.post('/login', async (req, res) => {
   }
 
   const [user] = await sql`
-    SELECT id, email, name, role, department, position, password_hash
+    SELECT id, email, name, role, department, position, password_hash, is_active
     FROM users
     WHERE email = ${email}
   `
 
   if (!user) {
     res.status(401).json({ message: '존재하지 않는 이메일입니다.', field: 'email' })
+    return
+  }
+
+  if (!user.is_active) {
+    res.status(403).json({ message: '비활성화된 계정입니다. 관리자에게 문의해주세요.', field: 'email' })
     return
   }
 

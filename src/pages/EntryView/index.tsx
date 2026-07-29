@@ -8,6 +8,7 @@ import CompletedTaskCardList from '@/components/CompletedTaskCard/CompletedTaskC
 import DetailHeader from '@/components/DetailHeader'
 import ScrollTop from '@/components/ScrollTop'
 import Select from '@/components/Select'
+import Textarea from '@/components/Textarea'
 import AlertPopup from '@/components/AlertPopup'
 import { useAuth } from '@/contexts/AuthContext'
 import EntryEditPopup, { type EntryEditForm } from './EntryEditPopup'
@@ -38,6 +39,8 @@ interface ApiEntry {
   sent_doing: boolean
   sent_todo: boolean
   imported_from_swit: boolean
+  feedback: string
+  feedback_updated_at: string | null
   confirmed_at: string | null
   write_date: string
   created_at: string
@@ -80,6 +83,8 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
   const [pendingConfirm, setPendingConfirm] = useState<{ status: string; items: string[]; project_id: string } | null>(null)
   const [allSentAlertOpen, setAllSentAlertOpen] = useState(false)
   const [projectRequiredAlertOpen, setProjectRequiredAlertOpen] = useState(false)
+  const [feedback, setFeedback] = useState('')
+  const [feedbackSaving, setFeedbackSaving] = useState(false)
 
   const isEditMode = searchParams.get('mode') === 'edit'
   const isAdmin = variant === 'admin'
@@ -106,6 +111,7 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     if (entry.sent_todo) initial.add('todo')
     setSentStatuses(initial)
     setConfirmed(Boolean(entry.confirmed_at))
+    setFeedback(entry.feedback ?? '')
   }, [entry])
 
   useEffect(() => {
@@ -310,6 +316,33 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
     }
   }
 
+  async function handleFeedbackSave() {
+    const nextFeedback = feedback.trim()
+    if (!id || !nextFeedback || feedbackSaving) return
+
+    setFeedbackSaving(true)
+    try {
+      const res = await apiFetch(`/api/entries/${id}/feedback`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ feedback: nextFeedback }),
+      })
+      const data = await res.json()
+      if (!res.ok) {
+        alert(data.message ?? '피드백 저장에 실패했습니다.')
+        return
+      }
+      setFeedback(data.feedback)
+      setEntry((prev) => prev
+        ? { ...prev, feedback: data.feedback, feedback_updated_at: data.feedback_updated_at }
+        : prev)
+    } catch {
+      alert('피드백 저장에 실패했습니다.')
+    } finally {
+      setFeedbackSaving(false)
+    }
+  }
+
   return (
     <div className={`entry-view ${isAdmin ? 'entry-view-admin' : ''}`.trim()}>
       <DetailHeader title="업무일지 상세" scrollTargetRef={contentRef} onClick={() => navigate(-1)} />
@@ -346,7 +379,35 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
                   : undefined}
               />
             ))}
+            {!isAdmin && entry.feedback && (
+              <CompletedTaskCard
+                title="피드백"
+                items={toLines(entry.feedback)}
+              />
+            )}
           </CompletedTaskCardList>
+          {isAdmin && (
+            <div className="entry-view-feedback">
+              <Textarea
+                id="entry-feedback"
+                label="피드백"
+                placeholder="피드백을 입력해 주세요."
+                value={feedback}
+                onChange={(event) => setFeedback(event.target.value)}
+              />
+              <Button
+                fullWidth
+                disabled={!feedback.trim() || feedbackSaving || feedback.trim() === (entry.feedback ?? '').trim()}
+                onClick={handleFeedbackSave}
+              >
+                {feedbackSaving
+                  ? '저장 중...'
+                  : entry.feedback
+                    ? '피드백 수정'
+                    : '피드백 등록'}
+              </Button>
+            </div>
+          )}
         </section>
       </main>
 

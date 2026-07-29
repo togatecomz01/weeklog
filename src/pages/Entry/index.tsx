@@ -201,11 +201,16 @@ function Entry() {
         return
       }
       const data: { done: string[]; doing: string[]; todo: string[] } = await res.json()
-      if (!data.done.length && !data.doing.length && !data.todo.length) {
+      const uniqueTasks = {
+        done: Array.from(new Set(data.done)),
+        doing: Array.from(new Set(data.doing)),
+        todo: Array.from(new Set(data.todo)),
+      }
+      if (!uniqueTasks.done.length && !uniqueTasks.doing.length && !uniqueTasks.todo.length) {
         setSwitEmptyAlertOpen(true)
         return
       }
-      setSwitTaskBuckets(data)
+      setSwitTaskBuckets(uniqueTasks)
     } catch {
       setSwitAlertMessage('서버에 연결할 수 없습니다.')
       setSwitAlertDescription('')

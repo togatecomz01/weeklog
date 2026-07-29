@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import './SideMenu.scss'
 
-type MenuKey = 'home' | 'register' | 'my' | 'logout'
+type MenuKey = 'home' | 'register' | 'users' | 'my' | 'logout'
 
 interface MenuItem {
   key: MenuKey
@@ -29,6 +29,15 @@ function MenuIcon({ type }: { type: MenuKey }) {
     return (
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <path d="M5 3h9l5 5v13H5V3Zm9 0v5h5M8 13h8M8 17h8" />
+      </svg>
+    )
+  }
+
+  if (type === 'users') {
+    return (
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="9" cy="8" r="3.5" />
+        <path d="M2.5 20a6.5 6.5 0 0 1 13 0M16 6.5a3 3 0 0 1 0 5.8M17 15a5 5 0 0 1 4.5 5" />
       </svg>
     )
   }
@@ -60,9 +69,15 @@ function SideMenu() {
   const items: MenuItem[] = [
     { key: 'home', label: '홈', path: homePath },
     ...(user?.role === 'admin'
-      ? []
+      ? [{ key: 'users' as const, label: '사용자 관리', path: '/admin/users' }]
       : [{ key: 'register' as const, label: '업무일지 쓰러가기', path: '/entry' }]),
     { key: 'my', label: '마이페이지', path: '/my' },
+  ]
+  const mySubmenuItems = [
+    ...MY_SUBMENU_ITEMS,
+    ...(user?.role === 'admin'
+      ? [{ label: '카카오톡 연결 확인', path: '/my/kakao' }]
+      : []),
   ]
 
   useEffect(() => {
@@ -85,10 +100,13 @@ function SideMenu() {
   function isActive(key: MenuKey) {
     if (key === 'home') {
       return user?.role === 'admin'
-        ? location.pathname.startsWith('/admin')
+        ? location.pathname === '/admin'
+          || location.pathname.startsWith('/adminlist')
+          || location.pathname.startsWith('/admin-entry-view')
         : location.pathname === '/main'
     }
     if (key === 'register') return location.pathname === '/entry'
+    if (key === 'users') return location.pathname.startsWith('/admin/users')
     return location.pathname.startsWith('/my')
   }
 
@@ -180,7 +198,7 @@ function SideMenu() {
 
                   {item.key === 'my' && (
                     <div className="side-menu-submenu" aria-label="마이페이지 하위 메뉴">
-                      {MY_SUBMENU_ITEMS.map((subItem) => {
+                      {mySubmenuItems.map((subItem) => {
                         const subItemActive = location.pathname === subItem.path
 
                         return (
