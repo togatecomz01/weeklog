@@ -15,6 +15,8 @@ import EntryView from './pages/EntryView'
 import AdminEntryView from './pages/AdminEntryView'
 import Components from './pages/Components'
 import AdminList from './pages/AdminList'
+import UserManagement from './pages/UserManagement'
+import UserEdit from './pages/UserEdit'
 import { useKeyboardOffset } from './hooks/useKeyboardOffset'
 
 function RootRedirect() {
@@ -47,6 +49,8 @@ function App() {
           <Route path="/admin" element={<ProtectedRoute allowedRoles={['admin']}><Admin /></ProtectedRoute>} />
           <Route path="/adminlist" element={<ProtectedRoute allowedRoles={['admin']}><AdminList /></ProtectedRoute>} />
           <Route path="/admin-entry-view" element={<ProtectedRoute allowedRoles={['admin']}><AdminEntryView /></ProtectedRoute>} />
+          <Route path="/admin/users" element={<ProtectedRoute allowedRoles={['admin']}><UserManagement /></ProtectedRoute>} />
+          <Route path="/admin/users/:id" element={<ProtectedRoute allowedRoles={['admin']}><UserEdit /></ProtectedRoute>} />
 
           <Route path="/components" element={<Components />} />
         </Routes>

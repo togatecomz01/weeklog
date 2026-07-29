@@ -67,9 +67,9 @@ function Select({ options, value, onChange, placeholder = '선택하세요', dis
 
       {open && (
         <ul className="select-list">
-          {options.map((option) => (
+          {options.map((option, index) => (
             <li
-              key={option.value}
+              key={`${option.value}-${index}`}
               className={['select-option', option.value === value ? 'is-selected' : ''].filter(Boolean).join(' ')}
               onClick={() => handleSelect(option.value)}
             >

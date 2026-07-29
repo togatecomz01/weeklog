@@ -135,7 +135,8 @@ router.get('/:id', requireAuth, async (req, res) => {
     SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
            e.department, e.title, e.completed_work, e.ongoing_work,
            e.next_week_plan, e.notes, e.sent_done, e.sent_doing, e.sent_todo,
-           e.imported_from_swit, e.confirmed_at, e.confirmed_by,
+           e.imported_from_swit, e.feedback, e.feedback_updated_at,
+           e.confirmed_at, e.confirmed_by,
            e.write_date, e.created_at, e.updated_at,
            u.id AS user_id, u.name AS user_name
     FROM entries e
@@ -188,6 +189,32 @@ router.post('/:id/confirm', requireAuth, requireRole('admin'), async (req, res) 
   }
 
   res.json({ message: '확인 완료' })
+})
+
+// 업무일지 피드백 등록/수정 (admin only)
+router.put('/:id/feedback', requireAuth, requireRole('admin'), async (req, res) => {
+  const feedback = typeof req.body.feedback === 'string' ? req.body.feedback.trim() : ''
+
+  if (!feedback) {
+    res.status(400).json({ message: '피드백을 입력해주세요.' })
+    return
+  }
+
+  const [entry] = await sql`
+    UPDATE entries
+    SET feedback = ${feedback},
+        feedback_updated_at = NOW(),
+        updated_at = NOW()
+    WHERE id = ${req.params.id}
+    RETURNING feedback, feedback_updated_at
+  `
+
+  if (!entry) {
+    res.status(404).json({ message: '업무일지를 찾을 수 없습니다.' })
+    return
+  }
+
+  res.json(entry)
 })
 
 // 업무일지 작성 (user only)

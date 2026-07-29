@@ -52,6 +52,15 @@
         }
     }
 
+    &-feedback {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 1px solid $color-border;
+    }
+
     .select-option {
         text-align: left;
     }

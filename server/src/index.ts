@@ -10,6 +10,7 @@ import entriesRouter from './routes/entries.js'
 import switRouter from './routes/swit.js'
 import draftsRouter from './routes/drafts.js'
 import kakaoRouter from './routes/kakao.js'
+import usersRouter from './routes/users.js'
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const DIST_DIR = path.join(__dirname, '../../dist')
@@ -28,6 +29,7 @@ app.use('/api/entries', entriesRouter)
 app.use('/api/swit', switRouter)
 app.use('/api/drafts', draftsRouter)
 app.use('/api/kakao', kakaoRouter)
+app.use('/api/users', usersRouter)
 
 app.get('/api/health', async (_req, res) => {
   try {
