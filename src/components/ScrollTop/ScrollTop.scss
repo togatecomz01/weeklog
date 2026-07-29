@@ -1,7 +1,7 @@
 .scroll-top {
     position: fixed;
     right: max(20px, calc((100vw - 480px) / 2 + 18px));
-    bottom: 100px;
+    bottom: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -15,7 +15,7 @@
     z-index: 110;
 
     &.scroll-top-with-button {
-        bottom: 160px;
+        bottom: 110px;
     }
 
     &-line {

@@ -74,7 +74,13 @@ const PRIORITY_TO_KO: Record<string, string> = {
   normal: '보통',
 }
 
-export function useEntries(filter: string = 'all') {
+interface EntryFilters {
+  priority?: string
+  year?: number
+  month?: number | null
+}
+
+export function useEntries({ priority = 'all', year, month = null }: EntryFilters = {}) {
   const { apiFetch } = useAuth()
   const [entries, setEntries] = useState<Entry[]>([])
   const [total, setTotal] = useState(0)
@@ -82,12 +88,27 @@ export function useEntries(filter: string = 'all') {
   const [loadingMore, setLoadingMore] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  const priorityParam = filter !== 'all' ? `&priority=${encodeURIComponent(PRIORITY_TO_KO[filter] ?? filter)}` : ''
+  const queryParams = new URLSearchParams({
+    limit: String(PAGE_SIZE),
+  })
+
+  if (priority !== 'all') {
+    queryParams.set('priority', PRIORITY_TO_KO[priority] ?? priority)
+  }
+  if (year) {
+    queryParams.set('year', String(year))
+  }
+  if (month) {
+    queryParams.set('month', String(month))
+  }
+
+  const filterParams = queryParams.toString()
 
   const fetchEntries = useCallback(async (offset: number, append: boolean) => {
     append ? setLoadingMore(true) : setLoading(true)
+    setError(null)
     try {
-      const res = await apiFetch(`/api/entries/me?limit=${PAGE_SIZE}&offset=${offset}${priorityParam}`)
+      const res = await apiFetch(`/api/entries/me?${filterParams}&offset=${offset}`)
       if (!res.ok) throw new Error('불러오기 실패')
       const { entries: raw, total } = await res.json()
       const mapped = raw.map(mapEntry)
@@ -98,7 +119,7 @@ export function useEntries(filter: string = 'all') {
     } finally {
       append ? setLoadingMore(false) : setLoading(false)
     }
-  }, [apiFetch, priorityParam])
+  }, [apiFetch, filterParams])
 
   useEffect(() => {
     fetchEntries(0, false)

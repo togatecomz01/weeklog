@@ -2,7 +2,6 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import Button from '@/components/Button'
 import DetailHeader from '@/components/DetailHeader'
-import BottomNav from '@/components/BottomNav'
 import AlertPopup from '@/components/AlertPopup'
 import ScrollTop from '@/components/ScrollTop'
 import { useAuth } from '@/contexts/AuthContext'
@@ -127,7 +126,6 @@ function MyPage() {
         cancelText="닫기"
       />
       <ScrollTop scrollTargetRef={contentRef} />
-      <BottomNav active="my" />
     </div>
   )
 }

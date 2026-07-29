@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import SideMenu from '@/components/SideMenu'
 import arrowIcon from '@/assets/svg/ico_h_arr.svg'
 import closeIcon from '@/assets/svg/ico_close.svg'
 import './DetailHeader.scss'
@@ -55,6 +56,9 @@ function DetailHeader({
         <img className="header-icon" src={isClose ? closeIcon : arrowIcon} alt="" />
       </button>
       <h1 className="header-title">{title}</h1>
+      <div className="detail-header-menu">
+        <SideMenu />
+      </div>
     </header>
   )
 }

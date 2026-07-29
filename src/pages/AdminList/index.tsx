@@ -5,7 +5,6 @@ import AdminListCardWrap from '@/components/AdminListCard/AdminListCardWrap'
 import AdminListCard from '@/components/AdminListCard'
 import Select from '@/components/Select'
 import Button from '@/components/Button'
-import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
 import './AdminList.scss'
@@ -137,8 +136,7 @@ function AdminList() {
         </div>
       </div>
 
-      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
-      <BottomNav active="home" />
+      <ScrollTop scrollTargetRef={contentRef} />
     </div>
   )
 }

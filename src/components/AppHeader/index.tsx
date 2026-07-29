@@ -1,4 +1,5 @@
 import React from 'react'
+import SideMenu from '@/components/SideMenu'
 import './AppHeader.scss'
 
 type HeaderVariant = '' | 'basics'
@@ -12,7 +13,10 @@ function AppHeader({ left, right, variant = '' }: AppHeaderProps) {
   return (
     <header className={`app-header ${variant}`}>
       <div className="app-header-left">{left}</div>
-      {right && <div className="app-header-right">{right}</div>}
+      <div className="app-header-right">
+        {right}
+        <SideMenu />
+      </div>
     </header>
   )
 }
