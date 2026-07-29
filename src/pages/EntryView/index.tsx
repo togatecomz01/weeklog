@@ -37,6 +37,7 @@ interface ApiEntry {
   sent_done: boolean
   sent_doing: boolean
   sent_todo: boolean
+  imported_from_swit: boolean
   confirmed_at: string | null
   write_date: string
   created_at: string
@@ -338,9 +339,9 @@ function EntryView({ variant = 'user' }: EntryViewProps) {
                 key={`${status ?? title ?? index}`}
                 title={title}
                 status={status}
-                sent={status ? sentStatuses.has(status) : false}
+                sent={!entry.imported_from_swit && status ? sentStatuses.has(status) : false}
                 items={items}
-                onSend={!isAdmin && status && items.length > 0 && !sentStatuses.has(status)
+                onSend={!entry.imported_from_swit && !isAdmin && status && items.length > 0 && !sentStatuses.has(status)
                   ? () => handleSend(status, items)
                   : undefined}
               />
