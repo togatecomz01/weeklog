@@ -16,11 +16,20 @@ router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
   const limit    = Math.min(Number(req.query.limit) || 3, 50)
   const offset   = Number(req.query.offset) || 0
   const priority = typeof req.query.priority === 'string' && req.query.priority ? req.query.priority : null
+  const year     = Number(req.query.year) || null
+  const month    = Number(req.query.month) || null
 
   const priorityFilter = priority ? sql`AND priority = ${priority}` : sql``
+  const yearFilter = year ? sql`AND week_year = ${year}` : sql``
+  const monthFilter = month ? sql`AND week_month = ${month}` : sql``
 
   const [{ count }] = await sql`
-    SELECT COUNT(*)::int AS count FROM entries WHERE user_id = ${req.user!.id} ${priorityFilter}
+    SELECT COUNT(*)::int AS count
+    FROM entries
+    WHERE user_id = ${req.user!.id}
+      ${priorityFilter}
+      ${yearFilter}
+      ${monthFilter}
   `
   const entries = await sql`
     SELECT id, week_year, week_month, week_number, priority,
@@ -28,11 +37,25 @@ router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
            next_week_plan, notes, sent_done, sent_doing, sent_todo,
            write_date, created_at, updated_at
     FROM entries
-    WHERE user_id = ${req.user!.id} ${priorityFilter}
+    WHERE user_id = ${req.user!.id}
+      ${priorityFilter}
+      ${yearFilter}
+      ${monthFilter}
     ORDER BY week_year DESC, week_month DESC, week_number DESC
     LIMIT ${limit} OFFSET ${offset}
   `
   res.json({ entries, total: count })
+})
+
+// 연도 필터에 노출할 내 업무일지 연도 목록
+router.get('/me/years', requireAuth, requireRole('user'), async (req, res) => {
+  const rows = await sql<{ week_year: number }[]>`
+    SELECT DISTINCT week_year
+    FROM entries
+    WHERE user_id = ${req.user!.id}
+    ORDER BY week_year DESC
+  `
+  res.json(rows.map((row) => row.week_year))
 })
 
 // 주차별 제출/확인 현황 요약 (admin)

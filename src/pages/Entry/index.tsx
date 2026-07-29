@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import type { ChangeEvent } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import BottomNav from '@/components/BottomNav'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
 import DetailHeader from '@/components/DetailHeader'
@@ -519,7 +518,6 @@ function Entry() {
         </Button>
       </ButtonContainer>
       <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
-      <BottomNav active="register" />
       <AlertPopup
         open={draftOpen}
         message="임시저장 하시겠습니까?"

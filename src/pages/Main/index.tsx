@@ -7,7 +7,6 @@ import WeekCardList from '@/components/WeekCard/WeekCardList'
 import Select from '@/components/Select'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
-import BottomNav from '@/components/BottomNav'
 import AppHeader from '@/components/AppHeader'
 import ScrollTop from '@/components/ScrollTop'
 import DraftCard from '@/components/DraftCard'
@@ -20,6 +19,8 @@ const FILTER_OPTIONS = [
   { value: 'important', label: '높음' },
   { value: 'normal', label: '보통' },
 ]
+
+const MONTHS = Array.from({ length: 12 }, (_, index) => index + 1)
 
 // function formatDate() {
 //   const now = new Date()
@@ -35,7 +36,15 @@ function Main() {
   const { user, apiFetch } = useAuth()
   const contentRef = useRef<HTMLDivElement | null>(null)
   const [filter, setFilter] = useState('all')
-  const { entries: filteredEntries, loading, loadingMore, error, hasMore, loadMore } = useEntries(filter)
+  const currentYear = new Date().getFullYear()
+  const [year, setYear] = useState(currentYear)
+  const [month, setMonth] = useState<number | null>(null)
+  const [availableYears, setAvailableYears] = useState<number[]>([currentYear])
+  const { entries: filteredEntries, loading, loadingMore, error, hasMore, loadMore } = useEntries({
+    priority: filter,
+    year,
+    month,
+  })
   const [draft, setDraft] = useState<{ id: number; savedAt: string } | null>(null)
 
   useEffect(() => {
@@ -49,6 +58,21 @@ function Main() {
         setDraft({ id: data.id, savedAt })
       })
   }, [apiFetch])
+
+  useEffect(() => {
+    apiFetch('/api/entries/me/years')
+      .then((res) => res.ok ? res.json() : [])
+      .then((years: number[]) => {
+        setAvailableYears(
+          Array.from(new Set([currentYear, ...years])).sort((a, b) => b - a)
+        )
+      })
+  }, [apiFetch, currentYear])
+
+  const yearOptions = availableYears.map((optionYear) => ({
+    value: String(optionYear),
+    label: `${optionYear}년`,
+  }))
 
   return (
     <div className="main">
@@ -66,6 +90,40 @@ function Main() {
 
           {draft && <DraftCard savedAt={draft.savedAt} />}
         </div>
+
+        <section className="period-filter" aria-label="업무일지 기간 선택">
+          <div className="period-filter-top">
+            <h2 className="period-filter-title">조회 기간</h2>
+            <Select
+              options={yearOptions}
+              value={String(year)}
+              onChange={(value) => setYear(Number(value))}
+              className="period-year"
+            />
+          </div>
+
+          <div className="period-months" role="group" aria-label="월 선택">
+            <button
+              type="button"
+              className={`period-month ${month === null ? 'is-selected' : ''}`}
+              aria-pressed={month === null}
+              onClick={() => setMonth(null)}
+            >
+              전체
+            </button>
+            {MONTHS.map((optionMonth) => (
+              <button
+                type="button"
+                key={optionMonth}
+                className={`period-month ${month === optionMonth ? 'is-selected' : ''}`}
+                aria-pressed={month === optionMonth}
+                onClick={() => setMonth(optionMonth)}
+              >
+                {optionMonth}월
+              </button>
+            ))}
+          </div>
+        </section>
 
         <div className="main-section">
           <div className="main-section-header">
@@ -112,8 +170,7 @@ function Main() {
         </div>
       </div>
 
-      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
-      <BottomNav active="home" />
+      <ScrollTop scrollTargetRef={contentRef} />
     </div>
   )
 }

@@ -2,7 +2,6 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@/contexts/AuthContext'
 import AppHeader from '@/components/AppHeader'
-import BottomNav from '@/components/BottomNav'
 import Badge from '@/components/Badge'
 import Button from '@/components/Button'
 import ButtonContainer from '@/components/ButtonContainer'
@@ -185,8 +184,7 @@ function Admin() {
           </div>
         </section>
       </div>
-      <ScrollTop scrollTargetRef={contentRef} hasBottomButton />
-      <BottomNav active="home" />
+      <ScrollTop scrollTargetRef={contentRef} />
     </div>
   )
 }
