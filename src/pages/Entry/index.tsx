@@ -25,6 +25,8 @@ const PRIORITY_OPTIONS: { value: Priority; label: string }[] = [
   { value: '매우 높음', label: '매우 높음' },
 ]
 
+const ATTACHMENT_MAX_COUNT = 3
+
 function normalizePriority(priority?: string): Priority {
   if (priority === '중요') return '높음'
   if (priority === '긴급') return '매우 높음'
@@ -84,6 +86,7 @@ function Entry() {
   const [kakaoAlertMessage, setKakaoAlertMessage] = useState('')
   const [titleError, setTitleError] = useState('')
   const [switProjectOpen, setSwitProjectOpen] = useState(false)
+  const [switCancelAlertOpen, setSwitCancelAlertOpen] = useState(false)
   const [switProjects, setSwitProjects] = useState<{ id: string; name: string }[]>([])
   const [selectedSwitProject, setSelectedSwitProject] = useState('')
   const [switProjectsLoading, setSwitProjectsLoading] = useState(false)
@@ -98,6 +101,7 @@ function Entry() {
   const [selectedDoingTasks, setSelectedDoingTasks] = useState<string[]>([])
   const [selectedTodoTasks, setSelectedTodoTasks] = useState<string[]>([])
   const [attachments, setAttachments] = useState<File[]>([])
+  const [importedFromSwit, setImportedFromSwit] = useState(false)
 
   const TITLE_MAX_LENGTH = 50
 
@@ -111,7 +115,7 @@ function Entry() {
 
   const draftId = searchParams.get('draftId')
 
-  function applyDraft(draft: Record<string, string>) {
+  function applyDraft(draft: Record<string, any>) {
     setForm({
       writeDate: draft.write_date?.slice(0, 10) ?? new Date().toISOString().slice(0, 10),
       title: draft.title ?? '',
@@ -121,6 +125,7 @@ function Entry() {
       nextWork: draft.next_week_plan ?? '',
       note: draft.notes ?? '',
     })
+    setImportedFromSwit(draft.imported_from_swit === true)
   }
 
   useEffect(() => {
@@ -242,7 +247,18 @@ function Entry() {
       progressWork: merge(prev.progressWork, selectedDoingTasks),
       nextWork: merge(prev.nextWork, selectedTodoTasks),
     }))
+    setImportedFromSwit(true)
     setSwitProjectOpen(false)
+  }
+
+  function handleSwitCancelConfirm() {
+    setSwitCancelAlertOpen(false)
+    setSwitProjectOpen(false)
+    setSelectedSwitProject('')
+    setSwitTaskBuckets({ done: [], doing: [], todo: [] })
+    setSelectedDoneTasks([])
+    setSelectedDoingTasks([])
+    setSelectedTodoTasks([])
   }
 
   function handleChange(field: keyof typeof form) {
@@ -268,8 +284,17 @@ function Entry() {
     if (!files.length) return
     setAttachments((prev) => {
       const existingKeys = new Set(prev.map((f) => `${f.name}-${f.size}`))
-      const newFiles = files.filter((f) => !existingKeys.has(`${f.name}-${f.size}`))
-      return [...prev, ...newFiles]
+      const next = [...prev]
+
+      for (const file of files) {
+        const key = `${file.name}-${file.size}`
+        if (existingKeys.has(key)) continue
+        existingKeys.add(key)
+        next.push(file)
+        if (next.length === ATTACHMENT_MAX_COUNT) break
+      }
+
+      return next
     })
   }
 
@@ -313,6 +338,7 @@ function Entry() {
           ongoing_work: form.progressWork,
           next_week_plan: form.nextWork,
           notes: form.note,
+          imported_from_swit: importedFromSwit,
         }),
       })
       if (!res.ok) {
@@ -348,6 +374,7 @@ function Entry() {
           next_week_plan: form.nextWork,
           notes: form.note,
           write_date: form.writeDate,
+          imported_from_swit: importedFromSwit,
         }),
       })
 
@@ -474,13 +501,23 @@ function Entry() {
               onChange={handleChange('note')}
             />
             <div className="entry-file">
-              <Input
-                id="entry-attachment"
-                type="file"
-                multiple
-                label="첨부파일"
-                onChange={handleAttachmentSelect}
-              />
+              <div className="entry-file-picker">
+                <span className="entry-file-label">첨부파일</span>
+                <label
+                  className={`entry-file-control${attachments.length >= ATTACHMENT_MAX_COUNT ? ' is-disabled' : ''}`}
+                >
+                  <input
+                    className="entry-file-native"
+                    id="entry-attachment"
+                    type="file"
+                    multiple
+                    disabled={attachments.length >= ATTACHMENT_MAX_COUNT}
+                    aria-label="첨부파일 추가"
+                    onChange={handleAttachmentSelect}
+                  />
+                  <span className="entry-file-placeholder">파일 추가하기(최대 3개)</span>
+                </label>
+              </div>
               {attachments.length > 0 && (
                 <ul className="entry-select-tags">
                   {attachments.map((file, index) => (
@@ -565,7 +602,7 @@ function Entry() {
         cancelText="취소"
         confirmText="확인"
         onClose={() => setSwitProjectOpen(false)}
-        onCancel={() => setSwitProjectOpen(false)}
+        onCancel={() => setSwitCancelAlertOpen(true)}
         onConfirm={handleSwitProjectConfirm}
       >
         <section className="entry-section">
@@ -684,6 +721,14 @@ function Entry() {
           </div>
         </section>
       </FullPopup>
+      <AlertPopup
+        open={switCancelAlertOpen}
+        message="불러오신 내용이 저장되지 않습니다."
+        confirmText="확인"
+        cancelText="취소"
+        onConfirm={handleSwitCancelConfirm}
+        onCancel={() => setSwitCancelAlertOpen(false)}
+      />
       <AlertPopup
         open={switProjectRequiredAlertOpen}
         message="프로젝트를 선택해 주세요."

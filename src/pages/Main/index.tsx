@@ -148,6 +148,8 @@ function Main() {
                     week={entry.week}
                     priority={entry.priority}
                     status={entry.status}
+                    statusIcon={entry.imported_from_swit ? 'sent' : undefined}
+                    showSendStatus={!entry.imported_from_swit}
                     content={entry.content}
                     onClick={() => navigate(`/entry-view?id=${entry.id}`)}
                   />

@@ -12,6 +12,8 @@ interface WeekCardProps {
   priority: BadgeType
   content: string
   status?: SendStatus
+  statusIcon?: SendStatus
+  showSendStatus?: boolean
   className?: string
   onClick?: () => void
 }
@@ -22,13 +24,22 @@ const STATUS_ICON: Record<SendStatus, string> = {
   sent: sentIcon,
 }
 
-function WeekCard({ week, priority, content, status = 'unsent', className = '', onClick }: WeekCardProps) {
+function WeekCard({
+  week,
+  priority,
+  content,
+  status = 'unsent',
+  statusIcon,
+  showSendStatus = true,
+  className = '',
+  onClick,
+}: WeekCardProps) {
   const cardContent = (
     <>
       <div className="week-card-top">
         <div className="card-icon">
           <img
-            src={STATUS_ICON[status]}
+            src={STATUS_ICON[statusIcon ?? status]}
             alt=""
             aria-hidden="true"
           />
@@ -39,7 +50,7 @@ function WeekCard({ week, priority, content, status = 'unsent', className = '', 
           <strong className="card-week">{week} 업무일지</strong>
 
           <div className="card-badge-group">
-            <Badge type={status} />
+            {showSendStatus && <Badge type={status} />}
             <Badge type={priority} />
           </div>
         </div>

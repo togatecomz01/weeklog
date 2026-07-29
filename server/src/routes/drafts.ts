@@ -8,7 +8,7 @@ const router = Router()
 router.get('/', requireAuth, requireRole('user'), async (req, res) => {
   const [draft] = await sql`
     SELECT id, write_date, title, priority, completed_work, ongoing_work,
-           next_week_plan, notes, saved_at
+           next_week_plan, notes, imported_from_swit, saved_at
     FROM drafts
     WHERE user_id = ${req.user!.id}
   `
@@ -17,10 +17,14 @@ router.get('/', requireAuth, requireRole('user'), async (req, res) => {
 
 // 임시저장 (upsert)
 router.post('/', requireAuth, requireRole('user'), async (req, res) => {
-  const { write_date, title, priority, completed_work, ongoing_work, next_week_plan, notes } = req.body
+  const { write_date, title, priority, completed_work, ongoing_work, next_week_plan, notes,
+          imported_from_swit } = req.body
 
   const [draft] = await sql`
-    INSERT INTO drafts (user_id, write_date, title, priority, completed_work, ongoing_work, next_week_plan, notes, saved_at)
+    INSERT INTO drafts (
+      user_id, write_date, title, priority, completed_work, ongoing_work,
+      next_week_plan, notes, imported_from_swit, saved_at
+    )
     VALUES (
       ${req.user!.id},
       ${write_date ?? null},
@@ -30,6 +34,7 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
       ${ongoing_work ?? ''},
       ${next_week_plan ?? ''},
       ${notes ?? ''},
+      ${imported_from_swit === true},
       NOW()
     )
     ON CONFLICT (user_id) DO UPDATE SET
@@ -40,6 +45,7 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
       ongoing_work   = EXCLUDED.ongoing_work,
       next_week_plan = EXCLUDED.next_week_plan,
       notes          = EXCLUDED.notes,
+      imported_from_swit = EXCLUDED.imported_from_swit,
       saved_at       = NOW()
     RETURNING id, saved_at
   `

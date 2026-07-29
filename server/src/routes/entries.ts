@@ -35,7 +35,7 @@ router.get('/me', requireAuth, requireRole('user'), async (req, res) => {
     SELECT id, week_year, week_month, week_number, priority,
            department, title, completed_work, ongoing_work,
            next_week_plan, notes, sent_done, sent_doing, sent_todo,
-           write_date, created_at, updated_at
+           imported_from_swit, write_date, created_at, updated_at
     FROM entries
     WHERE user_id = ${req.user!.id}
       ${priorityFilter}
@@ -83,7 +83,8 @@ router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
     const entries = await sql`
       SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
              e.department, e.title, e.completed_work, e.ongoing_work,
-             e.next_week_plan, e.notes, e.write_date, e.created_at, e.updated_at,
+             e.next_week_plan, e.notes, e.imported_from_swit,
+             e.write_date, e.created_at, e.updated_at,
              u.id AS user_id, u.name AS user_name, u.email AS user_email
       FROM entries e
       JOIN users u ON u.id = e.user_id
@@ -96,7 +97,8 @@ router.get('/', requireAuth, requireRole('admin'), async (req, res) => {
   } else {
     const entries = await sql`
       SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
-             e.next_week_plan, e.notes, e.write_date, e.created_at, e.updated_at,
+             e.next_week_plan, e.notes, e.imported_from_swit,
+             e.write_date, e.created_at, e.updated_at,
              u.id AS user_id, u.name AS user_name, u.email AS user_email
       FROM entries e
       JOIN users u ON u.id = e.user_id
@@ -133,7 +135,7 @@ router.get('/:id', requireAuth, async (req, res) => {
     SELECT e.id, e.week_year, e.week_month, e.week_number, e.priority,
            e.department, e.title, e.completed_work, e.ongoing_work,
            e.next_week_plan, e.notes, e.sent_done, e.sent_doing, e.sent_todo,
-           e.confirmed_at, e.confirmed_by,
+           e.imported_from_swit, e.confirmed_at, e.confirmed_by,
            e.write_date, e.created_at, e.updated_at,
            u.id AS user_id, u.name AS user_name
     FROM entries e
@@ -191,7 +193,8 @@ router.post('/:id/confirm', requireAuth, requireRole('admin'), async (req, res) 
 // 업무일지 작성 (user only)
 router.post('/', requireAuth, requireRole('user'), async (req, res) => {
   const { week_year, week_month, week_number, priority, department, title,
-          completed_work, ongoing_work, next_week_plan, notes, write_date } = req.body
+          completed_work, ongoing_work, next_week_plan, notes, write_date,
+          imported_from_swit } = req.body
 
   if (!week_year || !week_month || !week_number || !priority || !department || !title || !write_date) {
     res.status(400).json({ message: '필수 항목을 모두 입력해주세요.' })
@@ -206,11 +209,11 @@ router.post('/', requireAuth, requireRole('user'), async (req, res) => {
     const [entry] = await sql`
       INSERT INTO entries
         (user_id, week_year, week_month, week_number, priority, department, title,
-         completed_work, ongoing_work, next_week_plan, notes, write_date)
+         completed_work, ongoing_work, next_week_plan, notes, write_date, imported_from_swit)
       VALUES
         (${req.user!.id}, ${week_year}, ${week_month}, ${week_number}, ${priority},
          ${department}, ${title}, ${completed_work ?? ''}, ${ongoing_work ?? ''},
-         ${next_week_plan ?? ''}, ${notes ?? ''}, ${write_date})
+         ${next_week_plan ?? ''}, ${notes ?? ''}, ${write_date}, ${imported_from_swit === true})
       RETURNING id
     `
 
